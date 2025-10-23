@@ -22,8 +22,8 @@ struct DashboardExample: View {
                     .padding(.bottom, 20)
                 
                 HStack(spacing: 20) {
-                    DashboardCard(title: "Card 1", subtitle: "Contoh konten")
-                    DashboardCard(title: "Card 2", subtitle: "Contoh konten")
+//                    DashboardCardSmall(title: "Card 1", subtitle: "Contoh konten")
+//                    DashboardCardSmall(title: "Card 2", subtitle: "Contoh konten")
                 }
                 Spacer()
             }
