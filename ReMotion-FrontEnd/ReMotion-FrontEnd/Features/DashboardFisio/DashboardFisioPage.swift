@@ -1,5 +1,5 @@
 //
-//  DashboardLibraryFisio.swift
+//  DashboardFisioPage.swift
 //  ReMotion-FrontEnd
 //
 //  Created by Daniel Fernando Herawan on 23/10/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DashboardLibraryFisio: View {
+struct DashboardFisioPage: View {
     @State private var selectedMenu = "Pasien"
     
     var body: some View {
@@ -18,10 +18,10 @@ struct DashboardLibraryFisio: View {
                 
                 // Title
                 HStack {
-                    Text(selectedMenu == "Pasien" ? "Daftar Pasien" : "Daftar Gerakan")
+                    Text(selectedMenu == "Pasien" ? "Pasien" : "Gerakan Latihan")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .padding(.leading, 10)
+                        .padding(.leading, 30)
                     
                     Spacer()
                     
@@ -57,27 +57,11 @@ struct DashboardLibraryFisio: View {
                 .padding(.horizontal, 10)
                 
                 // Content Cards
-                if selectedMenu == "Gerakan" {
-                    
-                    let columns = [
-                        GridItem(.flexible(), spacing: 30),
-                        GridItem(.flexible(), spacing: 30),
-                        GridItem(.flexible(), spacing: 30)
-                    ]
-                    
-                    LazyVGrid(columns: columns, spacing: 30) {  ForEach(sampleMovements) { move in
-                            DashboardCardSmall(
-                                imageName: move.imageName,
-                                title: move.title,
-                                category: move.category,
-                                label: move.label,
-                                description: move.description
-                            )
-                        }
-                    }
-                    .padding(.horizontal, 10)
+                if selectedMenu == "Gerakan Latihan" {
+                    // Gerakan Latihan Card
+                    LibraryGerakanPage()
                 } else {
-                    // Daftar Pasien Card
+                    // Pasien Card
                 }
                 
                 Spacer()
@@ -89,5 +73,5 @@ struct DashboardLibraryFisio: View {
 }
 
 #Preview {
-    DashboardLibraryFisio()
+    DashboardFisioPage()
 }

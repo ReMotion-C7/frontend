@@ -12,7 +12,7 @@ struct CustomSidebar: View {
     
     private let menus = [
         ("Pasien", "square.grid.2x2.fill"),
-        ("Gerakan", "figure.walk")
+        ("Gerakan Latihan", "figure.run")
     ]
     
     var body: some View {
@@ -36,7 +36,7 @@ struct CustomSidebar: View {
                     HStack {
                         Image(systemName: menu.1)
                             .font(.system(size: 18, weight: .semibold))
-                        Text("Daftar \(menu.0)")
+                        Text("\(menu.0)")
                             .font(.system(size: 15, weight: .medium))
                     }
                     .foregroundColor(selectedMenu == menu.0 ? .white : .black)
