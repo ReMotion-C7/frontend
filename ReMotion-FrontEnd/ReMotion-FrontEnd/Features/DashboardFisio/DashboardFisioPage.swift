@@ -61,7 +61,7 @@ struct DashboardFisioPage: View {
                     // Gerakan Latihan Card
                     LibraryGerakanPage()
                 } else {
-                    // Pasien Card
+                    PasienPage()
                 }
                 
                 Spacer()
