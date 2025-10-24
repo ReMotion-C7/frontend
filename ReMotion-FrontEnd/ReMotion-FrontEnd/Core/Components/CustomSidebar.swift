@@ -27,6 +27,7 @@ struct CustomSidebar: View {
             
             Divider()
                 .padding(.horizontal)
+                .fontWeight(.bold)
             
             ForEach(menus, id: \.0) { menu in
                 Button(action: {
