@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DashboardFisioPage: View {
     @State private var selectedMenu = "Pasien"
+    @State private var searchText = ""
     
     var body: some View {
         NavigationSplitView {
@@ -45,9 +46,11 @@ struct DashboardFisioPage: View {
                 
                 // Search Bar
                 HStack {
-                    Text("Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...")
-                        .foregroundColor(.gray)
+                    TextField("Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...", text: $searchText)
+                        .textFieldStyle(PlainTextFieldStyle())
+                    
                     Spacer()
+                    
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                 }
@@ -61,7 +64,7 @@ struct DashboardFisioPage: View {
                     // Gerakan Latihan Card
                     LibraryGerakanPage()
                 } else {
-                    PasienPage()
+                    PatientPage()
                 }
                 
                 Spacer()
