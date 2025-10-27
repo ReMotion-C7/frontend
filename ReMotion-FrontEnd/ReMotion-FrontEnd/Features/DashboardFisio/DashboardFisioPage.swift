@@ -7,146 +7,95 @@
 
 import SwiftUI
 
-enum FisioDestination: String, Hashable {
-    case addMovement
-}
-
 struct DashboardFisioPage: View {
     @State private var selectedMenu = "Pasien"
     @State private var searchText = ""
-    @State private var isShowingAddPasien = false
+    @State private var showAddPatientModal = false
+    @State private var navigateToAddGerakan = false
     
     var body: some View {
         NavigationSplitView {
-            // Sidebar
             CustomSidebar(selectedMenu: $selectedMenu)
         } detail: {
-            // Detail area
             NavigationStack {
-                mainDashboardView
-                    .sheet(isPresented: $isShowingAddPasien) {
-                        NavigationStack {
-                            AddPasienPage()
-                                .navigationTitle("Tambah Pasien Baru")
-                                .navigationBarTitleDisplayMode(.inline)
-                                .toolbar {
-                                    ToolbarItem(placement: .navigationBarLeading) {
-                                        Button("Tutup") {
-                                            isShowingAddPasien = false
-                                        }
-                                    }
-                                }
-                        }
-                    }
-            }
-        }
-        // ✅ Letakkan navigationDestination DI LUAR NavigationStack
-        // agar bisa diakses oleh seluruh NavigationLink di dalam NavigationSplitView
-        .navigationDestination(for: FisioDestination.self) { destination in
-            switch destination {
-            case .addMovement:
-                AddMovementPage()
-                    .navigationTitle("")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Text("Tambah Gerakan Latihan")
-                                .font(.system(size: 20, weight: .bold))
-                        }
-                    }
-            }
-        }
-    }
-    
-    // MARK: - Main Dashboard View
-    private var mainDashboardView: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            HStack {
-                Text(selectedMenu == "Pasien" ? "Pasien" : "Gerakan Latihan")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                
-                Spacer()
-                
-                if selectedMenu == "Gerakan Latihan" {
-                    // ✅ Link ini sekarang bisa menemukan destination
-//                    NavigationLink(value: FisioDestination.addMovement) {
-//                        Label("Tambah Gerakan Baru", systemImage: "plus")
-//                            .labelStyle(.titleAndIcon)
-//                            .font(.headline)
-//                            .padding(.vertical, 10)
-//                            .padding(.horizontal, 14)
-//                            .foregroundColor(.white)
-//                            .background(Color.black)
-//                            .cornerRadius(10)
-//                    }
-//                    .buttonStyle(.plain)
+                VStack(alignment: .leading, spacing: 20) {
                     
-                    NavigationLink(destination: AddMovementPage()) {
-                        Label("Tambah Gerakan Baru", systemImage: "plus")
-                            .labelStyle(.titleAndIcon)
-                            .font(.headline)
+                    // Title
+                    HStack {
+                        Text(selectedMenu == "Pasien" ? "Pasien" : "Gerakan Latihan")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .padding(.leading, 12)
+                        
+                        Spacer()
+                        
+                        // Button Add
+                        Button(action: {
+                            if selectedMenu == "Pasien" {
+                                showAddPatientModal = true
+                            } else {
+                                navigateToAddGerakan = true
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: "plus")
+                                    .fontWeight(.bold)
+                                    .padding(.leading, 10)
+                                Text(selectedMenu == "Pasien" ? "Tambah Pasien Baru" : "Tambah Gerakan Baru")
+                                    .fontWeight(.semibold)
+                                    .padding(.trailing, 10)
+                            }
                             .padding(.vertical, 10)
-                            .padding(.horizontal, 14)
+                            .padding(.horizontal, 6)
                             .foregroundColor(.white)
                             .background(Color.black)
-                            .cornerRadius(10)
+                            .cornerRadius(8)
+                            .padding(.trailing, 55)
+                        }
                     }
-                    .buttonStyle(.plain)
+                    .padding(.bottom, 10)
                     
-                } else {
-                    Button(action: {
-                        isShowingAddPasien = true
-                    }) {
-                        Label("Tambah Pasien Baru", systemImage: "plus")
-                            .labelStyle(.titleAndIcon)
-                            .font(.headline)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 14)
-                            .foregroundColor(.white)
-                            .background(Color.black)
-                            .cornerRadius(10)
+                    // Search Bar
+                    HStack {
+                        TextField("Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...", text: $searchText)
+                            .textFieldStyle(PlainTextFieldStyle())
+                        
+                        Spacer()
+                        
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
                     }
-                    .buttonStyle(.plain)
+                    .padding()
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(8)
+                    .padding(.horizontal, 10)
+                    
+                    // Content Cards
+                    if selectedMenu == "Gerakan Latihan" {
+                        // Gerakan Latihan Card
+                        LibraryGerakanPage()
+                    } else {
+                        PatientPage()
+                    }
+                    
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 40)
+                .sheet(isPresented: $showAddPatientModal) {
+//                    AddPatientModal()
+//                        .presentationDetents([.large])
+//                        .presentationDragIndicator(.hidden)
+                }
+                .navigationDestination(isPresented: $navigateToAddGerakan) {
+                    AddMovementPage()
+                }
+                .onChange(of: selectedMenu) { _ in
+                    // Reset navigation state when switching tabs
+                    navigateToAddGerakan = false
                 }
             }
-            .padding(.horizontal, 10)
-            
-            // Search Bar
-            HStack {
-                TextField(
-                    "Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...",
-                    text: $searchText
-                )
-                .textFieldStyle(PlainTextFieldStyle())
-                
-                Spacer()
-                
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-            }
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(8)
-            .padding(.horizontal, 10)
-            
-            // Content Section
-            if selectedMenu == "Gerakan Latihan" {
-                LibraryGerakanPage()
-            } else {
-                PatientPage()
-            }
-            
-            Spacer()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.leading, 40)
-    }
-}
-
-struct AddPasienPage: View {
-    var body: some View {
-        Text("Halaman Tambah Pasien")
     }
 }
 
