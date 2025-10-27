@@ -47,7 +47,6 @@ struct DetailPatientPage: View {
                 }
                 .padding(.top, 20)
                 
-                // Therapy Date and Phase Section
                 HStack(spacing: 12) {
                     HStack(spacing: 8) {
                         Image(systemName: "calendar")

@@ -54,6 +54,14 @@ let dummyPatient: [Patient] = [
         therapyDate: "12 Juli 1996"
     ),
     Patient(
+        name: "Richard Kapankapanz",
+        gender: .laki,
+        phase: 3,
+        phoneNumber: "+62 894 2871 2837",
+        birthDate: "1 Juli 1945",
+        therapyDate: "12 Juli 2025"
+    ),
+    Patient(
         name: "Yobel Fernando",
         gender: .laki,
         phase: 3,
