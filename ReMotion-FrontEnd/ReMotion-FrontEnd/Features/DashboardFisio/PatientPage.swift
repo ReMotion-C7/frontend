@@ -21,10 +21,7 @@ struct PatientPage: View {
                         .buttonStyle(PlainButtonStyle())
                     }
                 }
-
             }
-            .background(Color.white)
-            .navigationBarTitleDisplayMode(.large)
         }
     }
 }

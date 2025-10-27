@@ -9,89 +9,116 @@ import SwiftUI
 
 enum FisioDestination: String, Hashable {
     case addMovement
-    case addPasien
 }
 
 struct DashboardFisioPage: View {
     @State private var selectedMenu = "Pasien"
     @State private var searchText = ""
+    @State private var isShowingAddPasien = false
     
     var body: some View {
         NavigationSplitView {
             // Sidebar
             CustomSidebar(selectedMenu: $selectedMenu)
         } detail: {
-            // Content
+            // Detail area
             NavigationStack {
                 mainDashboardView
-                    .navigationDestination(
-                        for: FisioDestination.self
-                    ) { destination in
-                        switch destination {
-                        case .addMovement:
-                            AddMovementPage()
+                    .sheet(isPresented: $isShowingAddPasien) {
+                        NavigationStack {
+                            AddPasienPage()
+                                .navigationTitle("Tambah Pasien Baru")
+                                .navigationBarTitleDisplayMode(.inline)
                                 .toolbar {
-                                    ToolbarItem(placement: .principal) {
-                                        Text("Tambah Gerakan Latihan")
-                                            .font(
-                                                .system(size: 28, weight: .bold)
-                                            )
+                                    ToolbarItem(placement: .navigationBarLeading) {
+                                        Button("Tutup") {
+                                            isShowingAddPasien = false
+                                        }
                                     }
                                 }
-                            
-                        case .addPasien:
-                            Text("Add Pasien Page")
-                            //                            AddPasienPage()
-                            //                                .toolbar {
-                            //                                    ToolbarItem(placement: .principal) {
-                            //                                        Text("Tambah Pasien")
-                            //                                            .font(
-                            //                                                .system(size: 28, weight: .bold)
-                            //                                            )
-                            //                                    }
-                            //                                }
                         }
                     }
-                    .onChange(of: selectedMenu) { _ in
+            }
+        }
+        // ✅ Letakkan navigationDestination DI LUAR NavigationStack
+        // agar bisa diakses oleh seluruh NavigationLink di dalam NavigationSplitView
+        .navigationDestination(for: FisioDestination.self) { destination in
+            switch destination {
+            case .addMovement:
+                AddMovementPage()
+                    .navigationTitle("")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            Text("Tambah Gerakan Latihan")
+                                .font(.system(size: 20, weight: .bold))
+                        }
                     }
             }
         }
     }
     
+    // MARK: - Main Dashboard View
     private var mainDashboardView: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Header
             HStack {
                 Text(selectedMenu == "Pasien" ? "Pasien" : "Gerakan Latihan")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .padding(.leading, 10)
                 
                 Spacer()
                 
-                NavigationLink(
-                    value: selectedMenu == "Pasien" ? FisioDestination.addPasien : FisioDestination.addMovement
-                ) {
-                    Label(
-                        selectedMenu == "Pasien" ? "Tambah Pasien Baru" : "Tambah Gerakan Baru",
-                        systemImage: "plus"
-                    )
-                    .labelStyle(.titleAndIcon)
-                    .font(.headline)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 14)
-                    .foregroundColor(.white)
-                    .background(Color.black)
-                    .cornerRadius(10)
+                if selectedMenu == "Gerakan Latihan" {
+                    // ✅ Link ini sekarang bisa menemukan destination
+//                    NavigationLink(value: FisioDestination.addMovement) {
+//                        Label("Tambah Gerakan Baru", systemImage: "plus")
+//                            .labelStyle(.titleAndIcon)
+//                            .font(.headline)
+//                            .padding(.vertical, 10)
+//                            .padding(.horizontal, 14)
+//                            .foregroundColor(.white)
+//                            .background(Color.black)
+//                            .cornerRadius(10)
+//                    }
+//                    .buttonStyle(.plain)
+                    
+                    NavigationLink(destination: AddMovementPage()) {
+                        Label("Tambah Gerakan Baru", systemImage: "plus")
+                            .labelStyle(.titleAndIcon)
+                            .font(.headline)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 14)
+                            .foregroundColor(.white)
+                            .background(Color.black)
+                            .cornerRadius(10)
+                    }
+                    .buttonStyle(.plain)
+                    
+                } else {
+                    Button(action: {
+                        isShowingAddPasien = true
+                    }) {
+                        Label("Tambah Pasien Baru", systemImage: "plus")
+                            .labelStyle(.titleAndIcon)
+                            .font(.headline)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 14)
+                            .foregroundColor(.white)
+                            .background(Color.black)
+                            .cornerRadius(10)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
-                .padding(.trailing, 55)
             }
+            .padding(.horizontal, 10)
             
             // Search Bar
             HStack {
-                TextField("Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...", text: $searchText)
-                    .textFieldStyle(PlainTextFieldStyle())
+                TextField(
+                    "Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...",
+                    text: $searchText
+                )
+                .textFieldStyle(PlainTextFieldStyle())
                 
                 Spacer()
                 
@@ -103,7 +130,7 @@ struct DashboardFisioPage: View {
             .cornerRadius(8)
             .padding(.horizontal, 10)
             
-            // Content
+            // Content Section
             if selectedMenu == "Gerakan Latihan" {
                 LibraryGerakanPage()
             } else {
@@ -117,7 +144,12 @@ struct DashboardFisioPage: View {
     }
 }
 
+struct AddPasienPage: View {
+    var body: some View {
+        Text("Halaman Tambah Pasien")
+    }
+}
+
 #Preview {
     DashboardFisioPage()
 }
-
