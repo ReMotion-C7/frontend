@@ -1,36 +1,17 @@
 //
-//  UserProfileCard.swift
+//  PatientCard.swift
 //  ReMotion-FrontEnd
 //
-//  User profile card component
+//  Created by Gabriela on 24/10/25.
 //
 
 import SwiftUI
 
-struct PasienCard: View {
-    let name: String
-    let phase: Int
-    let phoneNumber: String
-    let birthDate: String
-    let startDate: String
-    let therapyDate: String
-    
-    private func getPhaseColor() -> Color {
-        switch phase {
-        case 1:
-            return Color(red: 1.0, green: 0.4, blue: 0.4)
-        case 2:
-            return Color(red: 1.0, green: 0.7, blue: 0.3)
-        case 3:
-            return Color(red: 0.4, green: 0.8, blue: 0.4)
-        default:
-            return Color.gray
-        }
-    }
+struct PatientCard: View {
+    let patient: Patient
     
     var body: some View {
         VStack(spacing: 0) {
-
             HStack(spacing: 16) {
                 Circle()
                     .fill(Color.white)
@@ -43,22 +24,21 @@ struct PasienCard: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 12) {
-                        Text(name)
+                        Text(patient.name)
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.black)
                         
-
-                        Text("Fase \(phase)")
+                        Text("Fase \(patient.phase)")
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.white)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 4)
-                            .background(getPhaseColor())
+                            .background(patient.getPhaseColor())
                             .cornerRadius(4)
                     }
                     
                     HStack(spacing: 4) {
-                        Text(phoneNumber)
+                        Text(patient.phoneNumber)
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                         
@@ -66,7 +46,7 @@ struct PasienCard: View {
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                         
-                        Text(birthDate)
+                        Text(patient.birthDate)
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -78,20 +58,18 @@ struct PasienCard: View {
             
             Divider()
             
-           
             HStack(spacing: 8) {
                 Image(systemName: "calendar")
                     .foregroundColor(.gray)
                     .font(.system(size: 14))
                 
-                Text("Mulai terapi: \(therapyDate)")
+                Text("Mulai terapi: \(patient.therapyDate)")
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
                 
                 Spacer()
             }
             .padding(20)
-            
         }
         .background(Color.white)
         .cornerRadius(12)
@@ -101,35 +79,5 @@ struct PasienCard: View {
 }
 
 #Preview {
-    VStack(spacing: 16) {
-        PasienCard(
-            name: "Daniel Fernando",
-            phase: 1,
-            phoneNumber: "+62 894 2871 2837",
-            birthDate: "12 July 1996",
-            startDate: "12 July 1996",
-            therapyDate: "12 July 1996"
-        )
-        
-
-        PasienCard(
-            name: "Daniel Fernando",
-            phase: 2,
-            phoneNumber: "+62 894 2871 2837",
-            birthDate: "12 July 1996",
-            startDate: "12 July 1996",
-            therapyDate: "12 July 1996"
-        )
-        
-        PasienCard(
-            name: "Daniel Fernando",
-            phase: 3,
-            phoneNumber: "+62 894 2871 2837",
-            birthDate: "12 July 1996",
-            startDate: "12 July 1996",
-            therapyDate: "12 July 1996"
-        )
-    }
-    .padding()
-    .background(Color(red: 0.95, green: 0.95, blue: 0.95))
+    PatientCard(patient: dummyPatient[0])
 }

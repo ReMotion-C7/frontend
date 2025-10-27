@@ -14,6 +14,7 @@ enum FisioDestination: String, Hashable {
 
 struct DashboardFisioPage: View {
     @State private var selectedMenu = "Pasien"
+    @State private var searchText = ""
     
     var body: some View {
         NavigationSplitView {
@@ -40,15 +41,15 @@ struct DashboardFisioPage: View {
                             
                         case .addPasien:
                             Text("Add Pasien Page")
-//                            AddPasienPage()
-//                                .toolbar {
-//                                    ToolbarItem(placement: .principal) {
-//                                        Text("Tambah Pasien")
-//                                            .font(
-//                                                .system(size: 28, weight: .bold)
-//                                            )
-//                                    }
-//                                }
+                            //                            AddPasienPage()
+                            //                                .toolbar {
+                            //                                    ToolbarItem(placement: .principal) {
+                            //                                        Text("Tambah Pasien")
+                            //                                            .font(
+                            //                                                .system(size: 28, weight: .bold)
+                            //                                            )
+                            //                                    }
+                            //                                }
                         }
                     }
                     .onChange(of: selectedMenu) { _ in
@@ -87,13 +88,13 @@ struct DashboardFisioPage: View {
                 .padding(.trailing, 55)
             }
             
-            // Search bar
+            // Search Bar
             HStack {
-                Text(
-                    "Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ..."
-                )
-                .foregroundColor(.gray)
+                TextField("Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...", text: $searchText)
+                    .textFieldStyle(PlainTextFieldStyle())
+                
                 Spacer()
+                
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
             }
@@ -106,7 +107,7 @@ struct DashboardFisioPage: View {
             if selectedMenu == "Gerakan Latihan" {
                 LibraryGerakanPage()
             } else {
-                PasienPage()
+                PatientPage()
             }
             
             Spacer()
