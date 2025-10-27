@@ -83,9 +83,9 @@ struct DashboardFisioPage: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 40)
                 .sheet(isPresented: $showAddPatientModal) {
-//                    AddPatientModal()
-//                        .presentationDetents([.large])
-//                        .presentationDragIndicator(.hidden)
+                    AddPatientModal()
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.hidden)
                 }
                 .navigationDestination(isPresented: $navigateToAddGerakan) {
                     AddMovementPage()
