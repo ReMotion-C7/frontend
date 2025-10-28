@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PatientPage: View {
+struct PatientListPage: View {
     let patients = dummyPatient
 
     var body: some View {
@@ -27,5 +27,5 @@ struct PatientPage: View {
 }
 
 #Preview {
-    PatientPage()
+    PatientListPage()
 }
