@@ -8,16 +8,11 @@
 import SwiftUI
 
 struct DashboardCardSmall: View {
-    let imageName: String
-    let title: String
-    let category: String
-    let label: String
-    let description: String
+    let movement: Movement
     
-    // IconLabel
     private var labelIcon: String {
-        switch label.lowercased() {
-        case "Waktu":
+        switch movement.type.lowercased() {
+        case "waktu":
             return "timer"
         case "repetisi":
             return "arrow.counterclockwise"
@@ -28,12 +23,12 @@ struct DashboardCardSmall: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // Gambar
+            // Image
             Rectangle()
                 .fill(Color.gray.opacity(0.3))
                 .frame(width: 244, height: 160)
                 .overlay(
-                    Image(systemName: imageName)
+                    Image(systemName: movement.image)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 40, height: 40)
@@ -42,9 +37,9 @@ struct DashboardCardSmall: View {
                 .clipShape(RoundedRectangle(cornerRadius: 4))
             
             VStack(alignment: .leading, spacing: 6) {
-                // Judul dan Label
+                // Name
                 HStack {
-                    Text(title)
+                    Text(movement.name)
                         .font(.headline)
                         .foregroundColor(.black)
                     
@@ -54,7 +49,7 @@ struct DashboardCardSmall: View {
                         Image(systemName: labelIcon)
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
-                        Text(label)
+                        Text(movement.type)
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundColor(.gray)
@@ -65,8 +60,8 @@ struct DashboardCardSmall: View {
                     .cornerRadius(3)
                 }
                 
-                // Kategori
-                Text(category)
+                // Muscle
+                Text(movement.muscle)
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -75,8 +70,8 @@ struct DashboardCardSmall: View {
                     .background(Color.black)
                     .clipShape(Capsule())
                 
-                // Deskripsi
-                Text(description)
+                // Description
+                Text(movement.description)
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .lineLimit(2)
@@ -95,14 +90,12 @@ struct DashboardCardSmall: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
-        DashboardCardSmall(
-            imageName: "photo",
-            title: "Quadriceps set",
-            category: "Otot Paha Depan",
-            label: "Waktu",
-            description: "Latihan ini dilakukan dengan posisi duduk atau berbaring, lalu mengencangkan otot paha depan seolah-olah mendorong bagian belakang lutut ke permukaan di bawahnya."
-        )
+    ScrollView(.horizontal, showsIndicators: false) {
+        HStack(spacing: 20) {
+            ForEach(sampleMovements) { movement in
+                DashboardCardSmall(movement: movement)
+            }
+        }
+        .padding()
     }
-    .padding()
 }

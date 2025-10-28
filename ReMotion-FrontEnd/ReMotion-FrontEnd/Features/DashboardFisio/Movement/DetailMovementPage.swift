@@ -13,7 +13,7 @@ struct DetailMovementPage: View {
     
     // Computed property to get the correct icon based on the label
     private var labelIcon: String {
-        switch movement.label.lowercased() {
+        switch movement.type.lowercased() {
         case "waktu":
             return "timer"
         case "repetisi":
@@ -32,7 +32,7 @@ struct DetailMovementPage: View {
                     Rectangle()
                         .fill(Color.gray.opacity(0.4))
                     
-                    Image(systemName: movement.imageName)
+                    Image(systemName: movement.image)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
@@ -58,7 +58,7 @@ struct DetailMovementPage: View {
                 .padding(.bottom, 10)
                 
                 // --- Movement Title ---
-                Text(movement.title)
+                Text(movement.name)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 
@@ -67,7 +67,7 @@ struct DetailMovementPage: View {
                     HStack(spacing: 6) {
                         Image(systemName: labelIcon)
                             .font(.callout)
-                        Text(movement.label)
+                        Text(movement.type)
                             .fontWeight(.medium)
                     }
                     .padding(.horizontal, 12)
@@ -75,7 +75,7 @@ struct DetailMovementPage: View {
                     .background(Color.gray.opacity(0.15))
                     .cornerRadius(8)
                     
-                    Text(movement.category)
+                    Text(movement.muscle)
                         .fontWeight(.medium)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)

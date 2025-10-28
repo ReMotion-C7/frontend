@@ -17,7 +17,7 @@ struct AddPatientModal: View {
     @State private var showDatePicker = false
     @State private var showSymptomInput = false
     
-    let availablePatients = dummyPatient
+    let availablePatients = samplePatients
     
     var filteredPatients: [Patient] {
         if searchText.isEmpty {
@@ -297,11 +297,11 @@ struct AddPatientModal: View {
         
         print("Adding patient: \(patient.name)")
         print("Phone: \(patient.phoneNumber)")
-        print("Gender: \(patient.gender.rawValue)")
-        print("Birth Date: \(patient.birthDate)")
-        print("Therapy Start: \(formatDate(therapyStartDate))")
+        print("Gender: \(patient.gender)")
+        print("Birth Date: \(patient.dateOfBirth)")
+        print("Therapy Start: \(patient.therapyStartDate)")
         print("Phase: \(patient.phase)")
-        print("Symptoms: \(symptoms)")
+        print("Symptoms: \(patient.symptoms.joined(separator: ", "))")
         
         dismiss()
     }
