@@ -23,13 +23,7 @@ struct LibraryGerakanPage: View {
                 LazyVGrid(columns: columns, spacing: spacing) {
                     ForEach(sampleMovements) { move in
                         NavigationLink(destination: DetailMovementPage(movement: move)) {
-                            DashboardCardSmall(
-                                imageName: move.imageName,
-                                title: move.title,
-                                category: move.category,
-                                label: move.label,
-                                description: move.description
-                            )
+                            DashboardCardSmall(movement: move)
                         }
                         .buttonStyle(PlainButtonStyle())
                     }

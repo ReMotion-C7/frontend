@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PatientPage: View {
-    let patients = dummyPatient
+    let patients = samplePatients
 
     var body: some View {
         NavigationStack {

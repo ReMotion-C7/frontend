@@ -8,42 +8,46 @@
 import Foundation
 
 struct Movement: Identifiable {
-    let id = UUID()
-    let imageName: String
-    let title: String
-    let category: String
-    let label: String
+    let id: Int
+    let name: String
+    let type: String
     let description: String
+    let muscle: String
+    let image: String
 }
 
 // Dummy
 let sampleMovements: [Movement] = [
     Movement(
-        imageName: "photo",
-        title: "Quadriceps Set",
-        category: "Otot Paha Depan",
-        label: "Waktu",
-        description: "Latihan ini dilakukan dengan posisi duduk atau berbaring, lalu mengencangkan otot paha depan seolah-olah mendorong bagian belakang lutut ke permukaan di bawahnya."
+        id: 1,
+        name: "Quadriceps Set",
+        type: "Waktu",
+        description: "Latihan ini dilakukan dengan posisi duduk atau berbaring, lalu mengencangkan otot paha depan seolah-olah mendorong bagian belakang lutut ke permukaan di bawahnya.",
+        muscle: "Otot Paha Depan",
+        image: "photo"
     ),
     Movement(
-        imageName: "photo",
-        title: "Ankle Pump",
-        category: "Otot Betis",
-        label: "Repetisi",
-        description: "Latihan fisik yang dipergunakan untuk melatih otot pada betis dan pergelangan kaki. Ankle pumping exercise dapat dilakukan dengan melakukan gerakan."
+        id: 2,
+        name: "Ankle Pump",
+        type: "Repetisi",
+        description: "Latihan fisik yang dipergunakan untuk melatih otot pada betis dan pergelangan kaki. Ankle pumping exercise dapat dilakukan dengan melakukan gerakan naik-turun pergelangan kaki.",
+        muscle: "Otot Betis",
+        image: "photo"
     ),
     Movement(
-        imageName: "photo",
-        title: "Bridging Ringan",
-        category: "Otot Pinggul",
-        label: "Waktu",
-        description: "Latihan fisik yang dilakukan dengan berbaring telentang, menekuk lutut, dan mengangkat pinggul ke atas untuk membentuk 'jembatan' dengan tubuh."
+        id: 3,
+        name: "Bridging Ringan",
+        type: "Waktu",
+        description: "Latihan fisik yang dilakukan dengan berbaring telentang, menekuk lutut, dan mengangkat pinggul ke atas untuk membentuk 'jembatan' dengan tubuh.",
+        muscle: "Otot Pinggul",
+        image: "photo"
     ),
     Movement(
-        imageName: "photo",
-        title: "Heel Slide",
-        category: "Otot Paha Belakang",
-        label: "Repetisi",
-        description: "Latihan ini bertujuan untuk melatih fleksibilitas otot paha belakang dengan cara menggeser tumit maju dan mundur di permukaan."
+        id: 4,
+        name: "Heel Slide",
+        type: "Repetisi",
+        description: "Latihan ini bertujuan untuk melatih fleksibilitas otot paha belakang dengan cara menggeser tumit maju dan mundur di permukaan.",
+        muscle: "Otot Paha Belakang",
+        image: "photo"
     )
 ]

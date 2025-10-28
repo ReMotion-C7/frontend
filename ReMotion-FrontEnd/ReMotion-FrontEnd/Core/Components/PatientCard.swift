@@ -13,6 +13,7 @@ struct PatientCard: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 16) {
+                // Picture
                 Circle()
                     .fill(Color.white)
                     .frame(width: 56, height: 56)
@@ -22,12 +23,15 @@ struct PatientCard: View {
                             .font(.system(size: 24))
                     )
                 
+                // Info
                 VStack(alignment: .leading, spacing: 8) {
+                    // Name
                     HStack(spacing: 12) {
                         Text(patient.name)
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.black)
                         
+                        // Phase
                         Text("Fase \(patient.phase)")
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.white)
@@ -37,6 +41,7 @@ struct PatientCard: View {
                             .cornerRadius(4)
                     }
                     
+                    // DOB and Phone Number
                     HStack(spacing: 4) {
                         Text(patient.phoneNumber)
                             .font(.system(size: 14))
@@ -46,7 +51,7 @@ struct PatientCard: View {
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                         
-                        Text(patient.birthDate)
+                        Text("Lahir: \(patient.dateOfBirth)")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -58,12 +63,13 @@ struct PatientCard: View {
             
             Divider()
             
+            // Therapy Start Date
             HStack(spacing: 8) {
                 Image(systemName: "calendar")
                     .foregroundColor(.gray)
                     .font(.system(size: 14))
                 
-                Text("Mulai terapi: \(patient.therapyDate)")
+                Text("Mulai terapi: \(patient.therapyStartDate)")
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
                 
@@ -79,5 +85,5 @@ struct PatientCard: View {
 }
 
 #Preview {
-    PatientCard(patient: dummyPatient[0])
+    PatientCard(patient: samplePatients[0])
 }
