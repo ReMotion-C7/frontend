@@ -19,7 +19,7 @@ struct PatientMovementCard: View {
                     .fill(Color.gray.opacity(0.1))
                     .frame(width: 280, height: 160)
                     .overlay(
-                        Image(systemName: movement.imageName)
+                        Image(systemName: movement.image)
                             .font(.system(size: 60))
                             .foregroundColor(.gray.opacity(0.3))
                     )
@@ -33,13 +33,13 @@ struct PatientMovementCard: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(movement.title)
+                    Text(movement.name)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.black)
                     
                     Spacer()
                     
-                    Text(movement.label)
+                    Text(movement.type)
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.gray)
                         .padding(.horizontal, 8)
@@ -48,7 +48,7 @@ struct PatientMovementCard: View {
                         .cornerRadius(12)
                 }
                 
-                Text(movement.category)
+                Text(movement.muscle)
                     .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)

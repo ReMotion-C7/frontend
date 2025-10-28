@@ -29,7 +29,7 @@ struct DetailPatientPage: View {
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundColor(.black)
                             
-                            Text(patient.gender.rawValue)
+                            Text(patient.gender)
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 12)
@@ -38,7 +38,7 @@ struct DetailPatientPage: View {
                                 .cornerRadius(12)
                         }
                         
-                        Text("\(patient.phoneNumber) | \(patient.birthDate)")
+                        Text("\(patient.phoneNumber) | \(patient.dateOfBirth)")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -51,7 +51,7 @@ struct DetailPatientPage: View {
                     HStack(spacing: 8) {
                         Image(systemName: "calendar")
                             .foregroundColor(.gray)
-                        Text("Tanggal mulai terapi : \(patient.therapyDate)")
+                        Text("Tanggal mulai terapi : \(patient.therapyStartDate)")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -84,8 +84,8 @@ struct DetailPatientPage: View {
                         SymptomRow(text: "Pasien mungkin sulit atau pincang saat berjalan")
                     }
                 }
-            
-    
+                
+                
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         Text("Daftar Gerakan Latihan")
@@ -111,11 +111,20 @@ struct DetailPatientPage: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
-                            ForEach(sampleMovements) { movement in
+                            ForEach(patient.exercises) { exercise in
                                 PatientMovementCard(
-                                    movement: movement,
-                                    sets: "15x Set",
-                                    duration: movement.label == "Waktu" ? "10 detik" : "30x Rep"
+                                    movement: Movement(
+                                        id: exercise.id,
+                                        name: exercise.name,
+                                        type: exercise.type,
+                                        description: exercise.description,
+                                        muscle: exercise.muscle,
+                                        image: exercise.image
+                                    ),
+                                    sets: "\(exercise.set)x Set",
+                                    duration: exercise.type.lowercased() == "waktu"
+                                    ? "\(exercise.repOrTime) detik"
+                                    : "\(exercise.repOrTime)x Rep"
                                 )
                             }
                         }
@@ -131,14 +140,5 @@ struct DetailPatientPage: View {
 }
 
 #Preview {
-    DetailPatientPage(
-        patient: Patient(
-            name: "Daniel Fernando",
-            gender: .laki,
-            phase: 1,
-            phoneNumber: "+62 894 2871 2837",
-            birthDate: "12 July 1996",
-            therapyDate: "12 July 1996"
-        )
-    )
+    DetailPatientPage(patient: samplePatients[0])
 }
