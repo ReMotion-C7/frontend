@@ -37,6 +37,7 @@ class LoginRegisterViewModel: ObservableObject {
             )
             authResponse = response
             if let data = authResponse?.data {
+                self.errorMessage = ""
                 session?.login(token: data.accessToken, role: data.user.roleId, userId: data.user.id)
             }
         } catch {
@@ -54,7 +55,7 @@ class LoginRegisterViewModel: ObservableObject {
         
         do {
             let response: AuthResponse = try await APIService.shared.post(
-                "/auth/register",
+                "auth/register",
                 parameters: [
                     "email": email,
                     "name": name,
@@ -65,7 +66,14 @@ class LoginRegisterViewModel: ObservableObject {
                 ],
                 responseType: AuthResponse.self
             )
+            authResponse = response
+            print(response)
+            if let data = authResponse?.data {
+                self.errorMessage = ""
+                session?.login(token: data.accessToken, role: data.user.roleId, userId: data.user.id)
+            }
         } catch {
+            print(error)
             self.errorMessage = "Gagal mendaftarkan akun! Periksa kembali input anda."
         }
     }

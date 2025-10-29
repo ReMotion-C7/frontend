@@ -8,7 +8,7 @@
 struct AuthResponse: Codable {
     var status: String
     var message: String
-    var data: AuthData
+    var data: AuthData?
 }
 
 struct AuthData: Codable {
