@@ -12,6 +12,10 @@ struct LoginPage: View {
     @State private var password = ""
     @State private var rememberMe = true
     @State private var isPasswordVisible = false
+    @State private var isClicked: Bool = false
+    
+    @EnvironmentObject var session: SessionManager
+    @StateObject private var viewModel = LoginRegisterViewModel()
     
     var body: some View {
         GeometryReader { geometry in
@@ -26,7 +30,7 @@ struct LoginPage: View {
                         endPoint: .bottomTrailing
                     )
                     
-                
+                    
                 }
                 .frame(width: geometry.size.width * 0.5)
                 
@@ -48,15 +52,15 @@ struct LoginPage: View {
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.black)
                         
-                        TextField("example@email.com/08XXXXXX", text: $email)
-                                .foregroundStyle(Color.black)
-                                .padding()
-                                .background(Color.white)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                )
-                                .cornerRadius(8)
+                        TextField("example@gmail.com/08XXXXXX", text: $email)
+                            .foregroundStyle(Color.black)
+                            .padding()
+                            .background(Color.white)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                            )
+                            .cornerRadius(8)
                     }
                     .padding(.top, 40)
                     
@@ -99,7 +103,7 @@ struct LoginPage: View {
                             HStack(spacing: 8) {
                                 Image(systemName: rememberMe ? "checkmark.square.fill" : "square")
                                     .foregroundColor(rememberMe ? .black : .gray)
-                                Text("Remember me")
+                                Text("Ingat Saya")
                                     .font(.system(size: 14))
                                     .foregroundColor(.black)
                             }
@@ -108,7 +112,7 @@ struct LoginPage: View {
                         Spacer()
                         
                         Button(action: {}) {
-                            Text("Forgot password?")
+                            Text("Lupa password?")
                                 .font(.system(size: 14))
                                 .foregroundColor(.gray)
                                 .underline()
@@ -116,8 +120,23 @@ struct LoginPage: View {
                     }
                     .padding(.top, 16)
                     
-                    Button(action: {}) {
-                        Text("Daftar")
+                    Button(action: {
+                        
+                        Task {
+                            if email != "" && password != "" {
+                                try await viewModel.login(identifier: email, password: password)
+                                
+                                if viewModel.errorMessage != nil {
+                                    print(viewModel.errorMessage!)
+                                }
+                                                                
+                            }
+                            self.isClicked.toggle()
+                            
+                        }
+                        
+                    }) {
+                        Text("Masuk")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -127,13 +146,28 @@ struct LoginPage: View {
                     }
                     .padding(.top, 24)
                     
+                    if isClicked && (email.isEmpty || password.isEmpty) {
+                        Text("Email dan password tidak boleh kosong.")
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(Color.red)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                    }
+                    else if viewModel.errorMessage != nil {
+                        Text(viewModel.errorMessage!)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(Color.red)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                    }
+                    
                     // Register link
                     HStack(spacing: 4) {
-                        Text("Don't have an account?")
+                        Text("Belum punya akun?")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                         Button(action: {}) {
-                            Text("Register now")
+                            Text("Buat akun sekarang!")
                                 .font(.system(size: 14))
                                 .foregroundColor(Color.gray)
                                 .underline()
@@ -149,10 +183,14 @@ struct LoginPage: View {
                 .background(Color(red: 0.95, green: 0.95, blue: 0.95))
             }
         }
+        .onAppear {
+            viewModel.session = session
+        }
         .ignoresSafeArea()
     }
+    
 }
 
-#Preview {
-    LoginPage()
-}
+//#Preview {
+//    LoginPage()
+//}

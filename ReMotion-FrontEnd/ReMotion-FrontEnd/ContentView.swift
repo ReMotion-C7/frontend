@@ -8,14 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @EnvironmentObject var session: SessionManager
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Group {
+            if session.isLoggedIn {
+                switch session.userRole {
+                case 1:
+                    DashboardFisioPage()
+                case 2:
+                    SessionPage()
+                default:
+                    VStack {
+                        Text("Login Error!")
+                        Text("Error: Unknown user role.")
+                        Text("Received Role: \(String(session.userRole!))")
+                            .padding()
+                        
+                        Button("Keluar") {
+                            session.logout()
+                        }
+                    }
+                }
+            }
+            else {
+                LoginPage()
+            }
         }
-        .padding()
     }
 }
 
