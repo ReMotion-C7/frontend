@@ -16,7 +16,7 @@ struct ContentView: View {
             if session.isLoggedIn {
                 switch session.userRole {
                 case 1:
-                    DashboardFisioPage()
+                    DashboardFisioPage(fisioId: session.userId!)
                 case 2:
                     SessionPage()
                 default:

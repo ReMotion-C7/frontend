@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailPatientPage: View {
-    let patient: Patient
+    let patient: Patient?
     
     var body: some View {
         ScrollView {
@@ -25,11 +25,11 @@ struct DetailPatientPage: View {
                     
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 8) {
-                            Text(patient.name)
+                            Text(patient!.name)
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundColor(.black)
                             
-                            Text(patient.gender)
+                            Text(patient!.gender)
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 12)
@@ -38,7 +38,7 @@ struct DetailPatientPage: View {
                                 .cornerRadius(12)
                         }
                         
-                        Text("\(patient.phoneNumber) | \(patient.dateOfBirth)")
+                        Text("\(patient!.phoneNumber) | \(patient!.dateOfBirth)")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -51,7 +51,7 @@ struct DetailPatientPage: View {
                     HStack(spacing: 8) {
                         Image(systemName: "calendar")
                             .foregroundColor(.gray)
-                        Text("Tanggal mulai terapi : \(patient.therapyStartDate)")
+                        Text("Tanggal mulai terapi : \(patient!.therapyStartDate)")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -60,12 +60,12 @@ struct DetailPatientPage: View {
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(8)
                     
-                    Text("Fase \(patient.phase)")
+                    Text("Fase \(patient!.phase)")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
-                        .background(patient.getPhaseColor())
+                        .background(patient!.getPhaseColor())
                         .cornerRadius(8)
                 }
                 
@@ -111,7 +111,7 @@ struct DetailPatientPage: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
-                            ForEach(patient.exercises) { exercise in
+                            ForEach(patient!.exercises) { exercise in
                                 PatientMovementCard(
                                     movement: Movement(
                                         id: exercise.id,

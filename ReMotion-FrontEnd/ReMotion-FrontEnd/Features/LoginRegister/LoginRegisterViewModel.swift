@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Alamofire
 
 @MainActor
 class LoginRegisterViewModel: ObservableObject {
@@ -30,8 +31,9 @@ class LoginRegisterViewModel: ObservableObject {
         }
         
         do {
-            let response: AuthResponse = try await APIService.shared.post(
+            let response: AuthResponse = try await APIService.shared.requestAPI(
                 "auth/login",
+                method: .post,
                 parameters: ["identifier": identifier, "password": password],
                 responseType: AuthResponse.self
             )
@@ -54,8 +56,9 @@ class LoginRegisterViewModel: ObservableObject {
         }
         
         do {
-            let response: AuthResponse = try await APIService.shared.post(
+            let response: AuthResponse = try await APIService.shared.requestAPI(
                 "auth/register",
+                method: .post,
                 parameters: [
                     "email": email,
                     "name": name,

@@ -19,15 +19,16 @@ final class APIService {
     @Published var userId: Int? = 0
     @Published var roleId: Int? = 0
     
-    func post<T: Decodable>(
+    func requestAPI<T: Decodable>(
         _ endpoint: String,
-        parameters: Parameters,
+        method: HTTPMethod,
+        parameters: Parameters? = nil,
         headers: HTTPHeaders? = nil,
         responseType: T.Type
     ) async throws -> T {
         try await request(
             endpoint,
-            method: .post,
+            method: method,
             parameters: parameters,
             encoding: JSONEncoding.default,
             headers: headers,

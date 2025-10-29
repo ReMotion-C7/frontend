@@ -8,24 +8,54 @@
 import SwiftUI
 
 struct PatientPage: View {
-    let patients = samplePatients
-
+    
+    @ObservedObject var viewModel: DashboardFisioViewModel
+    let fisioId: Int
+    
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(patients) { patient in
-                        NavigationLink(destination: DetailPatientPage(patient: patient)) {
-                            PatientCard(patient: patient)
+            
+            if viewModel.isLoading {
+                
+                LoadingView(message: "Memuat data pasien...")
+                
+            }
+            else {
+                ScrollView {
+                    if viewModel.errorMessage != "" {
+                        VStack {
+                            Spacer()
+                            Text(viewModel.errorMessage)
+                                .font(.system(size: 24, weight: .semibold))
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 40)
+                            Spacer()
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
+                    else {
+                        VStack(spacing: 16) {
+                            ForEach(viewModel.patients) { patient in
+                                //                            NavigationLink(destination: DetailPatientPage(patient: patient)) {
+                                PatientCard(patient: patient)
+                                //                            }
+                                    .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                    }
+                    
                 }
+            }
+        }
+        .onAppear {
+            Task {
+                try await viewModel.readPatients(fisioId: fisioId)
             }
         }
     }
 }
 
-#Preview {
-    PatientPage()
-}
+//#Preview {
+//    PatientPage()
+//}
