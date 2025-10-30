@@ -58,6 +58,7 @@ struct SessionPage: View {
                                         }
                                     }
                                     Button(action: {
+                                        self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
                                         withAnimation(.spring()) {
                                             showSafetyModal = true
                                         }
@@ -73,19 +74,13 @@ struct SessionPage: View {
                                         .foregroundColor(.white)
                                         .cornerRadius(10)
                                         .padding(.top, 10)
-                                    }
-                                }
+                                    }                                }
                             }
                             .onAppear {
                                 Task {
                                     try await viewModel.readSessions(patientId: userId)
-                            Button(action: {
-                                self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
-                                withAnimation(.spring()) {
-                                    showSafetyModal = true
                                 }
-                            }
-                            
+                            }                            
                         } else {
                             // Isi pake evaluasi gerakan
                             Text("Ini Evaluasi Gerakan")
