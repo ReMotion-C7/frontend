@@ -11,6 +11,7 @@ struct SessionPage: View {
     @State private var selectedMenu = "Sesi Latihan"
     @State private var showSafetyModal = false
     @State private var navigateToExercisePage = false
+    @State private var todaysExercises: [Exercises] = []
     
     var body: some View {
         ZStack {
@@ -43,6 +44,7 @@ struct SessionPage: View {
                                 }
                             }
                             Button(action: {
+                                self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
                                 withAnimation(.spring()) {
                                     showSafetyModal = true
                                 }
@@ -68,17 +70,13 @@ struct SessionPage: View {
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, 40)
-                    .onChange(of: selectedMenu) { _ in }
-                    /*
-                     .background(
-                     NavigationLink(
-                     destination: ExercisePage(),
-                     isActive: $navigateToExercisePage,
-                     label: { EmptyView() }
-                     )
-                     ) // tolong di uncomment kalo udah ada ExercisePage
-                     */
+                    .padding(.horizontal, 40)
+                    .fullScreenCover(isPresented: $navigateToExercisePage) {
+                        NavigationStack {
+                            ExerciseSessionView(exercises: todaysExercises)
+                        }
+                    }
+                    .onChange(of: selectedMenu) {}
                 }
             }
             if showSafetyModal {
