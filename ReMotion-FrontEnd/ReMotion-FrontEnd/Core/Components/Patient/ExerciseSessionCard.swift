@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExerciseSessionCard: View {
-    let exercise: Exercise
+    let exercise: Session
     
     var body: some View {
         HStack {
@@ -18,9 +18,26 @@ struct ExerciseSessionCard: View {
                     .fill(Color.gray.opacity(0.1))
                     .frame(width: 240, height: 120)
                     .overlay(
-                        Image(systemName: "figure.strengthtraining.traditional")
-                            .font(.system(size: 50))
-                            .foregroundColor(.gray.opacity(0.4))
+                        AsyncImage(url: URL(string: exercise.image)) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 160)
+                                    .clipped() // potong bagian yang keluar frame
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            case .failure(_):
+                                Image(systemName: "photo") // fallback
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.gray.opacity(0.3))
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
                     )
                 
                 VStack(alignment: .leading, spacing: 10) {
@@ -84,8 +101,8 @@ struct ExerciseSessionCard: View {
     }
 }
 
-#Preview {
-    ExerciseSessionCard(
-        exercise: samplePatients[0].exercises[0]
-    )
-}
+//#Preview {
+//    ExerciseSessionCard(
+//        exercise: samplePatients[0].exercises[0]
+//    )
+//}

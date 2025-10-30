@@ -18,7 +18,7 @@ struct ContentView: View {
                 case 1:
                     DashboardFisioPage(fisioId: session.userId!)
                 case 2:
-                    SessionPage()
+                    SessionPage(userId: session.userId!)
                 default:
                     VStack {
                         Text("Login Error!")
