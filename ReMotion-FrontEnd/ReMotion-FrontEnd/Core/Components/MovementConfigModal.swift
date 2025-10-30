@@ -7,164 +7,157 @@
 
 import SwiftUI
 
-struct MovementConfig {
-    var sets: String = ""
-    var duration: String = ""
-}
-
 struct MovementConfigModal: View {
-    @Environment(\.dismiss) var dismiss
+    // No longer need @Environment(\.dismiss)
     let movement: Movement
-    @Binding var selectedMovements: [Movement]
+    let patient: Patient
+    @Binding var selectedExercises: [Exercise]
+    @Binding var showConfigModal: Bool 
     @Binding var dismissParent: Bool
     
-    @State private var selectedTab: ConfigTab = .repetisi
     @State private var setsInput: String = ""
     @State private var durationInput: String = ""
     
-    enum ConfigTab {
-        case repetisi
-        case otherMuscle
+    init(movement: Movement, patient: Patient, selectedExercises: Binding<[Exercise]>, showConfigModal: Binding<Bool>, dismissParent: Binding<Bool>) {
+        self.movement = movement
+        self.patient = patient
+        self._selectedExercises = selectedExercises
+        self._showConfigModal = showConfigModal
+        self._dismissParent = dismissParent
+        
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            headerSection
-            Divider()
-            patientInfoSection
-            Divider()
-            
-            ScrollView {
-                VStack(spacing: 24) {
-                    exerciseImageSection
-                    tabSelector
-                    inputFieldsSection
-                    addButton
+        ZStack {
+            // Background overlay
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showConfigModal = false // Dismiss on background tap
                 }
-                .padding(.vertical, 24)
+            
+            // Modal content
+            VStack(spacing: 20) {
+                // 1. Header (New)
+                headerSection
+                
+                // 2. Image section
+                exerciseImageSection
+                
+                // 3. Info section (name, tags)
+                exerciseInfoSection // <-- Re-added this section
+                
+                // 4. Input fields
+                inputFieldsSection
+                
+                // 4. Add button
+                addButton
             }
+            .padding(24) // Uniform padding
+            .background(Color.white)
+            .cornerRadius(20)
+            .shadow(radius: 10)
+            .padding(.horizontal, 40) // Constrains width to match prototype
         }
-        .background(Color(UIColor.systemGroupedBackground))
     }
     
-    // MARK: - Header Section
+    // MARK: - Header Section (New)
     private var headerSection: some View {
         HStack {
-            Button(action: { dismiss() }) {
+            // Close Button
+            Button(action: { showConfigModal = false }) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.black)
-                    .frame(width: 44, height: 44)
             }
             
             Spacer()
             
-            Text("Exercise Movement Detail")
-                .font(.system(size: 17, weight: .semibold))
+            // Centered Title
+            Text("Tambah Gerakan")
+                .font(.system(size: 17, weight: .semibold)) // Standard modal title size
                 .foregroundColor(.black)
             
             Spacer()
             
-            Color.clear.frame(width: 44, height: 44)
+            // Placeholder to balance
+            Color.clear
+                .frame(width: 20, height: 20) // Approx size of button
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color.white)
     }
     
-    // MARK: - Patient Info Section
-    private var patientInfoSection: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "person.circle.fill")
-                .font(.system(size: 24))
-                .foregroundColor(.gray)
-            
-            Text("Daniel Fernando")
-                .font(.system(size: 15, weight: .medium))
-                .foregroundColor(.black)
-            
-            Spacer()
-        }
-        .padding(16)
-        .background(Color.white)
-    }
-    
-    // MARK: - Exercise Image Section
+    // MARK: - Exercise Image Section (Modified)
     private var exerciseImageSection: some View {
-        VStack(spacing: 16) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.gray.opacity(0.1))
-                    .frame(height: 220)
-                
-                Image(systemName: movement.imageName)
+        ZStack(alignment: .top) { // Reverted alignment
+            // Exercise image
+            AsyncImage(url: URL(string: movement.image)) { image in
+                image
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 180)
-                    .foregroundColor(.gray.opacity(0.3))
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+                    .overlay(
+                        Image(systemName: "figure.walk")
+                            .font(.system(size: 60))
+                            .foregroundColor(.gray.opacity(0.5))
+                    )
             }
+            .frame(height: 200)
+            .cornerRadius(16)
+            .clipped()
             
-            Text(movement.title)
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.black)
+            // Removed gradient and text overlays
+        }
+    }
+    
+    // MARK: - Exercise Info Section (RE-ADDED)
+    private var exerciseInfoSection: some View {
+        VStack(spacing: 12) {
+            // Exercise name
+            Text(movement.name)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(.black)
+                .multilineTextAlignment(.center)
+            
+            // Tags
+            HStack(spacing: 8) {
+                TagView(
+                    text: movement.type,
+                    icon: movement.type == "Waktu" ? "clock" : "repeat"
                 )
+                
+                TagView(text: movement.muscle, icon: nil) // Prototype doesn't show icon for muscle
+            }
         }
-        .padding(.horizontal, 20)
     }
     
-    // MARK: - Tab Selector
-    private var tabSelector: some View {
-        HStack(spacing: 8) {
-            TabButton(
-                title: "Repetisi",
-                isSelected: selectedTab == .repetisi,
-                action: { withAnimation(.easeInOut(duration: 0.2)) { selectedTab = .repetisi } }
-            )
-            
-            TabButton(
-                title: movement.category,
-                isSelected: selectedTab == .otherMuscle,
-                action: { withAnimation(.easeInOut(duration: 0.2)) { selectedTab = .otherMuscle } }
-            )
-        }
-        .padding(4)
-        .background(Color.white)
-        .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-        .padding(.horizontal, 20)
-    }
-    
-    // MARK: - Input Fields Section
+    // MARK: - Input Fields Section (Modified)
     private var inputFieldsSection: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             InputField(
                 title: "Masukkan Jumlah Set",
-                placeholder: "Contoh: 15",
+                placeholder: "5",
                 text: $setsInput,
                 keyboardType: .numberPad
             )
             
             InputField(
-                title: movement.label == "Waktu" ? "Masukkan Durasi Waktu (detik)" : "Masukkan Jumlah Rep",
-                placeholder: movement.label == "Waktu" ? "Contoh: 30" : "Contoh: 10",
+                title: movement.type == "Waktu" ? "Masukan Durasi Waktu (detik)" : "Masukkan Jumlah Rep",
+                placeholder: movement.type == "Waktu" ? "30" : "10",
                 text: $durationInput,
                 keyboardType: .numberPad
             )
         }
-        .padding(.horizontal, 20)
+        // Removed description - not in prototype modal
     }
     
     // MARK: - Add Button
     private var addButton: some View {
         Button(action: addMovementWithConfig) {
             HStack(spacing: 10) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 18))
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .semibold))
                 Text("Tambah Gerakan")
                     .font(.system(size: 16, weight: .semibold))
             }
@@ -173,20 +166,65 @@ struct MovementConfigModal: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.black)
+                    .fill(isFormValid ? Color.black : Color.gray.opacity(0.5))
             )
-            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 20)
+        .disabled(!isFormValid)
+    }
+    
+    private var isFormValid: Bool {
+        !setsInput.isEmpty && !durationInput.isEmpty &&
+        Int(setsInput) != nil && Int(durationInput) != nil
     }
     
     private func addMovementWithConfig() {
-        selectedMovements.append(movement)
-        dismiss()
-        dismissParent = true
+        guard let sets = Int(setsInput),
+              let repOrTime = Int(durationInput) else {
+            return
+        }
+        
+        // Create new Exercise from Movement
+        let newExercise = Exercise(
+            id: Int.random(in: 1000...9999),
+            name: movement.name,
+            type: movement.type,
+            image: movement.image,
+            muscle: movement.muscle,
+            description: movement.description,
+            set: sets,
+            repOrTime: repOrTime
+        )
+        
+        selectedExercises.append(newExercise)
+        showConfigModal = false // Close this modal
+        dismissParent = true // Trigger parent (MovementToPatientModal) to close
     }
 }
+
+// MARK: - Tag View (New component for tags)
+struct TagView: View {
+    let text: String
+    let icon: String?
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            if let icon = icon {
+                Image(systemName: icon)
+                    .font(.system(size: 12))
+            }
+            Text(text)
+                .font(.system(size: 13, weight: .medium))
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .foregroundColor(.black.opacity(0.8))
+        .background(
+            Capsule()
+                .fill(Color.gray.opacity(0.15))
+        )
+    }
+}
+
 
 // MARK: - Input Field Component
 struct InputField: View {
@@ -205,42 +243,25 @@ struct InputField: View {
                 .keyboardType(keyboardType)
                 .font(.system(size: 15))
                 .padding(16)
-                .background(Color.white)
+                .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 1.5)
-                )
-                .shadow(color: Color.black.opacity(0.03), radius: 4, x: 0, y: 2)
-        }
-    }
-}
-
-// MARK: - Tab Button Component
-struct TabButton: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.system(size: 14, weight: isSelected ? .semibold : .medium))
-                .foregroundColor(isSelected ? .white : .gray)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(isSelected ? Color.black : Color.clear)
-                )
         }
     }
 }
 
 #Preview {
-    MovementConfigModal(
-        movement: sampleMovements[0],
-        selectedMovements: .constant([]),
-        dismissParent: .constant(false)
-    )
+    // Preview the modal on top of a blurred background
+    ZStack {
+        Color.gray.opacity(0.5).ignoresSafeArea()
+        
+        MovementConfigModal(
+            movement: sampleMovements[0], // "Waktu" type
+            patient: samplePatients[0],
+            selectedExercises: .constant([]),
+            showConfigModal: .constant(true),
+            dismissParent: .constant(false)
+        )
+    }
 }
+
+

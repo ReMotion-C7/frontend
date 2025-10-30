@@ -23,22 +23,23 @@ struct MovementSelectionCard: View {
     // MARK: - Image Section
     private var imageSection: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 12, corners: [.topLeft, .topRight])
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color.gray.opacity(0.1))
                 .frame(height: 130)
             
-            Image(systemName: movement.imageName)
+            Image(systemName: movement.image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 100)
                 .foregroundColor(.gray.opacity(0.3))
         }
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     // MARK: - Content Section
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(movement.title)
+            Text(movement.name)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.black)
                 .lineLimit(2)
@@ -47,11 +48,11 @@ struct MovementSelectionCard: View {
             
             HStack(spacing: 8) {
                 HStack(spacing: 4) {
-                    Image(systemName: movement.label == "Waktu" ? "clock.fill" : "repeat")
+                    Image(systemName: movement.type == "Waktu" ? "clock.fill" : "repeat")
                         .font(.system(size: 10))
                         .foregroundColor(.gray)
                     
-                    Text(movement.label)
+                    Text(movement.type)
                         .font(.system(size: 11))
                         .foregroundColor(.gray)
                 }
@@ -59,7 +60,7 @@ struct MovementSelectionCard: View {
                 Spacer()
             }
             
-            Text(movement.category)
+            Text(movement.muscle)
                 .font(.system(size: 10, weight: .medium))
                 .foregroundColor(.white)
                 .padding(.horizontal, 10)
@@ -74,33 +75,28 @@ struct MovementSelectionCard: View {
     }
 }
 
-// MARK: - Custom Shape for Rounded Corners
-extension RoundedRectangle {
-    init(cornerRadius: CGFloat, corners: UIRectCorner) {
-        self.init(cornerRadius: cornerRadius, style: .continuous)
-    }
-}
-
 #Preview {
     HStack(spacing: 16) {
         MovementSelectionCard(
             movement: Movement(
-                imageName: "photo",
-                title: "Quadriceps Set",
-                category: "Otot Paha Depan",
-                label: "Waktu",
-                description: "Latihan ini dilakukan dengan posisi duduk atau berbaring."
+                id: 1,
+                name: "Quadriceps Set",
+                type: "Waktu",
+                description: "Latihan ini dilakukan dengan posisi duduk atau berbaring.",
+                muscle: "Otot Paha Depan",
+                image: "photo"
             )
         )
         .frame(width: 170)
         
         MovementSelectionCard(
             movement: Movement(
-                imageName: "photo",
-                title: "Ankle Pump",
-                category: "Otot Betis",
-                label: "Repetisi",
-                description: "Latihan fisik yang dipergunakan untuk melatih otot pada betis."
+                id: 2,
+                name: "Ankle Pump",
+                type: "Repetisi",
+                description: "Latihan fisik yang dipergunakan untuk melatih otot pada betis.",
+                muscle: "Otot Betis",
+                image: "photo"
             )
         )
         .frame(width: 170)

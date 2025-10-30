@@ -10,7 +10,8 @@ import SwiftUI
 struct MovementToPatientModal: View {
     @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
-    @Binding var selectedMovements: [Movement]
+    let patient: Patient
+    @Binding var selectedExercises: [Exercise]
     @State private var showConfigModal = false
     @State private var selectedMovement: Movement?
     @State private var shouldDismiss = false
@@ -21,29 +22,37 @@ struct MovementToPatientModal: View {
         if searchText.isEmpty {
             return availableMovements
         }
-        return availableMovements.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+        return availableMovements.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            headerSection
-            Divider()
-            searchSection
-            exerciseGridSection
-        }
-        .background(Color(UIColor.systemGroupedBackground))
-        .sheet(isPresented: $showConfigModal) {
-            if let movement = selectedMovement {
-                MovementConfigModal(
-                    movement: movement,
-                    selectedMovements: $selectedMovements,
-                    dismissParent: $shouldDismiss
-                )
+        // 1. Wrap in ZStack to allow overlay
+        ZStack {
+            VStack(spacing: 0) {
+                headerSection
+                Divider()
+                searchSection
+                exerciseGridSection
             }
-        }
-        .onChange(of: shouldDismiss) { oldValue, newValue in
-            if newValue {
-                dismiss()
+            .background(Color(UIColor.systemGroupedBackground))
+            // 2. Remove .sheet modifier
+            .onChange(of: shouldDismiss) { oldValue, newValue in
+                if newValue {
+                    dismiss()
+                }
+            }
+            
+            // 3. Add modal as an overlay
+            if showConfigModal {
+                if let movement = selectedMovement {
+                    MovementConfigModal(
+                        movement: movement,
+                        patient: patient,
+                        selectedExercises: $selectedExercises,
+                        showConfigModal: $showConfigModal, // Pass binding to control visibility
+                        dismissParent: $shouldDismiss
+                    )
+                }
             }
         }
     }
@@ -131,5 +140,8 @@ struct MovementToPatientModal: View {
 }
 
 #Preview {
-    MovementToPatientModal(selectedMovements: .constant([]))
+    MovementToPatientModal(
+        patient: samplePatients[0],
+        selectedExercises: .constant([])
+    )
 }

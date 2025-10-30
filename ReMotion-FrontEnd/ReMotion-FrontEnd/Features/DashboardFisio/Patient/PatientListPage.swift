@@ -7,13 +7,8 @@
 
 import SwiftUI
 
-<<<<<<<< HEAD:ReMotion-FrontEnd/ReMotion-FrontEnd/Features/DashboardFisio/Patient/PatientListPage.swift
 struct PatientListPage: View {
-    let patients = dummyPatient
-========
-struct PatientPage: View {
     let patients = samplePatients
->>>>>>>> dev:ReMotion-FrontEnd/ReMotion-FrontEnd/Features/DashboardFisio/Movement/PatientPage.swift
 
     var body: some View {
         NavigationStack {
@@ -26,7 +21,10 @@ struct PatientPage: View {
                         .buttonStyle(PlainButtonStyle())
                     }
                 }
+                .padding(.vertical, 20)
             }
+            
+            .background(Color.white)
         }
     }
 }

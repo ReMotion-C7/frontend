@@ -10,11 +10,11 @@ import SwiftUI
 struct DetailPatientPage: View {
     let patient: Patient
     @State private var showExerciseSheet = false
-    @State private var patientMovements: [Movement] = []
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 28) {
+            VStack(alignment: .leading, spacing: 24) {
                 patientHeaderSection
                 therapyInfoSection
                 symptomsSection
@@ -22,12 +22,32 @@ struct DetailPatientPage: View {
                 
                 Spacer(minLength: 20)
             }
-            .padding(.horizontal, 32)
+            .padding(.horizontal, 16)
             .padding(.vertical, 20)
         }
-        .background(Color(UIColor.systemGroupedBackground))
+        .background(Color.white)
+        .navigationTitle("Detail Pasien")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.black)
+                        .font(.system(size: 18, weight: .semibold))
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {}) {
+                    Image(systemName: "ellipsis")
+                        .foregroundColor(.black)
+                        .font(.system(size: 18, weight: .bold))
+                        .rotationEffect(.degrees(90))
+                }
+            }
+        }
         .sheet(isPresented: $showExerciseSheet) {
-            MovementToPatientModal(selectedMovements: $patientMovements)
+            MovementToPatientModal(patient: patient, selectedExercises: .constant(patient.exercises))
         }
     }
     
@@ -35,119 +55,86 @@ struct DetailPatientPage: View {
     private var patientHeaderSection: some View {
         HStack(spacing: 16) {
             Circle()
-                .fill(
-                    Color.black
-                )
-                .frame(width: 70, height: 70)
+                .fill(Color.black)
+                .frame(width: 60, height: 60)
                 .overlay(
                     Image(systemName: "person.fill")
                         .foregroundColor(.white)
-                        .font(.system(size: 34))
+                        .font(.system(size: 28))
                 )
             
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
                     Text(patient.name)
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.black)
                     
-                    Text(patient.gender.rawValue)
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
+                    Text(patient.gender)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(.black.opacity(0.6))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
                         .background(
                             Capsule()
-                                .fill(Color.gray.opacity(0.7))
+                                .fill(Color.gray.opacity(0.2))
                         )
                 }
                 
-                HStack(spacing: 6) {
-                    Image(systemName: "phone.fill")
-                        .font(.system(size: 11))
-                        .foregroundColor(.gray)
-                    
-                    Text(patient.phoneNumber)
-                        .font(.system(size: 13))
-                        .foregroundColor(.gray)
-                    
-                    Text("•")
-                        .foregroundColor(.gray)
-                    
-                    Image(systemName: "calendar")
-                        .font(.system(size: 11))
-                        .foregroundColor(.gray)
-                    
-                    Text(patient.birthDate)
-                        .font(.system(size: 13))
-                        .foregroundColor(.gray)
-                }
+                Text(patient.phoneNumber + " | " + formatDate(patient.dateOfBirth))
+                    .font(.system(size: 13))
+                    .foregroundColor(.gray)
             }
             
             Spacer()
         }
+        .padding(.vertical, 8)
     }
     
     // MARK: - Therapy Info Section
     private var therapyInfoSection: some View {
         HStack(spacing: 12) {
             // Tanggal Mulai Terapi
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 Image(systemName: "calendar")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-                
-                Text("Tanggal mulai terapi : \(patient.therapyDate)")
                     .font(.system(size: 13))
                     .foregroundColor(.gray)
+                
+                Text("Tanggal mulai terapi : \(formatDate(patient.therapyStartDate))")
+                    .font(.system(size: 12))
+                    .foregroundColor(.gray)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(Color.white)
-            .cornerRadius(10)
-            .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(Color(UIColor.systemGray6))
+            .cornerRadius(8)
             
             // Fase Badge
-            HStack(spacing: 8) {
-                Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.system(size: 14))
-                    .foregroundColor(.white)
-                
+            HStack(spacing: 6) {
                 Text("Fase \(patient.phase)")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.white)
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(patient.getPhaseColor())
             )
-            .shadow(color: patient.getPhaseColor().opacity(0.3), radius: 6, x: 0, y: 3)
         }
     }
     
     // MARK: - Symptoms Section
     private var symptomsSection: some View {
-        VStack(alignment: .leading, spacing: 14) {
-                Text("Gejala")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.black)
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Gejala")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.black)
             
-            
-            VStack(alignment: .leading, spacing: 10) {
-                SymptomRow(text: "Bunyi letupan")
-                SymptomRow(text: "Nyeri yang tajam dan tiba-tiba di lutut")
-                SymptomRow(text: "Pembengkakan")
-                SymptomRow(text: "Lutut terasa tidak stabil, goyah, atau seperti mau lepas saat digunakan untuk menumpu beban")
-                SymptomRow(text: "Sulit untuk menggerakan atau memergangkan lutut, termasuk menekuk atau meluruskan")
-                SymptomRow(text: "Terjadi memar di sekitar lutut")
-                SymptomRow(text: "Pasien mungkin sulit atau pincang saat berjalan")
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(patient.symptoms, id: \.self) { symptom in
+                    SymptomRow(text: symptom)
+                }
             }
-            .padding(16)
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 3)
         }
     }
     
@@ -155,39 +142,36 @@ struct DetailPatientPage: View {
     private var exerciseListSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                    
-                    Text("Daftar Gerakan Latihan")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.black)
-
+                Text("Daftar Gerakan Latihan")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.black)
                 
                 Spacer()
                 
                 Button(action: {
                     showExerciseSheet = true
                 }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 16))
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 14, weight: .semibold))
                         Text("Tambah Gerakan")
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 11)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 8)
                             .fill(Color.black)
                     )
-                    .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 3)
                 }
             }
             
-            if patientMovements.isEmpty {
+            if patient.exercises.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "figure.walk.circle")
                         .font(.system(size: 50))
-                        .foregroundColor(.gray.opacity(0.4))
+                        .foregroundColor(.gray.opacity(0.3))
                     
                     Text("Belum ada gerakan latihan ditambahkan")
                         .font(.system(size: 14))
@@ -201,18 +185,13 @@ struct DetailPatientPage: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 50)
-                .background(Color.white)
+                .background(Color(UIColor.systemGray6).opacity(0.5))
                 .cornerRadius(12)
-                .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 3)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
-                        ForEach(patientMovements) { movement in
-                            PatientMovementCard(
-                                movement: movement,
-                                sets: "15x Set",
-                                duration: movement.label == "Waktu" ? "10 detik" : "30x Rep"
-                            )
+                        ForEach(patient.exercises) { exercise in
+                            PatientExerciseCard(exercise: exercise)
                         }
                     }
                     .padding(.vertical, 4)
@@ -220,17 +199,24 @@ struct DetailPatientPage: View {
             }
         }
     }
+    
+    // MARK: - Helper Functions
+    private func formatDate(_ dateString: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        if let date = dateFormatter.date(from: dateString) {
+            dateFormatter.dateFormat = "dd MMMM yyyy"
+            dateFormatter.locale = Locale(identifier: "id_ID")
+            return dateFormatter.string(from: date)
+        }
+        return dateString
+    }
 }
 
+
+
 #Preview {
-    DetailPatientPage(
-        patient: Patient(
-            name: "Daniel Fernando",
-            gender: .laki,
-            phase: 1,
-            phoneNumber: "+62 894 2871 2837",
-            birthDate: "12 July 1996",
-            therapyDate: "12 July 1996"
-        )
-    )
+        DetailPatientPage(patient: samplePatients[0])
+
 }
