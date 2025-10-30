@@ -13,7 +13,7 @@ final class APIService {
     
     static let shared = APIService()
     
-    private let host = "http://localhost:8080/api/v1/"
+    private let host = "https://backend-production-7825.up.railway.app/api/v1/"
     
     @Published var accessToken: String? = ""
     @Published var userId: Int? = 0
