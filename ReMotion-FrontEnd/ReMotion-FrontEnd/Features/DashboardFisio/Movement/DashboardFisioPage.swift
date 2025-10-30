@@ -15,7 +15,7 @@ struct DashboardFisioPage: View {
     
     let fisioId: Int
     
-    @StateObject private var viewModel = DashboardFisioViewModel()
+    @StateObject private var viewModel = PatientViewModel()
     
     var body: some View {
         NavigationSplitView {
@@ -79,7 +79,7 @@ struct DashboardFisioPage: View {
                         // Gerakan Latihan Card
                         LibraryGerakanPage()
                     } else {
-                        PatientPage(viewModel: viewModel, fisioId: fisioId)
+                        PatientListPage(viewModel: viewModel, fisioId: fisioId, searchText: searchText)
                     }
                     
                     Spacer()

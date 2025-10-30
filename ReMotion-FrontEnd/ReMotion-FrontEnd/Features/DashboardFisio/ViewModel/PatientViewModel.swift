@@ -1,5 +1,5 @@
 //
-//  DashboardFisioViewModel.swift
+//  PatientViewModel.swift
 //  ReMotion-FrontEnd
 //
 //  Created by Yobel Nathaniel Filipus on 29/10/25.
@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 @MainActor
-class DashboardFisioViewModel: ObservableObject {
+class PatientViewModel: ObservableObject {
     
     @Published var readPatientResponse: ReadPatientResponse?
     @Published var readPatientDetailResponse: ReadPatientDetailResponse?
@@ -54,7 +54,8 @@ class DashboardFisioViewModel: ObservableObject {
         defer {
             isLoading = false
         }
-        
+        print("hhhh")
+
         do {
             let response: ReadPatientDetailResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)",
@@ -62,6 +63,7 @@ class DashboardFisioViewModel: ObservableObject {
                 responseType: ReadPatientDetailResponse.self
             )
             self.readPatientDetailResponse = response
+            print(response)
             if let data = readPatientDetailResponse?.data {
                 print(fisioId)
                 print(patientId)
@@ -72,6 +74,7 @@ class DashboardFisioViewModel: ObservableObject {
             }
         } catch {
             self.isError = true
+            print("hahahaha")
             self.errorMessage = "Gagal mengambil data detail pasien!"
         }
     }

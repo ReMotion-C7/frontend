@@ -7,7 +7,13 @@
 
 import Foundation
 
-struct Movement: Identifiable {
+struct ReadExercisesResponse: Codable {
+    var status: String
+    var message: String
+    var data: [Movement]
+}
+
+struct Movement: Identifiable, Codable {
     let id: Int
     let name: String
     let type: String

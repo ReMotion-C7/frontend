@@ -54,7 +54,7 @@ struct LoginPage: View {
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.black)
                             
-                            TextField("example@gmail.com/08XXXXXX", text: $email)
+                            TextField("example@email.com/08XXXXXX", text: $email)
                                 .foregroundStyle(Color.black)
                                 .padding()
                                 .background(Color.white)
