@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ExerciseSessionView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = ExerciseViewModel()
+    @StateObject private var viewModel = ExerciseSessionViewModel()
     @State private var showExitModal = false
     let exercises: [Exercises]
     

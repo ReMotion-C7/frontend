@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class ExerciseViewModel: ObservableObject {
+class ExerciseSessionViewModel: ObservableObject {
     
     // @Published properties will automatically update the UI when they change.
     @Published var workoutPhases: [WorkoutPhase] = []
