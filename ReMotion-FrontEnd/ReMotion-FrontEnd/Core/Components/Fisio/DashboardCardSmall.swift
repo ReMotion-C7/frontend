@@ -28,11 +28,26 @@ struct DashboardCardSmall: View {
                 .fill(Color.gray.opacity(0.3))
                 .frame(width: 244, height: 160)
                 .overlay(
-                    Image(systemName: movement.image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40, height: 40)
-                        .foregroundColor(.gray)
+                    AsyncImage(url: URL(string: movement.image)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 160)
+                                .clipped() // potong bagian yang keluar frame
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        case .failure(_):
+                            Image(systemName: "photo") // fallback
+                                .font(.system(size: 60))
+                                .foregroundColor(.gray.opacity(0.3))
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 4))
             
