@@ -34,10 +34,10 @@ struct PatientListPage: View {
                     }
                     
                 }
+                .background(Color.white)
                 .padding(.vertical, 20)
             }
             
-            .background(Color.white)
         }
         .onAppear {
             Task {
@@ -45,6 +45,7 @@ struct PatientListPage: View {
             }
         }
     }
+     
 }
 
 //#Preview {

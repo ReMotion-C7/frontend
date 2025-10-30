@@ -17,7 +17,7 @@ struct PatientExerciseCard: View {
                     .fill(Color.gray.opacity(0.1))
                     .frame(width: 280, height: 160)
                     .overlay(
-                        AsyncImage(url: URL(string: movement.image)) { phase in
+                        AsyncImage(url: URL(string: exercise.image)) { phase in
                             switch phase {
                             case .empty:
                                 ProgressView()

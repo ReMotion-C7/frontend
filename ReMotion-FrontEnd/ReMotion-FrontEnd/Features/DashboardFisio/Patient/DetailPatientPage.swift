@@ -8,51 +8,101 @@
 import SwiftUI
 
 struct DetailPatientPage: View {
-    let patient: Patient
+    // --- Dari File 1 ---
+    @ObservedObject var viewModel: PatientViewModel
+    let fisioId: Int
+    let patientId: Int
+    
+    // --- Dari File 2 ---
     @State private var showExerciseSheet = false
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                patientHeaderSection
-                therapyInfoSection
-                symptomsSection
-                exerciseListSection
+        
+        VStack {
+            
+            // --- Logic Wrapper dari File 1 ---
+            if viewModel.isLoading {
+                // Anda perlu menyediakan/mendefinisikan LoadingView()
+                // LoadingView(message: "Memuat data detail pasien...")
+                Text("Memuat data...") // Placeholder
+            }
+            else if viewModel.errorMessage != "" {
+                // Anda perlu menyediakan/mendefinisikan ErrorView()
+                // ErrorView(message: viewModel.errorMessage)
+                Text("Error: \(viewModel.errorMessage)") // Placeholder
+            }
+            // MODIFIED: 'patientData' is of type 'ReadPatientDetailData'
+            else if let patientData = viewModel.patient {
                 
-                Spacer(minLength: 20)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 20)
-        }
-        .background(Color.white)
-        .navigationTitle("Detail Pasien")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.black)
-                        .font(.system(size: 18, weight: .semibold))
+                // MODIFIED: Create 'Patient' object from 'ReadPatientDetailData'
+                // This assumes 'ReadPatientDetailData' has all the same properties as 'Patient'
+                let patient = Patient(
+                    id: patientData.id,
+                    name: patientData.name,
+                    gender: patientData.gender,
+                    phase: patientData.phase,
+                    phoneNumber: patientData.phoneNumber,
+                    dateOfBirth: patientData.dateOfBirth,
+                    therapyStartDate: patientData.therapyStartDate,
+                    symptoms: patientData.symptoms,
+                    exercises: patientData.exercises
+                )
+                
+                // --- UI dan Navigasi dari File 2 ---
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // All functions now receive the correct 'Patient' type
+                        patientHeaderSection(patient: patient)
+                        therapyInfoSection(patient: patient)
+                        symptomsSection(patient: patient)
+                        exerciseListSection(patient: patient)
+                        
+                        Spacer(minLength: 20)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 20)
                 }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {}) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(.black)
-                        .font(.system(size: 18, weight: .bold))
-                        .rotationEffect(.degrees(90))
+                .background(Color.white)
+                .navigationTitle("Detail Pasien")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: { dismiss() }) {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.black)
+                                .font(.system(size: 18, weight: .semibold))
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {}) {
+                            Image(systemName: "ellipsis")
+                                .foregroundColor(.black)
+                                .font(.system(size: 18, weight: .bold))
+                                .rotationEffect(.degrees(90))
+                        }
+                    }
                 }
+                .sheet(isPresented: $showExerciseSheet) {
+                    // This call now works because 'patient' is type 'Patient'
+                    MovementToPatientModal(patient: patient, selectedExercises: .constant(patient.exercises))
+                }
+                
             }
+            
         }
-        .sheet(isPresented: $showExerciseSheet) {
-            MovementToPatientModal(patient: patient, selectedExercises: .constant(patient.exercises))
+        .onAppear {
+            // --- Task dari File 1 ---
+            Task {
+                try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
+            }
         }
     }
     
-    // MARK: - Patient Header Section
-    private var patientHeaderSection: some View {
+    // MARK: - Patient Header Section (dari File 2)
+    // Diperbarui untuk menerima 'patient' sebagai parameter
+    private func patientHeaderSection(patient: Patient) -> some View {
         HStack(spacing: 16) {
             Circle()
                 .fill(Color.black)
@@ -90,8 +140,8 @@ struct DetailPatientPage: View {
         .padding(.vertical, 8)
     }
     
-    // MARK: - Therapy Info Section
-    private var therapyInfoSection: some View {
+    // MARK: - Therapy Info Section (dari File 2)
+    private func therapyInfoSection(patient: Patient) -> some View {
         HStack(spacing: 12) {
             // Tanggal Mulai Terapi
             HStack(spacing: 8) {
@@ -118,13 +168,13 @@ struct DetailPatientPage: View {
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(patient.getPhaseColor())
+                    .fill(patient.getPhaseColor()) // Asumsi getPhaseColor() ada di Patient
             )
         }
     }
     
-    // MARK: - Symptoms Section
-    private var symptomsSection: some View {
+    // MARK: - Symptoms Section (dari File 2)
+    private func symptomsSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Gejala")
                 .font(.system(size: 20, weight: .bold))
@@ -132,14 +182,17 @@ struct DetailPatientPage: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(patient.symptoms, id: \.self) { symptom in
-                    SymptomRow(text: symptom)
+                    // MODIFIED: Replaced 'SymptomRow' with simple bullet text
+                    Text("• \(symptom)")
+                        .font(.system(size: 14))
+                        .foregroundColor(.black.opacity(0.8))
                 }
             }
         }
     }
     
-    // MARK: - Exercise List Section
-    private var exerciseListSection: some View {
+    // MARK: - Exercise List Section (dari File 2)
+    private func exerciseListSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Daftar Gerakan Latihan")
@@ -190,7 +243,10 @@ struct DetailPatientPage: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
+                        // MODIFIED: Replaced 'PatientExerciseCard' with 'PatientMovementCard'
                         ForEach(patient.exercises) { exercise in
+                            // MODIFIED: Changed back to PatientExerciseCard
+                            // This logic is from your *second* file
                             PatientExerciseCard(exercise: exercise)
                         }
                     }
@@ -200,7 +256,7 @@ struct DetailPatientPage: View {
         }
     }
     
-    // MARK: - Helper Functions
+    // MARK: - Helper Functions (dari File 2)
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -214,9 +270,23 @@ struct DetailPatientPage: View {
     }
 }
 
-
+// Anda perlu menambahkan definisi untuk:
+// 1. PatientViewModel
+// 2. LoadingView
+// 3. ErrorView
+// 4. PatientExerciseCard (HARUSNYA SUDAH ADA DARI FILE LAIN)
+// 5. Patient (dan getPhaseColor()) (HARUSNYA SUDAH ADA DARI FILE LAIN)
+// 6. Movement (HARUSNYA SUDAH ADA DARI FILE LAIN)
+// 7. MovementToPatientModal (HARUSNYA SUDAH ADA DARI FILE LAIN)
+// 8. ReadPatientDetailData (Ini adalah tipe dari 'viewModel.patient')
 
 #Preview {
-        DetailPatientPage(patient: samplePatients[0])
-
+    // Preview akan error sampai Anda menyediakan ViewModel
+    // DetailPatientPage(patient: samplePatients[0])
+    Text("Preview dinonaktifkan - butuh ViewModel")
 }
+
+
+
+
+
