@@ -49,7 +49,7 @@ struct SessionPage: View {
                                     ScrollView {
                                         VStack(spacing: 16) {
                                             ForEach(viewModel.sessions) { exercise in
-                                                NavigationLink(destination: DetailExercisePage()) {
+                                                NavigationLink(destination: DetailExercisePage(userId: userId, exerciseId: exercise.id, viewModel: viewModel)) {
                                                     ExerciseSessionCard(exercise: exercise)
                                                 }
                                                 .buttonStyle(PlainButtonStyle())
