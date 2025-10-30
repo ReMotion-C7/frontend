@@ -16,7 +16,7 @@ struct ExerciseSessionCard: View {
                 // Image
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.gray.opacity(0.1))
-                    .frame(width: 120, height: 120)
+                    .frame(width: 240, height: 120)
                     .overlay(
                         Image(systemName: "figure.strengthtraining.traditional")
                             .font(.system(size: 50))

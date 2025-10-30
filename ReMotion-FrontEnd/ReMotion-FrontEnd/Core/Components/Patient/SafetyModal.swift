@@ -12,24 +12,7 @@ struct SafetyModal: View {
     @Binding var navigateToExercisePage: Bool
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Button(action: {
-                    withAnimation(.spring()) {
-                        showModal = false
-                    }
-                }) {
-                    Image(systemName: "xmark")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                        .padding(8)
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                
-                Spacer()
-            }
-            
+        VStack(alignment: .leading, spacing: 8) {
             // Title
             Text("Sebelum memulai latihan")
                 .font(.headline)
@@ -60,6 +43,19 @@ struct SafetyModal: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
                     .background(Color.blue)
+                    .cornerRadius(18)
+            }
+            Button(action: {
+                withAnimation(.spring()) {
+                    showModal = false
+                }
+            }) {
+                Text("Kembali")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color.gray)
                     .cornerRadius(18)
             }
         }
