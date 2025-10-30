@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PatientPage: View {
+struct PatientListPage: View {
     
     @ObservedObject var viewModel: PatientViewModel
     let fisioId: Int
@@ -34,7 +34,10 @@ struct PatientPage: View {
                     }
                     
                 }
+                .background(Color.white)
+                .padding(.vertical, 20)
             }
+            
         }
         .onAppear {
             Task {
@@ -42,6 +45,7 @@ struct PatientPage: View {
             }
         }
     }
+     
 }
 
 //#Preview {

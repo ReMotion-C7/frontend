@@ -79,7 +79,7 @@ struct DashboardFisioPage: View {
                         // Gerakan Latihan Card
                         LibraryGerakanPage()
                     } else {
-                        PatientPage(viewModel: viewModel, fisioId: fisioId)
+                        PatientListPage(viewModel: viewModel, fisioId: fisioId)
                     }
                     
                     Spacer()

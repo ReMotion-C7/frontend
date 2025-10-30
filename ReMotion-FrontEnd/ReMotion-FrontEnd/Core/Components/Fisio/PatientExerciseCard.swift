@@ -1,5 +1,5 @@
 //
-//  PatientMovementCard.swift
+//  PatientExerciseCard.swift
 //  ReMotion-FrontEnd
 //
 //  Created by Gabriela on 26/10/25.
@@ -7,10 +7,8 @@
 
 import SwiftUI
 
-struct PatientMovementCard: View {
-    let movement: Movement
-    let sets: String
-    let duration: String
+struct PatientExerciseCard: View {
+    let exercise: Exercise
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -19,7 +17,7 @@ struct PatientMovementCard: View {
                     .fill(Color.gray.opacity(0.1))
                     .frame(width: 280, height: 160)
                     .overlay(
-                        AsyncImage(url: URL(string: movement.image)) { phase in
+                        AsyncImage(url: URL(string: exercise.image)) { phase in
                             switch phase {
                             case .empty:
                                 ProgressView()
@@ -51,13 +49,13 @@ struct PatientMovementCard: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(movement.name)
+                    Text(exercise.name)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.black)
                     
                     Spacer()
                     
-                    Text(movement.type)
+                    Text(exercise.type)
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.gray)
                         .padding(.horizontal, 8)
@@ -66,7 +64,7 @@ struct PatientMovementCard: View {
                         .cornerRadius(12)
                 }
                 
-                Text(movement.muscle)
+                Text(exercise.muscle)
                     .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
@@ -79,22 +77,22 @@ struct PatientMovementCard: View {
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
-                        Text(sets)
+                        Text("\(exercise.set)x Set")
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
                     }
                     
                     HStack(spacing: 4) {
-                        Image(systemName: "clock")
+                        Image(systemName: exercise.type == "Waktu" ? "clock" : "repeat")
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
-                        Text(duration)
+                        Text(exercise.type == "Waktu" ? "\(exercise.repOrTime) detik" : "\(exercise.repOrTime)x Rep")
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
                     }
                 }
                 
-                Text(movement.description)
+                Text(exercise.description)
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
                     .lineLimit(3)
@@ -110,9 +108,5 @@ struct PatientMovementCard: View {
 }
 
 #Preview {
-    PatientMovementCard(
-        movement: sampleMovements[0],
-        sets: "15x Set",
-        duration: "10 detik"
-    )
+    PatientExerciseCard(exercise: samplePatients[0].exercises[0])
 }
