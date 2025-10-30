@@ -9,38 +9,89 @@ import SwiftUI
 
 struct SessionPage: View {
     @State private var selectedMenu = "Sesi Latihan"
+    @State private var showSafetyModal = false
+    @State private var navigateToExercisePage = false
     
     var body: some View {
-        NavigationSplitView {
-            CustomSidebar(selectedMenu: $selectedMenu)
-        } detail: {
-            NavigationStack {
-                VStack(alignment: .leading, spacing: 20) {
-                    
-                    // Title
-                    HStack {
-                        Text(selectedMenu == "Sesi Latihan" ? "Sesi Latihan" : "Evaluasi Gerakan")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .padding(.leading, 12)
+        ZStack {
+            NavigationSplitView {
+                CustomSidebarPatient(selectedMenu: $selectedMenu)
+            } detail: {
+                NavigationStack {
+                    VStack(alignment: .leading, spacing: 20) {
+                        // Title
+                        HStack {
+                            Text(selectedMenu == "Sesi Latihan" ? "Sesi Latihan" : "Evaluasi Gerakan")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .padding(.leading, 12)
+                            
+                            Spacer()
+                        }
+                        .padding(.bottom, 10)
+                        
+                        // Content Cards
+                        if selectedMenu == "Sesi Latihan" {
+                            ScrollView {
+                                VStack(spacing: 16) {
+                                    ForEach(samplePatients[0].exercises) { exercise in
+                                        NavigationLink(destination: DetailExercisePage(exercise: exercise)) {
+                                            ExerciseSessionCard(exercise: exercise)
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                    }
+                                }
+                            }
+                            Button(action: {
+                                withAnimation(.spring()) {
+                                    showSafetyModal = true
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "play.circle.fill")
+                                    Text("Mulai Sesi Latihan")
+                                        .fontWeight(.semibold)
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.black)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                                .padding(.top, 10)
+                            }
+                            
+                        } else {
+                            // Isi pake evaluasi gerakan
+                            Text("Ini Evaluasi Gerakan")
+                        }
                         
                         Spacer()
                     }
-                    .padding(.bottom, 10)
-                    
-                    // Content Cards
-                    if selectedMenu == "Sesi Latihan" {
-                        
-                    } else {
-                        
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 40)
+                    .onChange(of: selectedMenu) { _ in }
+                    /*
+                     .background(
+                     NavigationLink(
+                     destination: ExercisePage(),
+                     isActive: $navigateToExercisePage,
+                     label: { EmptyView() }
+                     )
+                     ) // tolong di uncomment kalo udah ada ExercisePage
+                     */
+                }
+            }
+            if showSafetyModal {
+                Rectangle()
+                    .fill(.black.opacity(0.4))
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            showSafetyModal = false
+                        }
                     }
-                    
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 40)
-                .onChange(of: selectedMenu) { _ in
-                }
+                SafetyModal(showModal: $showSafetyModal, navigateToExercisePage: $navigateToExercisePage)
+                    .transition(.scale.combined(with: .opacity))
             }
         }
     }
