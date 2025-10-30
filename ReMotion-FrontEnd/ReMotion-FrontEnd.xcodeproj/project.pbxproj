@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		6F2A6DA52EB1C0DE0093400A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6F2A6DA42EB1C0DE0093400A /* Alamofire */; };
+		F2F0BAE42EB30C1C005F3F60 /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0BAE32EB30C1C005F3F60 /* QuickPoseCamera */; };
+		F2F0BAE62EB30C1C005F3F60 /* QuickPoseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0BAE52EB30C1C005F3F60 /* QuickPoseCore */; };
+		F2F0BAE82EB30C1C005F3F60 /* QuickPoseMP in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0BAE72EB30C1C005F3F60 /* QuickPoseMP */; };
+		F2F0BAEA2EB30C1C005F3F60 /* QuickPoseSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0BAE92EB30C1C005F3F60 /* QuickPoseSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,7 +44,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2F0BAEA2EB30C1C005F3F60 /* QuickPoseSwiftUI in Frameworks */,
+				F2F0BAE82EB30C1C005F3F60 /* QuickPoseMP in Frameworks */,
+				F2F0BAE42EB30C1C005F3F60 /* QuickPoseCamera in Frameworks */,
 				6F2A6DA52EB1C0DE0093400A /* Alamofire in Frameworks */,
+				F2F0BAE62EB30C1C005F3F60 /* QuickPoseCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +93,10 @@
 			name = "ReMotion-FrontEnd";
 			packageProductDependencies = (
 				6F2A6DA42EB1C0DE0093400A /* Alamofire */,
+				F2F0BAE32EB30C1C005F3F60 /* QuickPoseCamera */,
+				F2F0BAE52EB30C1C005F3F60 /* QuickPoseCore */,
+				F2F0BAE72EB30C1C005F3F60 /* QuickPoseMP */,
+				F2F0BAE92EB30C1C005F3F60 /* QuickPoseSwiftUI */,
 			);
 			productName = "ReMotion-FrontEnd";
 			productReference = 667CD0372EA9BF8F00BE40AE /* ReMotion-FrontEnd.app */;
@@ -116,6 +128,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6F2A6DA32EB1C0DE0093400A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				F2F0BAE22EB30C1C005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 667CD0382EA9BF8F00BE40AE /* Products */;
@@ -274,16 +287,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = RP5526BVLK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Butuh kamera bang";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -307,16 +323,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = RP5526BVLK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Butuh kamera bang";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -367,6 +386,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		F2F0BAE22EB30C1C005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/quickpose/quickpose-ios-sdk.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -374,6 +401,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6F2A6DA32EB1C0DE0093400A /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		F2F0BAE32EB30C1C005F3F60 /* QuickPoseCamera */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0BAE22EB30C1C005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCamera;
+		};
+		F2F0BAE52EB30C1C005F3F60 /* QuickPoseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0BAE22EB30C1C005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCore;
+		};
+		F2F0BAE72EB30C1C005F3F60 /* QuickPoseMP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0BAE22EB30C1C005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseMP;
+		};
+		F2F0BAE92EB30C1C005F3F60 /* QuickPoseSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0BAE22EB30C1C005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
