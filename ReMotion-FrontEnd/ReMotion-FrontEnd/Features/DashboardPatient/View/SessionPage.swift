@@ -13,12 +13,17 @@ struct SessionPage: View {
     @State private var navigateToExercisePage = false
     @State private var todaysExercises: [Exercises] = []
     
+    let userId: Int
+    
+    @StateObject var viewModel = SessionViewModel()
+    
     var body: some View {
         ZStack {
             NavigationSplitView {
                 CustomSidebarPatient(selectedMenu: $selectedMenu)
             } detail: {
                 NavigationStack {
+                    
                     VStack(alignment: .leading, spacing: 20) {
                         // Title
                         HStack {
@@ -33,13 +38,41 @@ struct SessionPage: View {
                         
                         // Content Cards
                         if selectedMenu == "Sesi Latihan" {
-                            ScrollView {
-                                VStack(spacing: 16) {
-                                    ForEach(samplePatients[0].exercises) { exercise in
-                                        NavigationLink(destination: DetailExercisePage(exercise: exercise)) {
-                                            ExerciseSessionCard(exercise: exercise)
+                            
+                            VStack {
+                                if viewModel.isLoading {
+                                    LoadingView(message: "Memuat sesi latihan anda...")
+                                }
+                                else if viewModel.errorMessage != "" {
+                                    ErrorView(message: viewModel.errorMessage)
+                                }
+                                else {
+                                    ScrollView {
+                                        VStack(spacing: 16) {
+                                            ForEach(viewModel.sessions) { exercise in
+                                                NavigationLink(destination: DetailExercisePage()) {
+                                                    ExerciseSessionCard(exercise: exercise)
+                                                }
+                                                .buttonStyle(PlainButtonStyle())
+                                            }
                                         }
-                                        .buttonStyle(PlainButtonStyle())
+                                    }
+                                    Button(action: {
+                                        withAnimation(.spring()) {
+                                            showSafetyModal = true
+                                        }
+                                    }) {
+                                        HStack {
+                                            Image(systemName: "play.circle.fill")
+                                            Text("Mulai Sesi Latihan")
+                                                .fontWeight(.semibold)
+                                        }
+                                        .padding()
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color.black)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(10)
+                                        .padding(.top, 10)
                                     }
                                 }
                             }
@@ -48,18 +81,6 @@ struct SessionPage: View {
                                 withAnimation(.spring()) {
                                     showSafetyModal = true
                                 }
-                            }) {
-                                HStack {
-                                    Image(systemName: "play.circle.fill")
-                                    Text("Mulai Sesi Latihan")
-                                        .fontWeight(.semibold)
-                                }
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.black)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                                .padding(.top, 10)
                             }
                             
                         } else {
@@ -95,6 +116,6 @@ struct SessionPage: View {
     }
 }
 
-#Preview {
-    SessionPage()
-}
+//#Preview {
+//    SessionPage()
+//}
