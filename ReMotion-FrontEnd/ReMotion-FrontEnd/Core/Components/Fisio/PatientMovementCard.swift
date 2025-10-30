@@ -19,10 +19,28 @@ struct PatientMovementCard: View {
                     .fill(Color.gray.opacity(0.1))
                     .frame(width: 280, height: 160)
                     .overlay(
-                        Image(systemName: movement.image)
-                            .font(.system(size: 60))
-                            .foregroundColor(.gray.opacity(0.3))
+                        AsyncImage(url: URL(string: movement.image)) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 160)
+                                    .clipped() // potong bagian yang keluar frame
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            case .failure(_):
+                                Image(systemName: "photo") // fallback
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.gray.opacity(0.3))
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
                     )
+                
                 
                 Button(action: {}) {
                     Image(systemName: "ellipsis")

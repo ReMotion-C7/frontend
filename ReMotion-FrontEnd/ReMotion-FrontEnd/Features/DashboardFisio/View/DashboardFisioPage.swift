@@ -15,7 +15,7 @@ struct DashboardFisioPage: View {
     
     let fisioId: Int
     
-    @StateObject private var viewModel = DashboardFisioViewModel()
+    @StateObject private var viewModel = PatientViewModel()
     
     var body: some View {
         NavigationSplitView {
