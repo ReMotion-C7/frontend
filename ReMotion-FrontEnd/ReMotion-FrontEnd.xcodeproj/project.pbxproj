@@ -6,13 +6,33 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F2F0B9F42EB066B0005F3F60 /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0B9F32EB066B0005F3F60 /* QuickPoseCamera */; };
+		F2F0B9F62EB066B0005F3F60 /* QuickPoseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0B9F52EB066B0005F3F60 /* QuickPoseCore */; };
+		F2F0B9F82EB066B0005F3F60 /* QuickPoseMP in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0B9F72EB066B0005F3F60 /* QuickPoseMP */; };
+		F2F0B9FA2EB066B0005F3F60 /* QuickPoseSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F2F0B9F92EB066B0005F3F60 /* QuickPoseSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		667CD0372EA9BF8F00BE40AE /* ReMotion-FrontEnd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ReMotion-FrontEnd.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F2F0B9FC2EB0672D005F3F60 /* Exceptions for "ReMotion-FrontEnd" folder in "ReMotion-FrontEnd" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 667CD0362EA9BF8E00BE40AE /* ReMotion-FrontEnd */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		667CD0392EA9BF8F00BE40AE /* ReMotion-FrontEnd */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F2F0B9FC2EB0672D005F3F60 /* Exceptions for "ReMotion-FrontEnd" folder in "ReMotion-FrontEnd" target */,
+			);
 			path = "ReMotion-FrontEnd";
 			sourceTree = "<group>";
 		};
@@ -23,6 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2F0B9F62EB066B0005F3F60 /* QuickPoseCore in Frameworks */,
+				F2F0B9F82EB066B0005F3F60 /* QuickPoseMP in Frameworks */,
+				F2F0B9F42EB066B0005F3F60 /* QuickPoseCamera in Frameworks */,
+				F2F0B9FA2EB066B0005F3F60 /* QuickPoseSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +89,10 @@
 			);
 			name = "ReMotion-FrontEnd";
 			packageProductDependencies = (
+				F2F0B9F32EB066B0005F3F60 /* QuickPoseCamera */,
+				F2F0B9F52EB066B0005F3F60 /* QuickPoseCore */,
+				F2F0B9F72EB066B0005F3F60 /* QuickPoseMP */,
+				F2F0B9F92EB066B0005F3F60 /* QuickPoseSwiftUI */,
 			);
 			productName = "ReMotion-FrontEnd";
 			productReference = 667CD0372EA9BF8F00BE40AE /* ReMotion-FrontEnd.app */;
@@ -94,6 +122,9 @@
 			);
 			mainGroup = 667CD02E2EA9BF8E00BE40AE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F2F0B9F22EB066B0005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 667CD0382EA9BF8F00BE40AE /* Products */;
 			projectDirPath = "";
@@ -253,14 +284,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9QV95FA5Z5;
+				DEVELOPMENT_TEAM = RP5526BVLK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ReMotion-FrontEnd/Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to take photos and videos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -285,14 +319,17 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9QV95FA5Z5;
+				DEVELOPMENT_TEAM = RP5526BVLK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ReMotion-FrontEnd/Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to take photos and videos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -332,6 +369,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F2F0B9F22EB066B0005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/quickpose/quickpose-ios-sdk.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F2F0B9F32EB066B0005F3F60 /* QuickPoseCamera */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0B9F22EB066B0005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCamera;
+		};
+		F2F0B9F52EB066B0005F3F60 /* QuickPoseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0B9F22EB066B0005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCore;
+		};
+		F2F0B9F72EB066B0005F3F60 /* QuickPoseMP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0B9F22EB066B0005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseMP;
+		};
+		F2F0B9F92EB066B0005F3F60 /* QuickPoseSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2F0B9F22EB066B0005F3F60 /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 667CD02F2EA9BF8E00BE40AE /* Project object */;
 }

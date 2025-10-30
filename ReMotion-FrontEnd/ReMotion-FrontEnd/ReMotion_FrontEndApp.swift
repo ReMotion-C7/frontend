@@ -12,6 +12,7 @@ struct ReMotion_FrontEndApp: App {
     var body: some Scene {
         WindowGroup {
 //            DashboardFisioPage()
+            PatientAssessmentCamera()
         }
     }
 }
