@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PatientPage: View {
     
-    @ObservedObject var viewModel: DashboardFisioViewModel
+    @ObservedObject var viewModel: PatientViewModel
     let fisioId: Int
     
     var body: some View {
