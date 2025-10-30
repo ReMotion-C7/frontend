@@ -13,6 +13,10 @@ struct DashboardFisioPage: View {
     @State private var showAddPatientModal = false
     @State private var navigateToAddGerakan = false
     
+    let fisioId: Int
+    
+    @StateObject private var viewModel = PatientViewModel()
+    
     var body: some View {
         NavigationSplitView {
             CustomSidebar(selectedMenu: $selectedMenu)
@@ -75,7 +79,7 @@ struct DashboardFisioPage: View {
                         // Gerakan Latihan Card
                         LibraryGerakanPage()
                     } else {
-                        PatientListPage()
+                        PatientListPage(viewModel: viewModel, fisioId: fisioId)
                     }
                     
                     Spacer()
@@ -99,6 +103,6 @@ struct DashboardFisioPage: View {
     }
 }
 
-#Preview {
-    DashboardFisioPage()
-}
+//#Preview {
+//    DashboardFisioPage()
+//}

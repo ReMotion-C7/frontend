@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct ReMotion_FrontEndApp: App {
+    
+    @StateObject private var session: SessionManager
+    
+    init() {
+        let sessionManagerInstance = SessionManager()
+
+        _session = StateObject(wrappedValue: sessionManagerInstance)
+        
+        SessionManager.shared = sessionManagerInstance
+    }
+    
     var body: some Scene {
         WindowGroup {
-//            DashboardFisioPage()
+            ContentView()
+                .environmentObject(session)
         }
     }
 }

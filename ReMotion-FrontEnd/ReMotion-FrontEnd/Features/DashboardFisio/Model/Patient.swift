@@ -8,9 +8,68 @@
 import Foundation
 import SwiftUI
 
+struct ReadPatientResponse: Codable {
+    var status: String
+    var message: String
+    var data: [ReadPatientData]
+}
+
+struct ReadPatientData: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var phase: Int
+    var phoneNumber: String
+    var dateOfBirth: String
+    var therapyStartDate: String
+    
+    public func getPhaseColor() -> Color {
+        switch phase {
+        case 1:
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case 2:
+            return Color(red: 1.0, green: 0.7, blue: 0.3)
+        case 3:
+            return Color(red: 0.4, green: 0.8, blue: 0.4)
+        default:
+            return Color.gray
+        }
+    }
+}
+
+struct ReadPatientDetailResponse: Codable {
+    var status: String
+    var message: String
+    var data: ReadPatientDetailData
+}
+
 enum Gender: String, CaseIterable {
     case laki = "Laki-laki"
     case perempuan = "Perempuan"
+}
+
+struct ReadPatientDetailData: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let gender: String
+    let phase: Int
+    let phoneNumber: String
+    let dateOfBirth: String
+    let therapyStartDate: String
+    let symptoms: [String]
+    let exercises: [Exercise]
+    
+    public func getPhaseColor() -> Color {
+        switch phase {
+        case 1:
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case 2:
+            return Color(red: 1.0, green: 0.7, blue: 0.3)
+        case 3:
+            return Color(red: 0.4, green: 0.8, blue: 0.4)
+        default:
+            return Color.gray
+        }
+    }
 }
 
 struct Patient: Identifiable, Codable {

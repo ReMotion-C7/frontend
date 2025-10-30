@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PatientCard: View {
-    let patient: Patient
+    let patient: ReadPatientData
     
     var body: some View {
         VStack(spacing: 0) {
@@ -51,7 +51,7 @@ struct PatientCard: View {
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                         
-                        Text("Lahir: \(patient.dateOfBirth)")
+                        Text("Lahir: \(DateHelper.formatDateForDisplay(dateString: patient.dateOfBirth))")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -69,7 +69,7 @@ struct PatientCard: View {
                     .foregroundColor(.gray)
                     .font(.system(size: 14))
                 
-                Text("Mulai terapi: \(patient.therapyStartDate)")
+                Text("Mulai terapi: \(DateHelper.formatDateForDisplay(dateString: patient.therapyStartDate))")
                     .font(.system(size: 14))
                     .foregroundColor(.gray)
                 
@@ -84,6 +84,6 @@ struct PatientCard: View {
     }
 }
 
-#Preview {
-    PatientCard(patient: samplePatients[0])
-}
+//#Preview {
+//    PatientCard(patient: samplePatients[0])
+//}

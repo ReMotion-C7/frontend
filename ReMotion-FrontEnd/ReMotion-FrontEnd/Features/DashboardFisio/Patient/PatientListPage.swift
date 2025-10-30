@@ -8,27 +8,45 @@
 import SwiftUI
 
 struct PatientListPage: View {
-    let patients = samplePatients
-
+    
+    @ObservedObject var viewModel: PatientViewModel
+    let fisioId: Int
+    
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(patients) { patient in
-                        NavigationLink(destination: DetailPatientPage(patient: patient)) {
-                            PatientCard(patient: patient)
+            
+            if viewModel.isLoading {
+                LoadingView(message: "Memuat data pasien...")
+            }
+            else if viewModel.errorMessage != "" {
+                ErrorView(message: viewModel.errorMessage)
+            }
+            else {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(viewModel.patients) { patient in
+                            NavigationLink(destination: DetailPatientPage(viewModel: viewModel, fisioId: fisioId, patientId: patient.id))
+                            {
+                                PatientCard(patient: patient)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
-                        .buttonStyle(PlainButtonStyle())
                     }
+                    
                 }
                 .padding(.vertical, 20)
             }
             
             .background(Color.white)
         }
+        .onAppear {
+            Task {
+                try await viewModel.readPatients(fisioId: fisioId)
+            }
+        }
     }
 }
 
-#Preview {
-    PatientListPage()
-}
+//#Preview {
+//    PatientPage()
+//}
