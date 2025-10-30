@@ -13,10 +13,12 @@ import Alamofire
 class DashboardFisioViewModel: ObservableObject {
     
     @Published var readPatientResponse: ReadPatientResponse?
+    @Published var readPatientDetailResponse: ReadPatientDetailResponse?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
     @Published var patients: [ReadPatientData] = []
+    @Published var patient: ReadPatientDetailData?
     
     func readPatients(fisioId: Int) async throws {
         
@@ -43,5 +45,34 @@ class DashboardFisioViewModel: ObservableObject {
             self.errorMessage = "Gagal mengambil data pasien!"
         }
         
+    }
+    
+    func readPatientDetail(fisioId: Int, patientId: Int) async throws {
+        
+        isLoading = true
+        
+        defer {
+            isLoading = false
+        }
+        
+        do {
+            let response: ReadPatientDetailResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/\(patientId)",
+                method: .get,
+                responseType: ReadPatientDetailResponse.self
+            )
+            self.readPatientDetailResponse = response
+            if let data = readPatientDetailResponse?.data {
+                print(fisioId)
+                print(patientId)
+                print(data)
+                self.errorMessage = ""
+                self.isError = false
+                self.patient = data
+            }
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal mengambil data detail pasien!"
+        }
     }
 }

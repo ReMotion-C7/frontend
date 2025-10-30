@@ -19,7 +19,7 @@ struct LoadingView: View {
                 .padding()
             Text(message)
                 .foregroundColor(.gray)
-                .font(.system(size: 16))
+                .font(.system(size: 20))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white.opacity(0.5))

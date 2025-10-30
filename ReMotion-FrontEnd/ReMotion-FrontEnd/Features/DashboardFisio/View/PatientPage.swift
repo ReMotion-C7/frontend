@@ -16,32 +16,20 @@ struct PatientPage: View {
         NavigationStack {
             
             if viewModel.isLoading {
-                
                 LoadingView(message: "Memuat data pasien...")
-                
+            }
+            else if viewModel.errorMessage != "" {
+                ErrorView(message: viewModel.errorMessage)
             }
             else {
                 ScrollView {
-                    if viewModel.errorMessage != "" {
-                        VStack {
-                            Spacer()
-                            Text(viewModel.errorMessage)
-                                .font(.system(size: 24, weight: .semibold))
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.red)
-                                .padding(.horizontal, 40)
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    else {
-                        VStack(spacing: 16) {
-                            ForEach(viewModel.patients) { patient in
-                                //                            NavigationLink(destination: DetailPatientPage(patient: patient)) {
+                    VStack(spacing: 16) {
+                        ForEach(viewModel.patients) { patient in
+                            NavigationLink(destination: DetailPatientPage(viewModel: viewModel, fisioId: fisioId, patientId: patient.id))
+                            {
                                 PatientCard(patient: patient)
-                                //                            }
-                                    .buttonStyle(PlainButtonStyle())
                             }
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
                     
