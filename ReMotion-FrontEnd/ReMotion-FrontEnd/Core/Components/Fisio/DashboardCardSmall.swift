@@ -104,13 +104,13 @@ struct DashboardCardSmall: View {
     }
 }
 
-#Preview {
-    ScrollView(.horizontal, showsIndicators: false) {
-        HStack(spacing: 20) {
-            ForEach(sampleMovements) { movement in
-                DashboardCardSmall(movement: movement)
-            }
-        }
-        .padding()
-    }
-}
+//#Preview {
+//    ScrollView(.horizontal, showsIndicators: false) {
+//        HStack(spacing: 20) {
+//            ForEach(sampleMovements) { movement in
+//                DashboardCardSmall(movement: movement)
+//            }
+//        }
+//        .padding()
+//    }
+//}
