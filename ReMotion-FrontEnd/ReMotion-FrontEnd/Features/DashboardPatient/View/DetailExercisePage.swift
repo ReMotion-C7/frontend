@@ -65,50 +65,30 @@ struct DetailExercisePage: View {
 //                        .padding(.bottom, 10)
                         
                         ZStack {
-                            VideoPlayer(player: player)
-                                .frame(height: 300)
-                                .cornerRadius(12)
-                            
-                            Button(action: {
-                                if player?.timeControlStatus == .playing {
-                                    player?.pause()
-                                } else {
-                                    player?.play()
-                                }
-                            }) {
-                                VStack(spacing: 8) {
-                                    Image(systemName: "play.circle.fill")
-                                        .font(.system(size: 60))
-                                        .foregroundColor(.white.opacity(0.8))
-                                    
-                                    Text("Putar Video")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                }
-                                .padding()
-                                .background(.black.opacity(0.3))
-                                .cornerRadius(10)
-                            }
-                        }
-                        .onAppear {
-                            // Buat AVQueuePlayer dan looper untuk auto-loop
-                            guard let url = URL(string: exercise.video) else {
-                                print("Invalid video URL: \(exercise.video)")
-                                return
-                            }
-                            
-                            let item = AVPlayerItem(url: url)
-                            let queuePlayer = AVQueuePlayer()
-                            player = queuePlayer
-                            let _ = AVPlayerLooper(player: queuePlayer, templateItem: item)
-                            queuePlayer.play()
-                        }
-                        .onDisappear {
-                            player?.pause()
-                            player = nil
-                        }
+                            if let videoString = viewModel.sessionExercise?.video,
+                               let videoURL = URL(string: videoString),
+                               UIApplication.shared.canOpenURL(videoURL) {
 
+                                VideoPlayerView(videoURL: videoURL)
+                                    .cornerRadius(12)
+                                    .transition(.opacity)
+                            } else {
+                                ZStack {
+                                    Color.black
+                                    VStack(spacing: 8) {
+                                        ProgressView()
+                                            .tint(.white)
+                                        Text("Loading video...")
+                                            .foregroundColor(.white)
+                                            .font(.caption)
+                                    }
+                                }
+                            }
+                        }
+                        .frame(height: 500)
+                        .background(Color.black)
+                        .cornerRadius(12)
+                        .animation(.easeInOut, value: viewModel.sessionExercise?.video)
                         
                         // Name
                         HStack {
