@@ -22,6 +22,9 @@ struct VideoPlayerView: UIViewControllerRepresentable {
         controller.showsPlaybackControls = false
         controller.videoGravity = .resizeAspectFill
         
+//        controller.view.backgroundColor = UIColor.black.withAlphaComponent(0.15)
+//        controller.contentOverlayView?.backgroundColor = UIColor.black.withAlphaComponent(0.15)
+        
         // --- FIX: Pass the created player to the coordinator ---
         context.coordinator.player = player
         
@@ -34,6 +37,14 @@ struct VideoPlayerView: UIViewControllerRepresentable {
         )
         
         player.play()
+        
+        // Tunggu video siap baru play, agar tidak flash putih (ubah ini jg gweh)
+//        player.currentItem?.addObserver(
+//            context.coordinator,
+//            forKeyPath: "status",
+//            options: [.new],
+//            context: nil
+//        )
         
         return controller
     }
@@ -96,6 +107,30 @@ struct VideoPlayerView: UIViewControllerRepresentable {
             player?.seek(to: .zero)
             player?.play()
         }
+        
+        // tambah ini jg gweh
+        // Tunggu sampai video siap baru play (hilangkan flash putih)
+//        override func observeValue(
+//            forKeyPath keyPath: String?,
+//            of object: Any?,
+//            change: [NSKeyValueChangeKey : Any]?,
+//            context: UnsafeMutableRawPointer?
+//        ) {
+//            if keyPath == "status",
+//               let item = object as? AVPlayerItem,
+//               item.status == .readyToPlay {
+//                player?.play()
+//            }
+//        }
+        
+        // ini jg masbro
+//        deinit {
+//            // Bersihkan observer saat koordinatōr hilang
+//            if let item = player?.currentItem {
+//                item.removeObserver(self, forKeyPath: "status", context: nil)
+//            }
+//            NotificationCenter.default.removeObserver(self)
+//        }
     }
 }
 
