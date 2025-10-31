@@ -21,7 +21,6 @@ struct LibraryGerakanPage: View {
             }
             else {
                 ScrollView {
-                    // Hitung jumlah kolom berdasarkan lebar layar
                     let availableWidth = geometry.size.width // padding
                     let itemWidth: CGFloat = 244
                     let spacing: CGFloat = 30
@@ -32,7 +31,7 @@ struct LibraryGerakanPage: View {
                     
                     LazyVGrid(columns: columns, spacing: spacing) {
                         ForEach(viewModel.exercises) { move in
-                            NavigationLink(destination: DetailMovementPage(movement: move)) {
+                            NavigationLink(destination:  DetailMovementPage(viewModel: viewModel, exerciseId: move.id)) {
                                 DashboardCardSmall(movement: move)
                             }
                             .buttonStyle(PlainButtonStyle())

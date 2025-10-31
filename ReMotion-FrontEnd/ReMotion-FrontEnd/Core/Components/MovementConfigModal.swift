@@ -249,19 +249,17 @@ struct InputField: View {
     }
 }
 
-#Preview {
-    // Preview the modal on top of a blurred background
-    ZStack {
-        Color.gray.opacity(0.5).ignoresSafeArea()
-        
-        MovementConfigModal(
-            movement: sampleMovements[0], // "Waktu" type
-            patient: samplePatients[0],
-            selectedExercises: .constant([]),
-            showConfigModal: .constant(true),
-            dismissParent: .constant(false)
-        )
-    }
-}
-
-
+//#Preview {
+//    // Preview the modal on top of a blurred background
+//    ZStack {
+//        Color.gray.opacity(0.5).ignoresSafeArea()
+//        
+//        MovementConfigModal(
+//            movement: sampleMovements[0], // "Waktu" type
+//            patient: samplePatients[0],
+//            selectedExercises: .constant([]),
+//            showConfigModal: .constant(true),
+//            dismissParent: .constant(false)
+//        )
+//    }
+//}

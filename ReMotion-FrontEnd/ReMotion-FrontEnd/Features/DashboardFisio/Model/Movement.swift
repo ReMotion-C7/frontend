@@ -13,6 +13,12 @@ struct ReadExercisesResponse: Codable {
     var data: [Movement]
 }
 
+struct ReadExerciseDetailResponse: Codable {
+    var status: String
+    var message: String
+    var data: MovementDetail
+}
+
 struct Movement: Identifiable, Codable {
     let id: Int
     let name: String
@@ -20,6 +26,15 @@ struct Movement: Identifiable, Codable {
     let description: String
     let muscle: String
     let image: String
+}
+
+struct MovementDetail: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let type: String
+    let description: String
+    let muscle: String
+    let video: String
 }
 
 // Dummy
