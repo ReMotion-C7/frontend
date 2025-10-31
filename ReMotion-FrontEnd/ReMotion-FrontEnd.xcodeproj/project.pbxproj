@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		6F2A6DA52EB1C0DE0093400A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 6F2A6DA42EB1C0DE0093400A /* Alamofire */; };
+		F2D70DA32EB486680015112D /* QuickPoseCamera in Frameworks */ = {isa = PBXBuildFile; productRef = F2D70DA22EB486680015112D /* QuickPoseCamera */; };
+		F2D70DA52EB486680015112D /* QuickPoseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F2D70DA42EB486680015112D /* QuickPoseCore */; };
+		F2D70DA72EB486680015112D /* QuickPoseMP in Frameworks */ = {isa = PBXBuildFile; productRef = F2D70DA62EB486680015112D /* QuickPoseMP */; };
+		F2D70DA92EB486680015112D /* QuickPoseSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F2D70DA82EB486680015112D /* QuickPoseSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,7 +44,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2D70DA92EB486680015112D /* QuickPoseSwiftUI in Frameworks */,
+				F2D70DA72EB486680015112D /* QuickPoseMP in Frameworks */,
+				F2D70DA32EB486680015112D /* QuickPoseCamera in Frameworks */,
 				6F2A6DA52EB1C0DE0093400A /* Alamofire in Frameworks */,
+				F2D70DA52EB486680015112D /* QuickPoseCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +93,10 @@
 			name = "ReMotion-FrontEnd";
 			packageProductDependencies = (
 				6F2A6DA42EB1C0DE0093400A /* Alamofire */,
+				F2D70DA22EB486680015112D /* QuickPoseCamera */,
+				F2D70DA42EB486680015112D /* QuickPoseCore */,
+				F2D70DA62EB486680015112D /* QuickPoseMP */,
+				F2D70DA82EB486680015112D /* QuickPoseSwiftUI */,
 			);
 			productName = "ReMotion-FrontEnd";
 			productReference = 667CD0372EA9BF8F00BE40AE /* ReMotion-FrontEnd.app */;
@@ -116,6 +128,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6F2A6DA32EB1C0DE0093400A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				F2D70DA12EB486680015112D /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 667CD0382EA9BF8F00BE40AE /* Products */;
@@ -279,6 +292,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Butuh kamera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -312,6 +326,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Butuh kamera";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -367,6 +382,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		F2D70DA12EB486680015112D /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/quickpose/quickpose-ios-sdk.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -374,6 +397,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6F2A6DA32EB1C0DE0093400A /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		F2D70DA22EB486680015112D /* QuickPoseCamera */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2D70DA12EB486680015112D /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCamera;
+		};
+		F2D70DA42EB486680015112D /* QuickPoseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2D70DA12EB486680015112D /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseCore;
+		};
+		F2D70DA62EB486680015112D /* QuickPoseMP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2D70DA12EB486680015112D /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseMP;
+		};
+		F2D70DA82EB486680015112D /* QuickPoseSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2D70DA12EB486680015112D /* XCRemoteSwiftPackageReference "quickpose-ios-sdk" */;
+			productName = QuickPoseSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
