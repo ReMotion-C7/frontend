@@ -20,8 +20,11 @@ class AssessmentCameraViewModel: ObservableObject {
     @Published var showModal: Bool = true
     @Published var startCountdown: Bool = false
     @Published var beginCountdown: Bool = false
-    
     @Published var displayedCountdown: Int = 5
+    @Published var displayResultModal: Bool = false
+    @Published var lastImage: UIImage? = nil
+    @Published var imageResult: UIImage? = nil
+    @Published var angle: Int = 0
     
     private var timer: Timer?
     
@@ -43,6 +46,7 @@ class AssessmentCameraViewModel: ObservableObject {
         ) { status, outputImage, measurements, feedback, body in
             
             DispatchQueue.main.async {
+                self.lastImage = outputImage
                 self.overlayImage = outputImage
                 
                 switch status {
@@ -115,8 +119,13 @@ class AssessmentCameraViewModel: ObservableObject {
                 } else {
                     self.timer?.invalidate()
                     print("UDAH BANG TIMER NYA 5 DETIK")
+                    
+                    self.displayResultModal = true
+                    if let lastFrame = self.lastImage, let overlay = self.overlayImage,
+                       let combined = self.combineImages(background: lastFrame, overlay: overlay) {
+                        self.imageResult = combined
+                    }
                 }
-                
             }
         }
     }

@@ -39,6 +39,25 @@ struct PatientAssessmentCamera: View {
             if !viewModel.showModal && viewModel.startCountdown && viewModel.beginCountdown {
                 Text("\(viewModel.displayedCountdown)")
             }
+            
+            if viewModel.displayResultModal && viewModel.imageResult != nil {
+                VStack {
+                    Text("Hasil Penilaian")
+                        .font(Font.largeTitle.bold())
+                    Image(uiImage: viewModel.imageResult!)
+                    Text("Ruang Lingkup Gerak Sendi Lutut: \(viewModel.angle)°.")
+                    NavigationLink(destination: EvaluasiGerakanPage()) {
+                        Text("Selesai")
+                            .background(Color.black)
+                            .foregroundColor(Color.white)
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                )
+            }
         }
         .onAppear(perform: viewModel.quickPoseSetup)
         .onDisappear {
