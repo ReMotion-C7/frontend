@@ -152,7 +152,6 @@ struct DetailPatientPage: View {
         }
     }
     
-    // MARK: - Symptoms Section (dari File 2)
     private func symptomsSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Gejala")
@@ -169,7 +168,6 @@ struct DetailPatientPage: View {
         }
     }
     
-    // MARK: - Exercise List Section (dari File 2)
     private func exerciseListSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
