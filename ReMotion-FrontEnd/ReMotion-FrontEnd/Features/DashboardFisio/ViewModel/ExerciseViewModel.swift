@@ -75,7 +75,6 @@ class ExerciseViewModel: ObservableObject {
         isError = false
         errorMessage = ""
         
-        // If it's a new search, clear previous results
         if name != nil {
             self.modalExercises = []
         }
@@ -86,9 +85,7 @@ class ExerciseViewModel: ObservableObject {
         
         var endpoint = "fisio/exercises/modal"
         
-        // If a search query is provided, append it to the endpoint
         if let searchQuery = name, !searchQuery.isEmpty {
-            // URL encoding the search query to handle spaces and special characters
             if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                 endpoint += "?name=\(encodedQuery)"
             }
@@ -101,20 +98,16 @@ class ExerciseViewModel: ObservableObject {
                 responseType: ReadModalExercisesResponse.self
             )
             
-            // Check for success status from backend
             if response.status == "success" {
                 self.modalExercises = response.data ?? []
             } else {
-                // Handle cases like "exercise not found"
                 self.modalExercises = []
-                // Optional: You can set an error message if you want to display it
-                // self.errorMessage = response.message
             }
             
         } catch {
             self.isError = true
             self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
-            self.modalExercises = [] // Clear data on error
+            self.modalExercises = []
             print(error.localizedDescription)
         }
     }
