@@ -97,7 +97,6 @@ struct SafetyModal: View {
         .frame(width: 360, height: 520)
         .background(Color.white)
         .cornerRadius(24)
-        .shadow(radius: 20)
     }
 }
 
