@@ -19,6 +19,20 @@ struct ReadExerciseDetailResponse: Codable {
     var data: MovementDetail
 }
 
+struct ReadModalExercisesResponse: Codable {
+    let status: String
+    let message: String
+    let data: [ModalExercise]?
+}
+
+struct ModalExercise: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let type: String
+    let muscle: String
+    let image: String
+}
+
 struct Movement: Identifiable, Codable {
     let id: Int
     let name: String

@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct DetailPatientPage: View {
-    // --- Dari File 1 ---
     @ObservedObject var viewModel: PatientViewModel
+    
     let fisioId: Int
     let patientId: Int
     
-    // --- Dari File 2 ---
     @State private var showExerciseSheet = false
     @Environment(\.dismiss) var dismiss
     
@@ -21,22 +20,13 @@ struct DetailPatientPage: View {
         
         VStack {
             
-            // --- Logic Wrapper dari File 1 ---
             if viewModel.isLoading {
-                // Anda perlu menyediakan/mendefinisikan LoadingView()
-                // LoadingView(message: "Memuat data detail pasien...")
-                Text("Memuat data...") // Placeholder
+                Text("Memuat data...")
             }
             else if viewModel.errorMessage != "" {
-                // Anda perlu menyediakan/mendefinisikan ErrorView()
-                // ErrorView(message: viewModel.errorMessage)
-                Text("Error: \(viewModel.errorMessage)") // Placeholder
+                Text("Error: \(viewModel.errorMessage)")
             }
-            // MODIFIED: 'patientData' is of type 'ReadPatientDetailData'
             else if let patientData = viewModel.patient {
-                
-                // MODIFIED: Create 'Patient' object from 'ReadPatientDetailData'
-                // This assumes 'ReadPatientDetailData' has all the same properties as 'Patient'
                 let patient = Patient(
                     id: patientData.id,
                     name: patientData.name,
@@ -49,10 +39,8 @@ struct DetailPatientPage: View {
                     exercises: patientData.exercises
                 )
                 
-                // --- UI dan Navigasi dari File 2 ---
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
-                        // All functions now receive the correct 'Patient' type
                         patientHeaderSection(patient: patient)
                         therapyInfoSection(patient: patient)
                         symptomsSection(patient: patient)
@@ -85,23 +73,17 @@ struct DetailPatientPage: View {
                     }
                 }
                 .sheet(isPresented: $showExerciseSheet) {
-                    // This call now works because 'patient' is type 'Patient'
-                    MovementToPatientModal(patient: patient, selectedExercises: .constant(patient.exercises))
+                    MovementToPatientModal(selectedExercises: .constant(patient.exercises), patient: patient)
                 }
-                
             }
-            
         }
         .onAppear {
-            // --- Task dari File 1 ---
             Task {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
             }
         }
     }
     
-    // MARK: - Patient Header Section (dari File 2)
-    // Diperbarui untuk menerima 'patient' sebagai parameter
     private func patientHeaderSection(patient: Patient) -> some View {
         HStack(spacing: 16) {
             Circle()
@@ -140,10 +122,8 @@ struct DetailPatientPage: View {
         .padding(.vertical, 8)
     }
     
-    // MARK: - Therapy Info Section (dari File 2)
     private func therapyInfoSection(patient: Patient) -> some View {
         HStack(spacing: 12) {
-            // Tanggal Mulai Terapi
             HStack(spacing: 8) {
                 Image(systemName: "calendar")
                     .font(.system(size: 13))
@@ -158,7 +138,6 @@ struct DetailPatientPage: View {
             .background(Color(UIColor.systemGray6))
             .cornerRadius(8)
             
-            // Fase Badge
             HStack(spacing: 6) {
                 Text("Fase \(patient.phase)")
                     .font(.system(size: 13, weight: .semibold))
@@ -168,7 +147,7 @@ struct DetailPatientPage: View {
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(patient.getPhaseColor()) // Asumsi getPhaseColor() ada di Patient
+                    .fill(patient.getPhaseColor())
             )
         }
     }
@@ -182,7 +161,6 @@ struct DetailPatientPage: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(patient.symptoms, id: \.self) { symptom in
-                    // MODIFIED: Replaced 'SymptomRow' with simple bullet text
                     Text("• \(symptom)")
                         .font(.system(size: 14))
                         .foregroundColor(.black.opacity(0.8))
@@ -243,10 +221,7 @@ struct DetailPatientPage: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
-                        // MODIFIED: Replaced 'PatientExerciseCard' with 'PatientMovementCard'
                         ForEach(patient.exercises) { exercise in
-                            // MODIFIED: Changed back to PatientExerciseCard
-                            // This logic is from your *second* file
                             PatientExerciseCard(exercise: exercise)
                         }
                     }
@@ -256,7 +231,6 @@ struct DetailPatientPage: View {
         }
     }
     
-    // MARK: - Helper Functions (dari File 2)
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -269,24 +243,3 @@ struct DetailPatientPage: View {
         return dateString
     }
 }
-
-// Anda perlu menambahkan definisi untuk:
-// 1. PatientViewModel
-// 2. LoadingView
-// 3. ErrorView
-// 4. PatientExerciseCard (HARUSNYA SUDAH ADA DARI FILE LAIN)
-// 5. Patient (dan getPhaseColor()) (HARUSNYA SUDAH ADA DARI FILE LAIN)
-// 6. Movement (HARUSNYA SUDAH ADA DARI FILE LAIN)
-// 7. MovementToPatientModal (HARUSNYA SUDAH ADA DARI FILE LAIN)
-// 8. ReadPatientDetailData (Ini adalah tipe dari 'viewModel.patient')
-
-#Preview {
-    // Preview akan error sampai Anda menyediakan ViewModel
-    // DetailPatientPage(patient: samplePatients[0])
-    Text("Preview dinonaktifkan - butuh ViewModel")
-}
-
-
-
-
-
