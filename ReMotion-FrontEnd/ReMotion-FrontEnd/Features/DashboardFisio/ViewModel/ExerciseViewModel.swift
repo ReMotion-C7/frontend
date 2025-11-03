@@ -19,6 +19,8 @@ class ExerciseViewModel: ObservableObject {
     @Published var exercise: MovementDetail?
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
+    @Published var setsInput: String = ""
+    @Published var durationInput: String = ""
     
     func readExercises() async throws {
         
@@ -67,5 +69,83 @@ class ExerciseViewModel: ObservableObject {
             self.errorMessage = "Gagal mengambil detail gerakan!"
             print(error)
         }
+    }
+    
+    func createExercise(
+        from movement: Movement,
+        setsString: String,
+        repOrTimeString: String,
+        currentExercises: [Exercise]
+    ) -> Exercise? {
+        
+        guard !setsString.isEmpty,
+              !repOrTimeString.isEmpty,
+              let sets = Int(setsString),
+              let repOrTime = Int(repOrTimeString)
+        else {
+            self.isError = true
+            self.errorMessage = "Input tidak valid. Harap masukkan angka."
+            return nil
+        }
+        
+
+        guard sets > 0, repOrTime > 0 else {
+            self.isError = true
+            self.errorMessage = "Input harus lebih besar dari 0."
+            return nil
+        }
+
+        let newId = (currentExercises.map { $0.id }.max() ?? 0) + 1
+        let newExercise = Exercise(
+            id: newId, // Use the new incremental ID
+            name: movement.name,
+            type: movement.type,
+            image: movement.image,
+            muscle: movement.muscle,
+            description: movement.description,
+            set: sets,
+            repOrTime: repOrTime
+        )
+        
+        self.isError = false
+        self.errorMessage = ""
+        return newExercise
+    }
+    
+    
+
+    func addExerciseToPatient(currentExercises: [Exercise]) -> Exercise? {
+        guard let currentExercise = self.exercise else {
+            self.isError = true
+            self.errorMessage = "Tidak ada detail gerakan yang dipilih."
+            return nil
+        }
+        
+        guard let sets = Int(setsInput),
+              let repOrTime = Int(durationInput),
+              sets > 0,
+              repOrTime > 0
+        else {
+            self.isError = true
+            self.errorMessage = "Input tidak valid. Harap masukkan angka positif."
+            return nil
+        }
+
+        let newId = (currentExercises.map { $0.id }.max() ?? 0) + 1
+        
+        let newExercise = Exercise(
+            id: newId,
+            name: currentExercise.name,
+            type: currentExercise.type,
+            image: "placeholder_image_url_from_video_or_detail",
+            muscle: currentExercise.muscle,
+            description: currentExercise.description,
+            set: sets,
+            repOrTime: repOrTime
+        )
+        
+        
+        print("Created exercise (from detail stub): \(newExercise.name)")
+        return newExercise
     }
 }
