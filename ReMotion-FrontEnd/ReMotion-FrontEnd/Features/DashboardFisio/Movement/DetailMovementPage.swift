@@ -81,16 +81,35 @@ struct DetailMovementPage: View {
         }
         .navigationTitle("Detail Gerakan Latihan")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {
+                        print("Edit Gerakan tapped")
+                    }) {
+                        Label("Edit Gerakan", systemImage: "square.and.pencil")
+                    }
+                    
+                    Button(role: .destructive, action: {
+                        print("Hapus Gerakan tapped")
+                    }) {
+                        Label("Hapus Gerakan", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
         .onAppear {
             Task {
-                try await viewModel.readExerciseDetail(exerciseId: exerciseId)
+                try? await viewModel.readExerciseDetail(exerciseId: exerciseId)
             }
         }
     }
 }
 
-#Preview {
-    NavigationStack {
-        DetailMovementPage(viewModel: ExerciseViewModel(), exerciseId: 0)
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        DetailMovementPage(viewModel: ExerciseViewModel(), exerciseId: 0)
+//    }
+//}

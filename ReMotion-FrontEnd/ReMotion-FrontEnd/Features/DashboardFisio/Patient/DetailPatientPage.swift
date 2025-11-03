@@ -13,6 +13,8 @@ struct DetailPatientPage: View {
     let fisioId: Int
     let patientId: Int
     
+    @State private var showDeleteModal = false
+    @State private var selectedExercise: Exercise?
     @State private var showExerciseSheet = false
     @Environment(\.dismiss) var dismiss
     
@@ -77,6 +79,32 @@ struct DetailPatientPage: View {
                 }
             }
         }
+        .overlay {
+                    if showDeleteModal, let exercise = selectedExercise {
+                        ZStack {
+                            Color.black.opacity(0.4)
+                                .ignoresSafeArea()
+                                .onTapGesture {
+                                    withAnimation(.spring()) {
+                                        showDeleteModal = false
+                                    }
+                                }
+                            
+                            DeleteModal(
+                                showDeleteModal: $showDeleteModal,
+                                exerciseName: exercise.name,
+                                onConfirm: {
+                                    // viewmodel disini nnti
+                                    withAnimation(.spring()) {
+                                        showDeleteModal = false
+                                    }
+                                }
+                            )
+                        }
+                        .transition(.opacity.combined(with: .scale))
+                        .animation(.spring(), value: showDeleteModal)
+                    }
+                }
         .onAppear {
             Task {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
@@ -220,7 +248,16 @@ struct DetailPatientPage: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
                         ForEach(patient.exercises) { exercise in
-                            PatientExerciseCard(exercise: exercise)
+                            PatientExerciseCard(
+                                exercise: exercise,
+                                onEdit: {
+                                    print("Edit \(exercise.name)")
+                                },
+                                onDelete: {
+                                    selectedExercise = exercise
+                                    showDeleteModal = true
+                                }
+                            )
                         }
                     }
                     .padding(.vertical, 4)

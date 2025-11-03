@@ -10,6 +10,8 @@ import SwiftUI
 struct LibraryGerakanPage: View {
     
     @StateObject private var viewModel = ExerciseViewModel()
+    @State private var showDeleteModal = false
+    @State private var selectedExercise: Exercise?
     
     var body: some View {
         GeometryReader { geometry in
@@ -40,6 +42,25 @@ struct LibraryGerakanPage: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
                 }
+            }
+        }
+        .overlay {
+            if showDeleteModal {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                DeleteModal(
+                    showDeleteModal: $showDeleteModal,
+                    exerciseName: selectedExercise?.name ?? "Gerakan",
+                    onConfirm: {
+                        if let selected = selectedExercise {
+//                            Task {
+//                                await viewModel.deleteExercise(id: selected.id)
+//                                await viewModel.readExercises()
+//                            }
+                        }
+                    }
+                )
+                .transition(.scale.combined(with: .opacity))
             }
         }
         .onAppear {
