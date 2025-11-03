@@ -63,7 +63,6 @@ struct SafetyModal: View {
         .frame(width: 360, height: 360)
         .background(Color.white)
         .cornerRadius(24)
-//        .glassEffect(.identity, in:. rect(cornerRadius: 24))
     }
 }
 

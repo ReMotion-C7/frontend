@@ -14,6 +14,16 @@
 		F2D70DA92EB486680015112D /* QuickPoseSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F2D70DA82EB486680015112D /* QuickPoseSwiftUI */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F2D70FC32EB842AC0015112D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 667CD02F2EA9BF8E00BE40AE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 667CD0362EA9BF8E00BE40AE;
+			remoteInfo = "ReMotion-FrontEnd";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		6F2A6DA92EB1C1F80093400A /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -29,12 +39,18 @@
 
 /* Begin PBXFileReference section */
 		667CD0372EA9BF8F00BE40AE /* ReMotion-FrontEnd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ReMotion-FrontEnd.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2D70FBF2EB842AC0015112D /* ReMotion-FrontEndTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ReMotion-FrontEndTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		667CD0392EA9BF8F00BE40AE /* ReMotion-FrontEnd */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "ReMotion-FrontEnd";
+			sourceTree = "<group>";
+		};
+		F2D70FC02EB842AC0015112D /* ReMotion-FrontEndTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "ReMotion-FrontEndTests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +68,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F2D70FBC2EB842AC0015112D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -59,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				667CD0392EA9BF8F00BE40AE /* ReMotion-FrontEnd */,
+				F2D70FC02EB842AC0015112D /* ReMotion-FrontEndTests */,
 				667CD0382EA9BF8F00BE40AE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				667CD0372EA9BF8F00BE40AE /* ReMotion-FrontEnd.app */,
+				F2D70FBF2EB842AC0015112D /* ReMotion-FrontEndTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,6 +127,29 @@
 			productReference = 667CD0372EA9BF8F00BE40AE /* ReMotion-FrontEnd.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F2D70FBE2EB842AC0015112D /* ReMotion-FrontEndTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2D70FC72EB842AC0015112D /* Build configuration list for PBXNativeTarget "ReMotion-FrontEndTests" */;
+			buildPhases = (
+				F2D70FBB2EB842AC0015112D /* Sources */,
+				F2D70FBC2EB842AC0015112D /* Frameworks */,
+				F2D70FBD2EB842AC0015112D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F2D70FC42EB842AC0015112D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F2D70FC02EB842AC0015112D /* ReMotion-FrontEndTests */,
+			);
+			name = "ReMotion-FrontEndTests";
+			packageProductDependencies = (
+			);
+			productName = "ReMotion-FrontEndTests";
+			productReference = F2D70FBF2EB842AC0015112D /* ReMotion-FrontEndTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -114,6 +162,10 @@
 				TargetAttributes = {
 					667CD0362EA9BF8E00BE40AE = {
 						CreatedOnToolsVersion = 26.0.1;
+					};
+					F2D70FBE2EB842AC0015112D = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 667CD0362EA9BF8E00BE40AE;
 					};
 				};
 			};
@@ -136,12 +188,20 @@
 			projectRoot = "";
 			targets = (
 				667CD0362EA9BF8E00BE40AE /* ReMotion-FrontEnd */,
+				F2D70FBE2EB842AC0015112D /* ReMotion-FrontEndTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		667CD0352EA9BF8E00BE40AE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2D70FBD2EB842AC0015112D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -158,7 +218,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F2D70FBB2EB842AC0015112D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F2D70FC42EB842AC0015112D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 667CD0362EA9BF8E00BE40AE /* ReMotion-FrontEnd */;
+			targetProxy = F2D70FC32EB842AC0015112D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		667CD0402EA9BF9000BE40AE /* Debug */ = {
@@ -296,8 +371,9 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -330,8 +406,9 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -347,6 +424,58 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		F2D70FC52EB842AC0015112D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RP5526BVLK;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "personal.ReMotion-FrontEndTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReMotion-FrontEnd.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReMotion-FrontEnd";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		F2D70FC62EB842AC0015112D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RP5526BVLK;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "personal.ReMotion-FrontEndTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReMotion-FrontEnd.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReMotion-FrontEnd";
+				XROS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -367,6 +496,15 @@
 			buildConfigurations = (
 				667CD0432EA9BF9000BE40AE /* Debug */,
 				667CD0442EA9BF9000BE40AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2D70FC72EB842AC0015112D /* Build configuration list for PBXNativeTarget "ReMotion-FrontEndTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2D70FC52EB842AC0015112D /* Debug */,
+				F2D70FC62EB842AC0015112D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

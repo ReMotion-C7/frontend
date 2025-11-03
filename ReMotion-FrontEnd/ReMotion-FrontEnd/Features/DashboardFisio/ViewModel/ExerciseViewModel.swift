@@ -19,6 +19,7 @@ class ExerciseViewModel: ObservableObject {
     @Published var exercise: MovementDetail?
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
+    @Published var modalExercises: [ModalExercise] = []
     
     func readExercises() async throws {
         
@@ -66,6 +67,48 @@ class ExerciseViewModel: ObservableObject {
             self.isError = true
             self.errorMessage = "Gagal mengambil detail gerakan!"
             print(error)
+        }
+    }
+    
+    func readModalExercises(name: String? = nil) async {
+        isLoading = true
+        isError = false
+        errorMessage = ""
+        
+        if name != nil {
+            self.modalExercises = []
+        }
+        
+        defer {
+            isLoading = false
+        }
+        
+        var endpoint = "fisio/exercises/modal"
+        
+        if let searchQuery = name, !searchQuery.isEmpty {
+            if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                endpoint += "?name=\(encodedQuery)"
+            }
+        }
+        
+        do {
+            let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
+                endpoint,
+                method: .get,
+                responseType: ReadModalExercisesResponse.self
+            )
+            
+            if response.status == "success" {
+                self.modalExercises = response.data ?? []
+            } else {
+                self.modalExercises = []
+            }
+            
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
+            self.modalExercises = []
+            print(error.localizedDescription)
         }
     }
 }
