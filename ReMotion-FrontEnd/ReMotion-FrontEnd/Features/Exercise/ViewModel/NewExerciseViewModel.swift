@@ -25,6 +25,12 @@ class NewExerciseViewModel: ObservableObject {
     @Published var lastImage: UIImage? = nil
     @Published var imageResult: UIImage? = nil
     @Published var angle: Int = 0
+    @Published var poseScore: Int = 0
+    
+    @Published var leftKneeScore:Double = 0.0
+    @Published var rightKneeScore:Double = 0.0
+    
+    let idealKneeAngle = 90.0
     
     private var timer: Timer?
     
@@ -39,9 +45,9 @@ class NewExerciseViewModel: ObservableObject {
         quickPose.start(
             features: [
                 .inside(edgeInsets),
-                .rangeOfMotion(.knee(side: .left, clockwiseDirection: false), style: basicStyle),
-                .rangeOfMotion(.knee(side: .right, clockwiseDirection: false), style: basicStyle),
-                .overlay(.upperBody)
+                .rangeOfMotion(.knee(side: .left, clockwiseDirection: true), style: basicStyle),
+                .rangeOfMotion(.knee(side: .right, clockwiseDirection: true), style: basicStyle),
+                .overlay(.none)
             ]
         ) { status, outputImage, measurements, feedback, body in
             
@@ -53,17 +59,42 @@ class NewExerciseViewModel: ObservableObject {
                 case .success:
                     
                     if feedback.values.first != nil {
-                        print("OKE BANG")
+                        print("MEASUREMENTS VALUES")
+                        print(measurements.values)
+                        
                         self.showModal = true
                     } else {
                         self.showModal = false
                     }
+                    
+                    for (feature, result) in measurements {
+                        switch feature {
+                        case .rangeOfMotion(let rom, _):
+                            switch rom {
+                            case .knee(side: .left, _):
+                                print("Left knee angle: \(result.stringValue)")
+                                self.leftKneeScore = self.countIdealScore(for: result.value, ideal: 90, tolerance: 90)
+                            case .knee(side: .right, _):
+                                print("Right knee angle: \(result.stringValue)")
+                                self.rightKneeScore = self.countIdealScore(for: result.value, ideal: 90, tolerance: 90)
+                            default:
+                                break
+                            }
+                            
+//                            case .inside:
+//                                print("Inside score: \(result.stringValue)")
+                            
+                        default:
+                            break
+                        }
+                    }
+                    
                 case .noPersonFound:
                     print("GAADA ORANG BANGG")
                 case .sdkValidationError:
                     print("APALAH INI")
-                    
-                }            }
+                }
+            }
         }
     }
     
@@ -112,5 +143,11 @@ class NewExerciseViewModel: ObservableObject {
         let combinedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return combinedImage
+    }
+    
+    private func countIdealScore(for measured: Double, ideal: Double, tolerance: Double) -> Double {
+        let diff = abs(measured - ideal)
+        if diff >= tolerance { return 0.0 }
+        return 1.0 - (diff / tolerance)
     }
 }

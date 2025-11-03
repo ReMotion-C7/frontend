@@ -34,7 +34,7 @@ struct NewExerciseView: View {
                 HStack {
                     if let url = URL(string: videoURL) {
                         VideoPlayerView(videoURL: url)
-                            .frame(maxWidth: 380, maxHeight: 200)
+                            .frame(maxWidth: 380, maxHeight: 300)
                             .cornerRadius(16)
                     }
                 }
@@ -88,7 +88,21 @@ struct NewExerciseView: View {
             ZStack {
                 //                Text("Ini bagian video bang")
                 QuickPoseCameraView(useFrontCamera: viewModel.useFrontCamera, delegate: viewModel.quickPose)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 QuickPoseOverlayView(overlayImage: $viewModel.overlayImage)
+                
+                VStack {
+                    ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+                        .padding(32)
+                        .frame(width:400, height: 100)
+                    
+//                    Text("\(viewModel.leftKneeScore)")
+//                    Text("\(viewModel.rightKneeScore)")
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                )                
                 
                 if viewModel.showModal {
                     VStack {
@@ -108,40 +122,10 @@ struct NewExerciseView: View {
                     )
                 }
                 
-                if !viewModel.showModal && viewModel.startCountdown && viewModel.beginCountdown {
-                    Text("\(viewModel.displayedCountdown)")
-                }
-                
-                if viewModel.displayResultModal && viewModel.imageResult != nil {
-                    VStack {
-                        Text("Hasil Penilaian")
-                            .font(Font.largeTitle.bold())
-                        Image(uiImage: viewModel.imageResult!)
-                        Text("Ruang Lingkup Gerak Sendi Lutut: \(viewModel.angle)°.")
-                        NavigationLink(destination: EvaluasiGerakanPage()) {
-                            Text("Selesai")
-                                .background(Color.black)
-                                .foregroundColor(Color.white)
-                        }
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.white)
-                    )
-                }
             }
             .onAppear(perform: viewModel.quickPoseSetup)
             .onDisappear {
                 viewModel.quickPose.stop()
-            }
-            .onChange(of: viewModel.showModal) { show in
-                if !show {
-                    print("CHECKING COUNTDOWN BANG")
-                    viewModel.checkCountdown()
-                } else {
-                    viewModel.resetReadyCountdown()
-                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
