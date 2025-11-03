@@ -8,56 +8,47 @@
 import SwiftUI
 
 struct MovementToPatientModal: View {
-    @Environment(\.dismiss) var dismiss
     @State private var searchText = ""
-    let patient: Patient
     @Binding var selectedExercises: [Exercise]
-    @State private var showConfigModal = false
-    @State private var selectedMovement: Movement?
-    @State private var shouldDismiss = false
+    @Environment(\.dismiss) var dismiss
+    @StateObject private var viewModel = ExerciseViewModel()
     
-    let availableMovements: [Movement] = sampleMovements
-    
-    var filteredMovements: [Movement] {
-        if searchText.isEmpty {
-            return availableMovements
-        }
-        return availableMovements.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-    }
+    let patient: Patient
     
     var body: some View {
-        // 1. Wrap in ZStack to allow overlay
-        ZStack {
-            VStack(spacing: 0) {
-                headerSection
-                Divider()
-                searchSection
+        VStack(spacing: 0) {
+            headerSection
+            Divider()
+            searchSection
+            
+            if viewModel.isLoading {
+                Spacer()
+                ProgressView("Memuat Gerakan...")
+                Spacer()
+            } else if viewModel.isError {
+                Spacer()
+                Text(viewModel.errorMessage)
+                    .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                Spacer()
+            } else {
                 exerciseGridSection
             }
-            .background(Color(UIColor.systemGroupedBackground))
-            // 2. Remove .sheet modifier
-            .onChange(of: shouldDismiss) { oldValue, newValue in
-                if newValue {
-                    dismiss()
-                }
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .onAppear {
+            Task {
+                await viewModel.readModalExercises()
             }
-            
-            // 3. Add modal as an overlay
-            if showConfigModal {
-                if let movement = selectedMovement {
-                    MovementConfigModal(
-                        movement: movement,
-                        patient: patient,
-                        selectedExercises: $selectedExercises,
-                        showConfigModal: $showConfigModal, // Pass binding to control visibility
-                        dismissParent: $shouldDismiss
-                    )
-                }
+        }
+        .onChange(of: searchText) { oldValue, newValue in
+            Task {
+                await viewModel.readModalExercises(name: newValue)
             }
         }
     }
     
-    // MARK: - Header Section
     private var headerSection: some View {
         HStack {
             Button(action: { dismiss() }) {
@@ -82,7 +73,6 @@ struct MovementToPatientModal: View {
         .background(Color.white)
     }
     
-    // MARK: - Search Section
     private var searchSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Cari Gerakan")
@@ -94,7 +84,7 @@ struct MovementToPatientModal: View {
                     .font(.system(size: 16))
                     .foregroundColor(.gray)
                 
-                TextField("Quadriceps set", text: $searchText)
+                TextField("Contoh: Quadriceps set", text: $searchText)
                     .font(.system(size: 15))
                 
                 if !searchText.isEmpty {
@@ -119,29 +109,77 @@ struct MovementToPatientModal: View {
         .background(Color.white)
     }
     
-    // MARK: - Exercise Grid Section
     private var exerciseGridSection: some View {
         ScrollView {
-            LazyVGrid(columns: [
-                GridItem(.flexible(), spacing: 16),
-                GridItem(.flexible(), spacing: 16)
-            ], spacing: 16) {
-                ForEach(filteredMovements) { movement in
-                    MovementSelectionCard(movement: movement)
-                        .onTapGesture {
-                            selectedMovement = movement
-                            showConfigModal = true
-                        }
+            if viewModel.modalExercises.isEmpty && !searchText.isEmpty {
+                Text("Gerakan \"\(searchText)\" tidak ditemukan.")
+                    .foregroundColor(.gray)
+                    .padding(.top, 50)
+            } else {
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 16),
+                    GridItem(.flexible(), spacing: 16)
+                ], spacing: 16) {
+                    ForEach(viewModel.modalExercises) { exercise in
+                        ModalMovementSelectionCard(exercise: exercise)
+                            .onTapGesture {
+                                print("\(exercise.name) selected")
+                            }
+                    }
                 }
+                .padding(20)
             }
-            .padding(20)
         }
     }
 }
 
-#Preview {
-    MovementToPatientModal(
-        patient: samplePatients[0],
-        selectedExercises: .constant([])
-    )
+struct ModalMovementSelectionCard: View {
+    let exercise: ModalExercise
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            AsyncImage(url: URL(string: exercise.image)) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .failure(_):
+                    Image(systemName: "photo")
+                        .font(.largeTitle)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.gray.opacity(0.3))
+                default:
+                    ZStack {
+                        Color.clear
+                        ProgressView()
+                    }
+                }
+            }
+            .frame(height: 120)
+            .clipped()
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(exercise.name)
+                    .font(.system(size: 16, weight: .semibold))
+                    .lineLimit(1)
+                
+                HStack {
+                    Text(exercise.type)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    Spacer()
+                    Text(exercise.muscle)
+                        .font(.caption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(8)
+                }
+            }
+            .padding(12)
+        }
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+    }
 }
