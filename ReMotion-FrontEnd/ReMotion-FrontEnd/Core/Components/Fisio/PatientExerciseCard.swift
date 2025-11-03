@@ -9,6 +9,8 @@ import SwiftUI
 
 struct PatientExerciseCard: View {
     let exercise: Exercise
+    var onEdit: (() -> Void)?
+    var onDelete: (() -> Void)?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -39,10 +41,21 @@ struct PatientExerciseCard: View {
                         }
                     )
                 
-                
-                Button(action: {}) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(.gray)
+                Menu {
+                    Button(action: { onEdit?() }) {
+                        Label("Edit", systemImage: "square.and.pencil")
+                    }
+                    
+                    Button(role: .destructive, action: { onDelete?() }) {
+                        Label("Hapus", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.black.opacity(0.4))
+                        .clipShape(Circle())
                         .padding(8)
                 }
             }
@@ -107,6 +120,7 @@ struct PatientExerciseCard: View {
     }
 }
 
-#Preview {
-    PatientExerciseCard(exercise: samplePatients[0].exercises[0])
-}
+//#Preview {
+//    PatientExerciseCard(exercise: samplePatients[0].exercises[0])
+//}
+
