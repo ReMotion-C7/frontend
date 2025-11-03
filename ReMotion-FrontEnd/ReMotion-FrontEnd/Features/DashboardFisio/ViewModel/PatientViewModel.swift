@@ -14,11 +14,41 @@ class PatientViewModel: ObservableObject {
     
     @Published var readPatientResponse: ReadPatientResponse?
     @Published var readPatientDetailResponse: ReadPatientDetailResponse?
+    @Published var readUsersNonFisioResponse: ReadUsersNonFisioResponse?
+    
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
     @Published var patients: [ReadPatientData] = []
+    @Published var users: [ReadUsersNonFisioData] = []
     @Published var patient: ReadPatientDetailData?
+    
+    func readUsersNonFisio(fisioId: Int) async throws {
+        
+        isLoading = true
+        
+        defer {
+            isLoading = false
+        }
+        
+        do {
+            let response: ReadUsersNonFisioResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/users",
+                method: .get,
+                responseType: ReadUsersNonFisioResponse.self
+            )
+            self.readUsersNonFisioResponse = response
+            if let data = readUsersNonFisioResponse?.data {
+                self.errorMessage = ""
+                self.isError = false
+                self.users = data
+            }
+            
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal mengambil data user yang belum terdaftar sebagai fisio!"
+        }
+    }
     
     func readPatients(fisioId: Int) async throws {
         

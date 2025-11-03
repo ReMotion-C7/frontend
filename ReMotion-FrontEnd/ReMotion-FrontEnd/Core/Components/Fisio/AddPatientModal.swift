@@ -17,6 +17,10 @@ struct AddPatientModal: View {
     @State private var showDatePicker = false
     @State private var showSymptomInput = false
     
+    let fisioId: Int
+    
+    @StateObject private var viewModel = PatientViewModel()
+
     let availablePatients = samplePatients
     
     var filteredPatients: [Patient] {
@@ -78,9 +82,15 @@ struct AddPatientModal: View {
                             
                             Spacer()
                             
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                                .font(.system(size: 16))
+                            Button(action: {
+                                
+                            }) {
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundColor(.gray)
+                                    .font(.system(size: 16))
+                            }
+                            .buttonStyle(.plain)
+
                         }
                         .padding()
                         .background(Color.gray.opacity(selectedPatient != nil ? 0.05 : 0.1))
@@ -284,6 +294,11 @@ struct AddPatientModal: View {
             .disabled(selectedPatient == nil)
         }
         .background(Color.white)
+        .onAppear {
+            Task {
+                try await viewModel.readUsersNonFisio(fisioId: fisioId)
+            }
+        }
     }
     
     private func formatDate(_ date: Date) -> String {
@@ -307,6 +322,6 @@ struct AddPatientModal: View {
     }
 }
 
-#Preview {
-    AddPatientModal()
-}
+//#Preview {
+//    AddPatientModal()
+//}
