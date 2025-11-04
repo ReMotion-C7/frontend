@@ -146,48 +146,49 @@ class ExerciseViewModel: ObservableObject {
         )
         
         
+        
         print("Created exercise (from detail stub): \(newExercise.name)")
         return newExercise
-        func readModalExercises(name: String? = nil) async {
-            isLoading = true
-            isError = false
-            errorMessage = ""
+    }
+    func readModalExercises(name: String? = nil) async {
+        isLoading = true
+        isError = false
+        errorMessage = ""
+        
+        if name != nil {
+            self.modalExercises = []
+        }
+        
+        defer {
+            isLoading = false
+        }
+        
+        var endpoint = "fisio/exercises/modal"
+        
+        if let searchQuery = name, !searchQuery.isEmpty {
+            if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                endpoint += "?name=\(encodedQuery)"
+            }
+        }
+        
+        do {
+            let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
+                endpoint,
+                method: .get,
+                responseType: ReadModalExercisesResponse.self
+            )
             
-            if name != nil {
+            if response.status == "success" {
+                self.modalExercises = response.data ?? []
+            } else {
                 self.modalExercises = []
             }
             
-            defer {
-                isLoading = false
-            }
-            
-            var endpoint = "fisio/exercises/modal"
-            
-            if let searchQuery = name, !searchQuery.isEmpty {
-                if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                    endpoint += "?name=\(encodedQuery)"
-                }
-            }
-            
-            do {
-                let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
-                    endpoint,
-                    method: .get,
-                    responseType: ReadModalExercisesResponse.self
-                )
-                
-                if response.status == "success" {
-                    self.modalExercises = response.data ?? []
-                } else {
-                    self.modalExercises = []
-                }
-                
-            } catch {
-                self.isError = true
-                self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
-                self.modalExercises = []
-                print(error.localizedDescription)
-            }
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
+            self.modalExercises = []
+            print(error.localizedDescription)
         }
     }
 }
