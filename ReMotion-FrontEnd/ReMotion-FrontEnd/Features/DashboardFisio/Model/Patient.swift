@@ -72,6 +72,11 @@ struct ReadPatientDetailData: Identifiable, Codable {
     }
 }
 
+struct EditPatientExerciseResponse: Codable {
+    let status: String
+    let message: String
+}
+
 struct Patient: Identifiable, Codable {
     let id: Int
     let name: String
@@ -104,8 +109,8 @@ struct Exercise: Identifiable, Codable {
     let image: String
     let muscle: String
     let description: String
-    let set: Int
-    let repOrTime: Int
+    var set: Int
+    var repOrTime: Int
 }
 
 let samplePatients: [Patient] = [
