@@ -150,6 +150,7 @@ class ExerciseViewModel: ObservableObject {
         print("Created exercise (from detail stub): \(newExercise.name)")
         return newExercise
     }
+    
     func readModalExercises(name: String? = nil) async {
         isLoading = true
         isError = false
@@ -189,6 +190,38 @@ class ExerciseViewModel: ObservableObject {
             self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
             self.modalExercises = []
             print(error.localizedDescription)
+        }
+    }
+    
+    func deleteExercise(exerciseId: Int) async -> Bool {
+        isLoading = true
+        isError = false
+        errorMessage = ""
+        
+        defer {
+            isLoading = false
+        }
+        
+        do {
+            let response: DeleteExerciseResponse = try await APIService.shared.requestAPI(
+                "fisio/exercises/delete/\(exerciseId)",
+                method: .delete, // Menggunakan metode HTTP DELETE
+                responseType: DeleteExerciseResponse.self
+            )
+            
+            if response.status == "success" {
+                print(response.message)
+                return true // Berhasil
+            } else {
+                self.isError = true
+                self.errorMessage = response.message
+                return false // Gagal
+            }
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal menghapus gerakan. Periksa koneksi Anda."
+            print(error.localizedDescription)
+            return false // Gagal karena error koneksi atau lainnya
         }
     }
 }
