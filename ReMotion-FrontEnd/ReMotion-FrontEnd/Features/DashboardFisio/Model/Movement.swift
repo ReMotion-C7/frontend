@@ -25,6 +25,11 @@ struct ReadModalExercisesResponse: Codable {
     let data: [ModalExercise]?
 }
 
+struct DeleteExerciseResponse: Codable {
+    let status: String
+    let message: String
+}
+
 struct ModalExercise: Codable, Identifiable {
     let id: Int
     let name: String
