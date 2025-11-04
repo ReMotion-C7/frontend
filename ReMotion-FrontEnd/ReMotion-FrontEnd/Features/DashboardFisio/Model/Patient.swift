@@ -8,6 +8,11 @@
 import Foundation
 import SwiftUI
 
+struct AddPatientResponse: Codable {
+    var status: String
+    var message: String
+}
+
 struct ReadUsersNonFisioResponse: Codable {
     var status: String
     var message: String

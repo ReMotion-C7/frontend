@@ -15,6 +15,7 @@ class PatientViewModel: ObservableObject {
     @Published var readPatientResponse: ReadPatientResponse?
     @Published var readPatientDetailResponse: ReadPatientDetailResponse?
     @Published var readUsersNonFisioResponse: ReadUsersNonFisioResponse?
+    @Published var addPatientResponse: AddPatientResponse?
     
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
@@ -22,6 +23,35 @@ class PatientViewModel: ObservableObject {
     @Published var patients: [ReadPatientData] = []
     @Published var users: [ReadUsersNonFisioData] = []
     @Published var patient: ReadPatientDetailData?
+    
+    func addPatient(fisioId: Int, userId: Int, phase: Int, therapyStartDate: String, symptoms: [String]) async throws {
+        print(fisioId)
+        print(userId)
+        print(phase)
+        print(therapyStartDate)
+        print(symptoms)
+        do {
+            let response: AddPatientResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/add",
+                method: .post,
+                parameters: [
+                    "userId": userId,
+                    "phase": phase,
+                    "therapyStartDate": therapyStartDate,
+                    "symptoms": symptoms
+                    ],
+                responseType: AddPatientResponse.self
+            )
+            self.addPatientResponse = response
+            self.errorMessage = ""
+            self.isError = false
+            
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal mengambil data user yang belum terdaftar sebagai fisio!"
+        }
+        
+    }
     
     func readUsersNonFisio(fisioId: Int) async throws {
         
