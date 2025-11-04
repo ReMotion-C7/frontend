@@ -15,12 +15,12 @@ struct DeleteModal: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Title
-            Text("Konfirmasi")
+            Text("Apakah anda yakin ingin menghapus latihan ini?")
                 .font(.headline)
                 .fontWeight(.semibold)
             
             // Body
-            Text("Apakah anda yakin ingin menghapus gerakan \(exerciseName)? Aksi ini tidak dapat dibatalkan.")
+            Text("Tindakan ini tidak dapat dibatalkan dan semua data latihan akan hilang secara permanen..")
                 .font(.callout)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -31,7 +31,7 @@ struct DeleteModal: View {
             Button(action: {
                 onConfirm()
             }) {
-                Text("Lanjutkan")
+                Text("Hapus")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)

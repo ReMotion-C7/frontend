@@ -19,6 +19,8 @@ class PatientViewModel: ObservableObject {
     @Published var isError: Bool = false
     @Published var patients: [ReadPatientData] = []
     @Published var patient: ReadPatientDetailData?
+    @Published var fisioId: Int?
+    @Published var patientId: Int?
     
     func readPatients(fisioId: Int) async throws {
         
@@ -76,6 +78,42 @@ class PatientViewModel: ObservableObject {
             self.isError = true
             print("hahahaha")
             self.errorMessage = "Gagal mengambil data detail pasien!"
+        }
+    }
+    
+    func editPatientExercise(
+        fisioId: Int,
+        patientId: Int,
+        exerciseId: Int,
+        set: Int,
+        repOrTime: Int
+    ) async {
+        isLoading = true
+        isError = false
+        errorMessage = ""
+
+        defer {
+            isLoading = false
+        }
+
+        do {
+            let response: EditPatientExerciseResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/\(patientId)/exercises/edit/\(exerciseId)",
+                method: .patch,
+                parameters: ["set": set, "repOrTime": repOrTime],
+                responseType: EditPatientExerciseResponse.self
+            )
+
+            if response.status == "success" {
+                self.isError = false
+            } else {
+                self.isError = true
+                self.errorMessage = response.message
+            }
+
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal mengedit data gerakan!"
         }
     }
 }

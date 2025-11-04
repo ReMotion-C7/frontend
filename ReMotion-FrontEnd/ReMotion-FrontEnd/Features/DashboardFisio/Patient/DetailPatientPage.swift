@@ -14,6 +14,7 @@ struct DetailPatientPage: View {
     let patientId: Int
     
     @State private var showDeleteModal = false
+    @State private var showEditModal = false
     @State private var selectedExercise: Exercise?
     @State private var showExerciseSheet = false
     @Environment(\.dismiss) var dismiss
@@ -80,36 +81,59 @@ struct DetailPatientPage: View {
             }
         }
         .overlay {
-                    if showDeleteModal, let exercise = selectedExercise {
-                        ZStack {
-                            Color.black.opacity(0.4)
-                                .ignoresSafeArea()
-                                .onTapGesture {
-                                    withAnimation(.spring()) {
-                                        showDeleteModal = false
-                                    }
-                                }
-                            
-                            DeleteModal(
-                                showDeleteModal: $showDeleteModal,
-                                exerciseName: exercise.name,
-                                onConfirm: {
-                                    // viewmodel disini nnti
-                                    withAnimation(.spring()) {
-                                        showDeleteModal = false
-                                    }
-                                }
-                            )
+            if showDeleteModal, let exercise = selectedExercise {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring()) {
+                                showDeleteModal = false
+                            }
                         }
-                        .transition(.opacity.combined(with: .scale))
-                        .animation(.spring(), value: showDeleteModal)
-                    }
+                    
+                    DeleteModal(
+                        showDeleteModal: $showDeleteModal,
+                        exerciseName: exercise.name,
+                        onConfirm: {
+                            // viewmodel disini nnti
+                            withAnimation(.spring()) {
+                                showDeleteModal = false
+                            }
+                        }
+                    )
                 }
+                .transition(.opacity.combined(with: .scale))
+                .animation(.spring(), value: showDeleteModal)
+            }
+            if showEditModal, let selected = selectedExercise {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring()) {
+                                showEditModal = false
+                            }
+                        }
+                    EditPatientExerciseModal(
+                        exercise: selected,
+                        viewModel: viewModel,
+                        showEditModal: $showEditModal
+                    )
+                }
+                .transition(.opacity.combined(with: .scale))
+                .animation(.spring(), value: showEditModal)
+            }
+            
+        }
         .onAppear {
             Task {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
+                
+                viewModel.fisioId = fisioId
+                viewModel.patientId = patientId
             }
         }
+
     }
     
     private func patientHeaderSection(patient: Patient) -> some View {
@@ -251,7 +275,8 @@ struct DetailPatientPage: View {
                             PatientExerciseCard(
                                 exercise: exercise,
                                 onEdit: {
-                                    print("Edit \(exercise.name)")
+                                    selectedExercise = exercise
+                                    showEditModal = true
                                 },
                                 onDelete: {
                                     selectedExercise = exercise
