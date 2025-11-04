@@ -89,13 +89,13 @@ class ExerciseViewModel: ObservableObject {
             return nil
         }
         
-
+        
         guard sets > 0, repOrTime > 0 else {
             self.isError = true
             self.errorMessage = "Input harus lebih besar dari 0."
             return nil
         }
-
+        
         let newId = (currentExercises.map { $0.id }.max() ?? 0) + 1
         let newExercise = Exercise(
             id: newId, // Use the new incremental ID
@@ -114,7 +114,7 @@ class ExerciseViewModel: ObservableObject {
     }
     
     
-
+    
     func addExerciseToPatient(currentExercises: [Exercise]) -> Exercise? {
         guard let currentExercise = self.exercise else {
             self.isError = true
@@ -131,7 +131,7 @@ class ExerciseViewModel: ObservableObject {
             self.errorMessage = "Input tidak valid. Harap masukkan angka positif."
             return nil
         }
-
+        
         let newId = (currentExercises.map { $0.id }.max() ?? 0) + 1
         
         let newExercise = Exercise(
@@ -148,45 +148,46 @@ class ExerciseViewModel: ObservableObject {
         
         print("Created exercise (from detail stub): \(newExercise.name)")
         return newExercise
-    func readModalExercises(name: String? = nil) async {
-        isLoading = true
-        isError = false
-        errorMessage = ""
-        
-        if name != nil {
-            self.modalExercises = []
-        }
-        
-        defer {
-            isLoading = false
-        }
-        
-        var endpoint = "fisio/exercises/modal"
-        
-        if let searchQuery = name, !searchQuery.isEmpty {
-            if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                endpoint += "?name=\(encodedQuery)"
-            }
-        }
-        
-        do {
-            let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
-                endpoint,
-                method: .get,
-                responseType: ReadModalExercisesResponse.self
-            )
+        func readModalExercises(name: String? = nil) async {
+            isLoading = true
+            isError = false
+            errorMessage = ""
             
-            if response.status == "success" {
-                self.modalExercises = response.data ?? []
-            } else {
+            if name != nil {
                 self.modalExercises = []
             }
             
-        } catch {
-            self.isError = true
-            self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
-            self.modalExercises = []
-            print(error.localizedDescription)
+            defer {
+                isLoading = false
+            }
+            
+            var endpoint = "fisio/exercises/modal"
+            
+            if let searchQuery = name, !searchQuery.isEmpty {
+                if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                    endpoint += "?name=\(encodedQuery)"
+                }
+            }
+            
+            do {
+                let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
+                    endpoint,
+                    method: .get,
+                    responseType: ReadModalExercisesResponse.self
+                )
+                
+                if response.status == "success" {
+                    self.modalExercises = response.data ?? []
+                } else {
+                    self.modalExercises = []
+                }
+                
+            } catch {
+                self.isError = true
+                self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
+                self.modalExercises = []
+                print(error.localizedDescription)
+            }
         }
     }
 }
