@@ -42,7 +42,7 @@ class PatientViewModel: ObservableObject {
                     "phase": phase,
                     "therapyStartDate": therapyStartDate,
                     "symptoms": symptoms
-                ],
+                    ],
                 responseType: AddPatientResponse.self
             )
             self.addPatientResponse = response
@@ -150,7 +150,7 @@ class PatientViewModel: ObservableObject {
         }
         
         do {
-            
+   
             let response: BaseResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)",
                 method: .delete,
@@ -168,7 +168,10 @@ class PatientViewModel: ObservableObject {
             print(error.localizedDescription)
         }
     }
-    
+}
+
+struct BaseResponse: Codable {
+   let message: String?
     func editPatientExercise(
         fisioId: Int,
         patientId: Int,
@@ -179,11 +182,11 @@ class PatientViewModel: ObservableObject {
         isLoading = true
         isError = false
         errorMessage = ""
-        
+
         defer {
             isLoading = false
         }
-        
+
         do {
             let response: EditPatientExerciseResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)/exercises/edit/\(exerciseId)",
@@ -191,54 +194,17 @@ class PatientViewModel: ObservableObject {
                 parameters: ["set": set, "repOrTime": repOrTime],
                 responseType: EditPatientExerciseResponse.self
             )
-            
+
             if response.status == "success" {
                 self.isError = false
             } else {
                 self.isError = true
                 self.errorMessage = response.message
             }
-            
+
         } catch {
             self.isError = true
             self.errorMessage = "Gagal mengedit data gerakan!"
         }
     }
-    
-    func deletePatientExercise(fisioId: Int, patientId: Int, exerciseId: Int) async -> Bool {
-        isLoading = true
-        isError = false
-        errorMessage = ""
-        
-        defer {
-            isLoading = false
-        }
-        
-        do {
-            let response: DeletePatientExerciseResponse = try await APIService.shared.requestAPI(
-                "fisio/\(fisioId)/patients/\(patientId)/exercises/delete/\(exerciseId)",
-                method: .delete,
-                responseType: DeletePatientExerciseResponse.self
-            )
-            
-            if response.status == "success" {
-                print(response.message)
-                return true
-            } else {
-                self.isError = true
-                self.errorMessage = response.message
-                return false
-            }
-        } catch {
-            self.isError = true
-            self.errorMessage = "Gagal menghapus gerakan pasien. Periksa koneksi Anda."
-            print(error.localizedDescription)
-            return false
-        }
-    }
-}
-
-
-struct BaseResponse: Codable {
-    let message: String?
 }

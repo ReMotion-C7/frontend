@@ -73,7 +73,7 @@ struct ReadPatientDetailData: Identifiable, Codable {
     let dateOfBirth: String
     let therapyStartDate: String
     let symptoms: [String]
-    let exercises: [Exercise]?
+    let exercises: [Exercise]
     
     public func getPhaseColor() -> Color {
         switch phase {
@@ -133,11 +133,6 @@ struct Exercise: Identifiable, Codable {
     let description: String
     var set: Int
     var repOrTime: Int
-}
-
-struct DeletePatientExerciseResponse: Codable {
-    let status: String
-    let message: String
 }
 
 let samplePatients: [Patient] = [
