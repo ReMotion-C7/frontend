@@ -12,13 +12,14 @@ struct EditPatientDetailPage: View {
     
     @State private var selectedPhase: Int
     @State private var symptoms: [String]
+    let fisioId: Int
     
     @Environment(\.dismiss) var dismiss
     
-    init(viewModel: PatientViewModel, patient: Patient) {
+    init(viewModel: PatientViewModel, patient: Patient, fisioId: Int) {
         self.viewModel = viewModel
         self.patient = patient
-        
+        self.fisioId = fisioId
         _selectedPhase = State(initialValue: patient.phase)
         _symptoms = State(initialValue: patient.symptoms)
     }
@@ -27,20 +28,20 @@ struct EditPatientDetailPage: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    patientHeaderSection(patient: patient)
-                    therapyInfoSection(patient: patient)
+                    patientHeader(patient: patient)
+                    therapyInfo(patient: patient)
                     
                     Divider()
                     
-                    phaseEditorSection
+                    phaseEditor
                     
-                    symptomsEditorSection
+                    symptomsEditor
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 20)
             }
             
-            saveButtonSection
+            saveButton
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationTitle("Ubah Detail Pasien")
@@ -58,7 +59,7 @@ struct EditPatientDetailPage: View {
     }
     
     
-    private var phaseEditorSection: some View {
+    private var phaseEditor: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Pilih Fase Pasien")
                 .font(.system(size: 16, weight: .semibold))
@@ -91,7 +92,7 @@ struct EditPatientDetailPage: View {
         }
     }
     
-    private var symptomsEditorSection: some View {
+    private var symptomsEditor: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Gejala Pasien")
                 .font(.system(size: 16, weight: .semibold))
@@ -126,11 +127,18 @@ struct EditPatientDetailPage: View {
         }
     }
     
-    private var saveButtonSection: some View {
+    private var saveButton: some View {
         Button(action: {
             Task {
-                // await viewModel.updatePatient(patientId: patient.id, newPhase: selectedPhase, newSymptoms: symptoms)
-                print("Menyimpan perubahan...")
+                
+                let validSymptoms = symptoms.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+                await viewModel.editPatientDetail(
+                    fisioId: fisioId,
+                    patientId: patient.id,
+                    phase: selectedPhase,
+                    symptoms: validSymptoms
+                )
+                
                 dismiss()
             }
         }) {
@@ -148,7 +156,7 @@ struct EditPatientDetailPage: View {
     }
     
     
-    private func patientHeaderSection(patient: Patient) -> some View {
+    private func patientHeader(patient: Patient) -> some View {
         HStack(spacing: 16) {
             Circle()
                 .fill(Color.black)
@@ -185,14 +193,14 @@ struct EditPatientDetailPage: View {
         .padding(.vertical, 8)
     }
     
-    private func therapyInfoSection(patient: Patient) -> some View {
+    private func therapyInfo(patient: Patient) -> some View {
         HStack(spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: "calendar")
                     .font(.system(size: 13))
                     .foregroundColor(.gray)
                 
-                Text("Tanggal mulai terapi : \(formatDate(patient.therapyStartDate))")
+                Text("Mulai terapi : \(formatDate(patient.therapyStartDate))")
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
             }
