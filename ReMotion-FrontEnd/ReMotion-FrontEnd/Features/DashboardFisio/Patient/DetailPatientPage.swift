@@ -10,21 +10,22 @@ import SwiftUI
 
 struct DetailPatientPage: View {
     @ObservedObject var viewModel: PatientViewModel
-    
     let fisioId: Int
     let patientId: Int
     
-    @State private var selectedExercise: Exercise?
     @State private var showDeleteModal = false
+    @State private var showEditModal = false
+    @State private var selectedExercise: Exercise?
     @State private var showExerciseSheet = false
     @Environment(\.dismiss) var dismiss
+    @State private var isShowingDeleteAlert = false
+    @State private var isNavigatingToEdit = false
     
     var body: some View {
         
         VStack {
-            
             if viewModel.isLoading {
-                ProgressView("Memuat data...")
+                Text("Memuat data...")
             }
             else if viewModel.errorMessage != "" {
                 Text("Error: \(viewModel.errorMessage)")
@@ -50,6 +51,12 @@ struct DetailPatientPage: View {
                         exerciseListSection(patient: patient)
                         
                         Spacer(minLength: 20)
+                        
+                        NavigationLink(
+                            destination: EditPatientDetailPage(viewModel: viewModel, patient: patient),
+                            isActive: $isNavigatingToEdit,
+                            label: { EmptyView() }
+                        )
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 20)
@@ -66,16 +73,52 @@ struct DetailPatientPage: View {
                                 .font(.system(size: 18, weight: .semibold))
                         }
                     }
+
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: EditPatientDetailPage(viewModel: viewModel, patient: patient)) {
-                            Text("Ubah")
+                        Menu {
+                            Button(action: {
+                                isNavigatingToEdit = true
+                            }) {
+                                Label("Ubah Detail Pasien", systemImage: "pencil")
+                            }
                             
+                            Button(role: .destructive, action: {
+                                isShowingDeleteAlert = true
+                            }) {
+                                Label("Hapus Pasien", systemImage: "trash")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .foregroundColor(.black)
+                                .font(.system(size: 18, weight: .bold))
+                                .rotationEffect(.degrees(90))
                         }
                     }
                 }
                 .sheet(isPresented: $showExerciseSheet) {
                     MovementToPatientModal(selectedExercises: .constant(patient.exercises), patient: patient)
                 }
+                .alert("Hapus Pasien?", isPresented: $isShowingDeleteAlert) {
+                    Button("Hapus", role: .destructive) {
+                        Task {
+                            do {
+                                try await viewModel.deletePatient(fisioId: fisioId, patientId: patient.id)
+
+                                if !viewModel.isError {
+                                    dismiss()
+                                } else {
+                                    print("Gagal menghapus: \(viewModel.errorMessage)")
+                                }
+                            } catch {
+                                print("Error: \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                    Button("Batal", role: .cancel) {}
+                } message: {
+                    Text("Apakah Anda yakin ingin menghapus data pasien \(patient.name)? Tindakan ini tidak dapat dibatalkan.")
+                }
+                
             }
         }
         .overlay {
@@ -88,11 +131,12 @@ struct DetailPatientPage: View {
                                 showDeleteModal = false
                             }
                         }
+                    
                     DeleteModal(
                         showDeleteModal: $showDeleteModal,
                         exerciseName: exercise.name,
                         onConfirm: {
-//                            viewmodel disini nnti
+                            // viewmodel disini nnti
                             withAnimation(.spring()) {
                                 showDeleteModal = false
                             }
@@ -102,16 +146,36 @@ struct DetailPatientPage: View {
                 .transition(.opacity.combined(with: .scale))
                 .animation(.spring(), value: showDeleteModal)
             }
+            if showEditModal, let selected = selectedExercise {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation(.spring()) {
+                                showEditModal = false
+                            }
+                        }
+                    EditPatientExerciseModal(
+                        exercise: selected,
+                        viewModel: viewModel,
+                        showEditModal: $showEditModal
+                    )
+                }
+                .transition(.opacity.combined(with: .scale))
+                .animation(.spring(), value: showEditModal)
+            }
+            
         }
         .onAppear {
             Task {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
+                
+                viewModel.fisioId = fisioId
+                viewModel.patientId = patientId
             }
         }
+
     }
-    
-    
-    // components
     private func patientHeaderSection(patient: Patient) -> some View {
         HStack(spacing: 16) {
             Circle()
@@ -196,6 +260,7 @@ struct DetailPatientPage: View {
         }
     }
     
+    // MARK: - Exercise List Section (dari File 2)
     private func exerciseListSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -247,9 +312,18 @@ struct DetailPatientPage: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
-                        
                         ForEach(patient.exercises) { exercise in
-                            PatientExerciseCard(exercise: exercise)
+                            PatientExerciseCard(
+                                exercise: exercise,
+                                onEdit: {
+                                    selectedExercise = exercise
+                                    showEditModal = true
+                                },
+                                onDelete: {
+                                    selectedExercise = exercise
+                                    showDeleteModal = true
+                                }
+                            )
                         }
                     }
                     .padding(.vertical, 4)
@@ -257,7 +331,6 @@ struct DetailPatientPage: View {
             }
         }
     }
-    
     
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = DateFormatter()
@@ -273,7 +346,9 @@ struct DetailPatientPage: View {
 }
 
 
-
+#Preview {
+    Text("Preview dinonaktifkan - butuh ViewModel")
+}
 
 
 

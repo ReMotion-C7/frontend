@@ -94,11 +94,6 @@ struct EditPatientExerciseResponse: Codable {
     let message: String
 }
 
-struct EditPatientResponse: Codable {
-    let phase: Int
-    let symptoms: [String]
-}
-
 struct Patient: Identifiable, Codable {
     let id: Int
     let name: String
