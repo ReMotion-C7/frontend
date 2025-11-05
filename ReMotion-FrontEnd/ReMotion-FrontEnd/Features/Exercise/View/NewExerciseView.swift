@@ -11,7 +11,10 @@ import QuickPoseCore
 
 struct NewExerciseView: View {
     
+    @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel = NewExerciseViewModel()
+    
+    @State var showExitModal: Bool = false
     
     private var videoURL: String = "https://tjyoilicubnsdpujursp.supabase.co/storage/v1/object/public/ReMotion/Lunges%20Landscape.mp4"
     
@@ -138,6 +141,23 @@ struct NewExerciseView: View {
                 viewModel.quickPose.stop()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            viewModel.showExitModal = true
+        }) {
+            Image(systemName: "chevron.left")
+                .foregroundColor(.black)
+                .font(.title2)
+        })
+        .ignoresSafeArea()
+        .alert("Apakah Anda Yakin Ingin Keluar?", isPresented: $viewModel.showExitModal) {
+            Button("Keluar", role: .destructive) {
+                dismiss()
+            }
+            Button("Batal", role: .cancel) {
+                viewModel.showExitModal = false
+            }
         }
     }
 }

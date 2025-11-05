@@ -92,7 +92,8 @@ struct SessionPage: View {
                     .padding(.horizontal, 40)
                     .fullScreenCover(isPresented: $navigateToExercisePage) {
                         NavigationStack {
-                            ExerciseSessionView(exercises: todaysExercises)
+//                            ExerciseSessionView(exercises: todaysExercises)
+                            NewExerciseView()
                         }
                     }
                     .onChange(of: selectedMenu) {}
