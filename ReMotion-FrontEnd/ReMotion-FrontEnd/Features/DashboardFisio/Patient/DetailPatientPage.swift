@@ -5,23 +5,21 @@
 //  Created by Gabriela on 24/10/25.
 //
 
+
 import SwiftUI
 
 struct DetailPatientPage: View {
     @ObservedObject var viewModel: PatientViewModel
-    
     let fisioId: Int
     let patientId: Int
-    
-    @State private var showDeleteModal = false
-    @State private var selectedExercise: Exercise?
     @State private var showExerciseSheet = false
     @Environment(\.dismiss) var dismiss
+    @State private var isShowingDeleteAlert = false
+    @State private var isNavigatingToEdit = false
     
     var body: some View {
         
         VStack {
-            
             if viewModel.isLoading {
                 Text("Memuat data...")
             }
@@ -49,6 +47,12 @@ struct DetailPatientPage: View {
                         exerciseListSection(patient: patient)
                         
                         Spacer(minLength: 20)
+                        
+                        NavigationLink(
+                            destination: EditPatientDetailPage(viewModel: viewModel, patient: patient),
+                            isActive: $isNavigatingToEdit,
+                            label: { EmptyView() }
+                        )
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 20)
@@ -65,8 +69,21 @@ struct DetailPatientPage: View {
                                 .font(.system(size: 18, weight: .semibold))
                         }
                     }
+
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {}) {
+                        Menu {
+                            Button(action: {
+                                isNavigatingToEdit = true
+                            }) {
+                                Label("Ubah Detail Pasien", systemImage: "pencil")
+                            }
+                            
+                            Button(role: .destructive, action: {
+                                isShowingDeleteAlert = true
+                            }) {
+                                Label("Hapus Pasien", systemImage: "trash")
+                            }
+                        } label: {
                             Image(systemName: "ellipsis")
                                 .foregroundColor(.black)
                                 .font(.system(size: 18, weight: .bold))
@@ -77,41 +94,36 @@ struct DetailPatientPage: View {
                 .sheet(isPresented: $showExerciseSheet) {
                     MovementToPatientModal(selectedExercises: .constant(patient.exercises), patient: patient)
                 }
-            }
-        }
-        .overlay {
-                    if showDeleteModal, let exercise = selectedExercise {
-                        ZStack {
-                            Color.black.opacity(0.4)
-                                .ignoresSafeArea()
-                                .onTapGesture {
-                                    withAnimation(.spring()) {
-                                        showDeleteModal = false
-                                    }
+                .alert("Hapus Pasien?", isPresented: $isShowingDeleteAlert) {
+                    Button("Hapus", role: .destructive) {
+                        Task {
+                            do {
+                                try await viewModel.deletePatient(fisioId: fisioId, patientId: patient.id)
+
+                                if !viewModel.isError {
+                                    dismiss()
+                                } else {
+                                    print("Gagal menghapus: \(viewModel.errorMessage)")
                                 }
-                            
-                            DeleteModal(
-                                showDeleteModal: $showDeleteModal,
-                                exerciseName: exercise.name,
-                                onConfirm: {
-                                    // viewmodel disini nnti
-                                    withAnimation(.spring()) {
-                                        showDeleteModal = false
-                                    }
-                                }
-                            )
+                            } catch {
+                                print("Error: \(error.localizedDescription)")
+                            }
                         }
-                        .transition(.opacity.combined(with: .scale))
-                        .animation(.spring(), value: showDeleteModal)
                     }
+                    Button("Batal", role: .cancel) {}
+                } message: {
+                    Text("Apakah Anda yakin ingin menghapus data pasien \(patient.name)? Tindakan ini tidak dapat dibatalkan.")
                 }
+                
+            }
+            
+        }
         .onAppear {
             Task {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
             }
         }
     }
-    
     private func patientHeaderSection(patient: Patient) -> some View {
         HStack(spacing: 16) {
             Circle()
@@ -196,6 +208,7 @@ struct DetailPatientPage: View {
         }
     }
     
+    // MARK: - Exercise List Section (dari File 2)
     private func exerciseListSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -248,16 +261,7 @@ struct DetailPatientPage: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
                         ForEach(patient.exercises) { exercise in
-                            PatientExerciseCard(
-                                exercise: exercise,
-                                onEdit: {
-                                    print("Edit \(exercise.name)")
-                                },
-                                onDelete: {
-                                    selectedExercise = exercise
-                                    showDeleteModal = true
-                                }
-                            )
+                            PatientExerciseCard(exercise: exercise)
                         }
                     }
                     .padding(.vertical, 4)
@@ -278,3 +282,11 @@ struct DetailPatientPage: View {
         return dateString
     }
 }
+
+
+#Preview {
+    Text("Preview dinonaktifkan - butuh ViewModel")
+}
+
+
+

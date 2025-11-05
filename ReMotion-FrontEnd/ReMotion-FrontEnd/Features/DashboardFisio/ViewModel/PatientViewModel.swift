@@ -14,6 +14,7 @@ class PatientViewModel: ObservableObject {
     
     @Published var readPatientResponse: ReadPatientResponse?
     @Published var readPatientDetailResponse: ReadPatientDetailResponse?
+    @Published var deletePatientResponse: BaseResponse?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
@@ -55,7 +56,7 @@ class PatientViewModel: ObservableObject {
             isLoading = false
         }
         print("hhhh")
-
+        
         do {
             let response: ReadPatientDetailResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)",
@@ -78,4 +79,35 @@ class PatientViewModel: ObservableObject {
             self.errorMessage = "Gagal mengambil data detail pasien!"
         }
     }
+    
+    func deletePatient(fisioId: Int, patientId: Int) async throws {
+        
+        isLoading = true
+        defer {
+            isLoading = false
+        }
+        
+        do {
+   
+            let response: BaseResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/\(patientId)",
+                method: .delete,
+                responseType: BaseResponse.self
+            )
+            
+            self.deletePatientResponse = response
+            self.errorMessage = ""
+            self.isError = false
+            print("Pasien berhasil dihapus")
+            
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal menghapus data pasien!"
+            print(error.localizedDescription)
+        }
+    }
+}
+
+struct BaseResponse: Codable {
+   let message: String?
 }
