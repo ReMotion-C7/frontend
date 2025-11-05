@@ -86,11 +86,20 @@ struct DashboardFisioPage: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 40)
-                .sheet(isPresented: $showAddPatientModal) {
-                    AddPatientModal()
+                .sheet(isPresented: $showAddPatientModal, onDismiss: {
+                    Task {
+                        do {
+                            try await viewModel.readPatients(fisioId: fisioId)
+                        } catch {
+                            print(error)
+                        }
+                    }
+                }) {
+                    AddPatientModal(fisioId: fisioId)
                         .presentationDetents([.large])
                         .presentationDragIndicator(.hidden)
                 }
+
                 .navigationDestination(isPresented: $navigateToAddGerakan) {
                     AddMovementPage()
                 }

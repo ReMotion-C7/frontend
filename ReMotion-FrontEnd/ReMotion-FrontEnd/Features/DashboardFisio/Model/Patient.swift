@@ -8,6 +8,23 @@
 import Foundation
 import SwiftUI
 
+struct AddPatientResponse: Codable {
+    var status: String
+    var message: String
+}
+
+struct ReadUsersNonFisioResponse: Codable {
+    var status: String
+    var message: String
+    var data: [ReadUsersNonFisioData]
+}
+
+struct ReadUsersNonFisioData: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var phoneNumber: String
+}
+
 struct ReadPatientResponse: Codable {
     var status: String
     var message: String
