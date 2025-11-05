@@ -39,7 +39,7 @@ struct DetailPatientPage: View {
                     dateOfBirth: patientData.dateOfBirth,
                     therapyStartDate: patientData.therapyStartDate,
                     symptoms: patientData.symptoms,
-                    exercises: patientData.exercises
+                    exercises: patientData.exercises ?? []
                 )
                 
                 ScrollView {
@@ -54,6 +54,7 @@ struct DetailPatientPage: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 20)
                 }
+                .disabled(showDeleteModal || showEditModal)
                 .background(Color.white)
                 .navigationTitle("Detail Pasien")
                 .navigationBarTitleDisplayMode(.inline)
@@ -92,9 +93,18 @@ struct DetailPatientPage: View {
                         showDeleteModal: $showDeleteModal,
                         exerciseName: exercise.name,
                         onConfirm: {
-//                            viewmodel disini nnti
-                            withAnimation(.spring()) {
+                            Task {
                                 showDeleteModal = false
+                                
+                                let success = await viewModel.deletePatientExercise(
+                                    fisioId: fisioId,
+                                    patientId: patientId,
+                                    exerciseId: exercise.id
+                                )
+                                
+                                if success {
+                                    try? await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
+                                }
                             }
                         }
                     )
