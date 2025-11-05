@@ -40,7 +40,7 @@ struct DetailPatientPage: View {
                     dateOfBirth: patientData.dateOfBirth,
                     therapyStartDate: patientData.therapyStartDate,
                     symptoms: patientData.symptoms,
-                    exercises: patientData.exercises
+                    exercises: patientData.exercises ?? []
                 )
                 
                 ScrollView {
@@ -61,6 +61,7 @@ struct DetailPatientPage: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 20)
                 }
+                .disabled(showDeleteModal || showEditModal)
                 .background(Color.white)
                 .navigationTitle("Detail Pasien")
                 .navigationBarTitleDisplayMode(.inline)
@@ -73,7 +74,7 @@ struct DetailPatientPage: View {
                                 .font(.system(size: 18, weight: .semibold))
                         }
                     }
-
+                    
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Menu {
                             Button(action: {
@@ -103,7 +104,7 @@ struct DetailPatientPage: View {
                         Task {
                             do {
                                 try await viewModel.deletePatient(fisioId: fisioId, patientId: patient.id)
-
+                                
                                 if !viewModel.isError {
                                     dismiss()
                                 } else {
@@ -136,9 +137,18 @@ struct DetailPatientPage: View {
                         showDeleteModal: $showDeleteModal,
                         exerciseName: exercise.name,
                         onConfirm: {
-                            // viewmodel disini nnti
-                            withAnimation(.spring()) {
+                            Task {
                                 showDeleteModal = false
+                                
+                                let success = await viewModel.deletePatientExercise(
+                                    fisioId: fisioId,
+                                    patientId: patientId,
+                                    exerciseId: exercise.id
+                                )
+                                
+                                if success {
+                                    try? await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
+                                }
                             }
                         }
                     )
@@ -174,7 +184,7 @@ struct DetailPatientPage: View {
                 viewModel.patientId = patientId
             }
         }
-
+        
     }
     private func patientHeaderSection(patient: Patient) -> some View {
         HStack(spacing: 16) {
