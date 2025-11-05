@@ -61,6 +61,7 @@ class SessionManager: ObservableObject {
         
         APIService.shared.accessToken = nil
         APIService.shared.userId = nil
+        APIService.shared.roleId = nil
         
         DispatchQueue.main.async {
             self.isLoggedIn = false
