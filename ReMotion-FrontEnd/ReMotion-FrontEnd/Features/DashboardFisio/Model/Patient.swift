@@ -8,6 +8,23 @@
 import Foundation
 import SwiftUI
 
+struct AddPatientResponse: Codable {
+    var status: String
+    var message: String
+}
+
+struct ReadUsersNonFisioResponse: Codable {
+    var status: String
+    var message: String
+    var data: [ReadUsersNonFisioData]
+}
+
+struct ReadUsersNonFisioData: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var phoneNumber: String
+}
+
 struct ReadPatientResponse: Codable {
     var status: String
     var message: String
@@ -72,6 +89,11 @@ struct ReadPatientDetailData: Identifiable, Codable {
     }
 }
 
+struct EditPatientExerciseResponse: Codable {
+    let status: String
+    let message: String
+}
+
 struct Patient: Identifiable, Codable {
     let id: Int
     let name: String
@@ -104,8 +126,8 @@ struct Exercise: Identifiable, Codable {
     let image: String
     let muscle: String
     let description: String
-    let set: Int
-    let repOrTime: Int
+    var set: Int
+    var repOrTime: Int
 }
 
 let samplePatients: [Patient] = [

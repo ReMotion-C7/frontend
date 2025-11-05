@@ -9,10 +9,11 @@ import SwiftUI
 
 struct DetailMovementPage: View {
     @ObservedObject var viewModel: ExerciseViewModel
+    @Environment(\.dismiss) var dismiss
+    @State private var showingDeleteAlert = false
     let exerciseId: Int
     
     var body: some View {
-        
         VStack {
             if viewModel.isLoading {
                 LoadingView(message: "Memuat detail gerakan...")
@@ -91,7 +92,7 @@ struct DetailMovementPage: View {
                     }
                     
                     Button(role: .destructive, action: {
-                        print("Hapus Gerakan tapped")
+                        showingDeleteAlert = true
                     }) {
                         Label("Hapus Gerakan", systemImage: "trash")
                     }
@@ -100,6 +101,19 @@ struct DetailMovementPage: View {
                 }
             }
         }
+        .alert("Konfirmasi Hapus", isPresented: $showingDeleteAlert) {
+            Button("Hapus", role: .destructive) {
+                Task {
+                    let success = await viewModel.deleteExercise(exerciseId: exerciseId)
+                    if success {
+                        dismiss()
+                    }
+                }
+            }
+            Button("Batal", role: .cancel) {}
+        } message: {
+            Text("Apakah Anda yakin ingin menghapus gerakan ini? Tindakan ini tidak dapat dibatalkan.")
+        }
         .onAppear {
             Task {
                 try? await viewModel.readExerciseDetail(exerciseId: exerciseId)
@@ -107,9 +121,3 @@ struct DetailMovementPage: View {
         }
     }
 }
-
-//#Preview {
-//    NavigationStack {
-//        DetailMovementPage(viewModel: ExerciseViewModel(), exerciseId: 0)
-//    }
-//}

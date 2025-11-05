@@ -91,18 +91,28 @@ struct NewExerciseView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 QuickPoseOverlayView(overlayImage: $viewModel.overlayImage)
                 
-                VStack {
-                    ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
-                        .padding(32)
-                        .frame(width:400, height: 100)
-                    
-//                    Text("\(viewModel.leftKneeScore)")
-//                    Text("\(viewModel.rightKneeScore)")
+                
+                if !viewModel.showModal {
+                    VStack {
+                        HStack {
+                            ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+                                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                                .scaleEffect(x: 1, y: 4, anchor: .center)
+                                .padding(.horizontal, 32)
+                                .frame(width: 500, height: 100)
+                            Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .padding(.horizontal, 32)
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                        )
+                        Spacer()
+                    }
+                    .padding(.top, 64)
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white)
-                )                
                 
                 if viewModel.showModal {
                     VStack {

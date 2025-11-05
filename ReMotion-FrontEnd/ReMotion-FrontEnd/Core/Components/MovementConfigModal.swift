@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MovementConfigModal: View {
-    // No longer need @Environment(\.dismiss)
     let movement: Movement
     let patient: Patient
     @Binding var selectedExercises: [Exercise]
@@ -29,42 +28,29 @@ struct MovementConfigModal: View {
     
     var body: some View {
         ZStack {
-            // Background overlay
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
                 .onTapGesture {
-                    showConfigModal = false // Dismiss on background tap
+                    showConfigModal = false
                 }
             
-            // Modal content
             VStack(spacing: 20) {
-                // 1. Header (New)
                 headerSection
-                
-                // 2. Image section
                 exerciseImageSection
-                
-                // 3. Info section (name, tags)
-                exerciseInfoSection // <-- Re-added this section
-                
-                // 4. Input fields
+                exerciseInfoSection
                 inputFieldsSection
-                
-                // 4. Add button
                 addButton
             }
-            .padding(24) // Uniform padding
+            .padding(24)
             .background(Color.white)
             .cornerRadius(20)
             .shadow(radius: 10)
-            .padding(.horizontal, 40) // Constrains width to match prototype
+            .padding(.horizontal, 40)
         }
     }
-    
-    // MARK: - Header Section (New)
+
     private var headerSection: some View {
         HStack {
-            // Close Button
             Button(action: { showConfigModal = false }) {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .bold))
@@ -73,23 +59,19 @@ struct MovementConfigModal: View {
             
             Spacer()
             
-            // Centered Title
             Text("Tambah Gerakan")
-                .font(.system(size: 17, weight: .semibold)) // Standard modal title size
+                .font(.system(size: 17, weight: .semibold))
                 .foregroundColor(.black)
             
             Spacer()
             
-            // Placeholder to balance
             Color.clear
-                .frame(width: 20, height: 20) // Approx size of button
+                .frame(width: 20, height: 20)
         }
     }
     
-    // MARK: - Exercise Image Section (Modified)
     private var exerciseImageSection: some View {
-        ZStack(alignment: .top) { // Reverted alignment
-            // Exercise image
+        ZStack(alignment: .top) {
             AsyncImage(url: URL(string: movement.image)) { image in
                 image
                     .resizable()
@@ -106,12 +88,9 @@ struct MovementConfigModal: View {
             .frame(height: 200)
             .cornerRadius(16)
             .clipped()
-            
-            // Removed gradient and text overlays
         }
     }
     
-    // MARK: - Exercise Info Section (RE-ADDED)
     private var exerciseInfoSection: some View {
         VStack(spacing: 12) {
             // Exercise name
@@ -120,14 +99,13 @@ struct MovementConfigModal: View {
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
             
-            // Tags
             HStack(spacing: 8) {
                 TagView(
                     text: movement.type,
                     icon: movement.type == "Waktu" ? "clock" : "repeat"
                 )
                 
-                TagView(text: movement.muscle, icon: nil) // Prototype doesn't show icon for muscle
+                TagView(text: movement.muscle, icon: nil)
             }
         }
     }
@@ -149,10 +127,8 @@ struct MovementConfigModal: View {
                 keyboardType: .numberPad
             )
         }
-        // Removed description - not in prototype modal
     }
     
-    // MARK: - Add Button
     private var addButton: some View {
         Button(action: addMovementWithConfig) {
             HStack(spacing: 10) {
@@ -182,8 +158,7 @@ struct MovementConfigModal: View {
               let repOrTime = Int(durationInput) else {
             return
         }
-        
-        // Create new Exercise from Movement
+
         let newExercise = Exercise(
             id: Int.random(in: 1000...9999),
             name: movement.name,
@@ -196,12 +171,11 @@ struct MovementConfigModal: View {
         )
         
         selectedExercises.append(newExercise)
-        showConfigModal = false // Close this modal
-        dismissParent = true // Trigger parent (MovementToPatientModal) to close
+        showConfigModal = false
+        dismissParent = true
     }
 }
 
-// MARK: - Tag View (New component for tags)
 struct TagView: View {
     let text: String
     let icon: String?
@@ -225,8 +199,6 @@ struct TagView: View {
     }
 }
 
-
-// MARK: - Input Field Component
 struct InputField: View {
     let title: String
     let placeholder: String
@@ -249,17 +221,17 @@ struct InputField: View {
     }
 }
 
-//#Preview {
-//    // Preview the modal on top of a blurred background
-//    ZStack {
-//        Color.gray.opacity(0.5).ignoresSafeArea()
-//        
-//        MovementConfigModal(
-//            movement: sampleMovements[0], // "Waktu" type
-//            patient: samplePatients[0],
-//            selectedExercises: .constant([]),
-//            showConfigModal: .constant(true),
-//            dismissParent: .constant(false)
-//        )
-//    }
-//}
+#Preview {
+    // Preview the modal on top of a blurred background
+    ZStack {
+        Color.gray.opacity(0.5).ignoresSafeArea()
+        
+        MovementConfigModal(
+            movement: sampleMovements[0], // "Waktu" type
+            patient: samplePatients[0],
+            selectedExercises: .constant([]),
+            showConfigModal: .constant(true),
+            dismissParent: .constant(false)
+        )
+    }
+}

@@ -10,6 +10,7 @@ import SwiftUI
 struct LibraryGerakanPage: View {
     
     @StateObject private var viewModel = ExerciseViewModel()
+    @StateObject private var patientViewModel = PatientViewModel()
     @State private var showDeleteModal = false
     @State private var selectedExercise: Exercise?
     
@@ -53,10 +54,10 @@ struct LibraryGerakanPage: View {
                     exerciseName: selectedExercise?.name ?? "Gerakan",
                     onConfirm: {
                         if let selected = selectedExercise {
-//                            Task {
-//                                await viewModel.deleteExercise(id: selected.id)
-//                                await viewModel.readExercises()
-//                            }
+                            //                            Task {
+                            //                                await viewModel.deleteExercise(id: selected.id)
+                            //                                await viewModel.readExercises()
+                            //                            }
                         }
                     }
                 )
@@ -71,6 +72,6 @@ struct LibraryGerakanPage: View {
     }
 }
 
-#Preview {
-    LibraryGerakanPage()
-}
+//#Preview {
+//    LibraryGerakanPage()
+//}

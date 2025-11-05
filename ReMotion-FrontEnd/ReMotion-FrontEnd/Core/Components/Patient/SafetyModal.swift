@@ -57,6 +57,58 @@ struct SafetyModal: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 20)
                 
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Tips Pakaian untuk Hasil Terbaik")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .padding(.top, 10)
+                    
+                    Text("Untuk memaksimalkan fitur deteksi gerak AI, gunakan pakaian yang pas di badan agar sendi utama Anda (bahu, siku, lutut) terlihat jelas.")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                    
+                    Text("Pakaian yang tidak disarankan:")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .padding(.top, 5)
+                    
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(UIColor.systemGray6))
+                            .frame(height: 150)
+                        
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 40))
+                            .foregroundColor(.red.opacity(0.6))
+                        
+                        Text("Contoh: Baju longgar / oversized, jaket")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .offset(y: 60)
+                    }
+                    
+                    Text("Pakaian yang disarankan:")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .padding(.top, 5)
+                    
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(UIColor.systemGray6))
+                            .frame(height: 150)
+                        
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 40))
+                            .foregroundColor(.green.opacity(0.7))
+                        
+                        Text("Contoh: Kaos & celana yang pas di badan")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .offset(y: 60)
+                    }
+                }
+                .padding(.horizontal, 20)
+                                
                 Spacer(minLength: 8)
                 
                 VStack(spacing: 12) {
@@ -94,7 +146,7 @@ struct SafetyModal: View {
         }
         .padding(.horizontal, 5)
         .padding(.vertical, 25)
-        .frame(width: 360, height: 520)
+        .frame(width: 360, height: 660)
         .background(Color.white)
         .cornerRadius(24)
     }
