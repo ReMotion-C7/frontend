@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct ReMotion_FrontEndApp: App {
     
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var session: SessionManager
     
     init() {
