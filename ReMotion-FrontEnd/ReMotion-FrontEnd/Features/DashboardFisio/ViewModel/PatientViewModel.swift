@@ -168,10 +168,7 @@ class PatientViewModel: ObservableObject {
             print(error.localizedDescription)
         }
     }
-}
-
-struct BaseResponse: Codable {
-   let message: String?
+    
     func editPatientExercise(
         fisioId: Int,
         patientId: Int,
@@ -207,4 +204,10 @@ struct BaseResponse: Codable {
             self.errorMessage = "Gagal mengedit data gerakan!"
         }
     }
+    
+}
+
+
+struct BaseResponse: Codable {
+   let message: String?
 }
