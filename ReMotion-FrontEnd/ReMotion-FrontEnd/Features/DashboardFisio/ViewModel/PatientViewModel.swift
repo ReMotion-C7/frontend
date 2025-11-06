@@ -205,15 +205,52 @@ class PatientViewModel: ObservableObject {
         }
     }
     
-    func deletePatientExercise(fisioId: Int, patientId: Int, exerciseId: Int) async -> Bool {
-        isLoading = true
-        isError = false
-        errorMessage = ""
+    func assignPatientExercise(
+        fisioId: Int,
+        patientId: Int,
+        exerciseId: Int,
+        set: Int,
+        repOrTime: Int
+    ) async {
         
         defer {
             isLoading = false
         }
-        
+      
+        print("fisioId:", fisioId)
+        print("patientId:", patientId)
+        print("exerciseId:", exerciseId)
+        print("set:", set)
+        print("repOrTime:", repOrTime)
+        do {
+            let response: AssignPatientExerciseResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/\(patientId)/exercises/assign",
+                method: .post,
+                parameters: [
+                    "exerciseId": exerciseId,
+                    "set": set,
+                    "repOrTime": repOrTime
+                ],
+                responseType: AssignPatientExerciseResponse.self
+            )
+            
+            if response.status == "success" {
+                self.isError = false
+            } else {
+                self.isError = true
+                self.errorMessage = response.message
+            }
+            
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal menambahkan gerakan ke pasien!"
+        }
+    }
+  
+  func deletePatientExercise(fisioId: Int, patientId: Int, exerciseId: Int) async -> Bool {
+        isLoading = true
+        isError = false
+        errorMessage = ""
         do {
             let response: DeletePatientExerciseResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)/exercises/delete/\(exerciseId)",
@@ -237,7 +274,6 @@ class PatientViewModel: ObservableObject {
         }
     }
 }
-
 
 struct BaseResponse: Codable {
     let message: String?
