@@ -20,6 +20,7 @@ struct DetailPatientPage: View {
     @Environment(\.dismiss) var dismiss
     @State private var isShowingDeleteAlert = false
     @State private var isNavigatingToEdit = false
+    @State private var dismissSheet = false
     
     var body: some View {
         
@@ -97,7 +98,13 @@ struct DetailPatientPage: View {
                     }
                 }
                 .sheet(isPresented: $showExerciseSheet) {
-                    MovementToPatientModal(selectedExercises: .constant(patient.exercises), patient: patient)
+                    MovementToPatientModal(selectedExercises: .constant(patient.exercises), patientViewModel: viewModel, dismissSheet: $dismissSheet, patient: patient, fisioId: fisioId)
+                }
+                .onChange(of: dismissSheet) { newValue in
+                    if newValue {
+                        showExerciseSheet = false
+                        dismissSheet = false
+                    }
                 }
                 .alert("Hapus Pasien?", isPresented: $isShowingDeleteAlert) {
                     Button("Hapus", role: .destructive) {
@@ -322,7 +329,7 @@ struct DetailPatientPage: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
-                        ForEach(patient.exercises) { exercise in
+                        ForEach(Array(patient.exercises.enumerated()), id: \.offset) { index, exercise in
                             PatientExerciseCard(
                                 exercise: exercise,
                                 onEdit: {
@@ -355,10 +362,7 @@ struct DetailPatientPage: View {
     }
 }
 
-
-#Preview {
-    Text("Preview dinonaktifkan - butuh ViewModel")
-}
-
-
-
+//
+//#Preview {
+//    Text("Preview dinonaktifkan - butuh ViewModel")
+//}
