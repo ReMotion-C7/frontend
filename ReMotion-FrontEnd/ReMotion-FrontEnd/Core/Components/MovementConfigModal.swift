@@ -8,22 +8,25 @@
 import SwiftUI
 
 struct MovementConfigModal: View {
-    let movement: Movement
+    let movement: ModalExercise
     let patient: Patient
+    let fisioId: Int
     @Binding var selectedExercises: [Exercise]
     @Binding var showConfigModal: Bool 
-    @Binding var dismissParent: Bool
+    @Binding var dismissSheet: Bool
     
     @State private var setsInput: String = ""
     @State private var durationInput: String = ""
+    @ObservedObject var patientViewModel: PatientViewModel
     
-    init(movement: Movement, patient: Patient, selectedExercises: Binding<[Exercise]>, showConfigModal: Binding<Bool>, dismissParent: Binding<Bool>) {
+    init(movement: ModalExercise, patient: Patient, fisioId: Int, selectedExercises: Binding<[Exercise]>, showConfigModal: Binding<Bool>, dismissSheet: Binding<Bool>, patientViewModel: ObservedObject<PatientViewModel>) {
         self.movement = movement
         self.patient = patient
+        self.fisioId = fisioId
         self._selectedExercises = selectedExercises
         self._showConfigModal = showConfigModal
-        self._dismissParent = dismissParent
-        
+        self._dismissSheet = dismissSheet
+        self._patientViewModel = patientViewModel
     }
     
     var body: some View {
@@ -51,7 +54,7 @@ struct MovementConfigModal: View {
 
     private var headerSection: some View {
         HStack {
-            Button(action: { showConfigModal = false }) {
+            Button(action: { showConfigModal = false}) {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.black)
@@ -110,7 +113,6 @@ struct MovementConfigModal: View {
         }
     }
     
-    // MARK: - Input Fields Section (Modified)
     private var inputFieldsSection: some View {
         VStack(spacing: 16) {
             InputField(
@@ -159,20 +161,24 @@ struct MovementConfigModal: View {
             return
         }
 
-        let newExercise = Exercise(
-            id: Int.random(in: 1000...9999),
-            name: movement.name,
-            type: movement.type,
-            image: movement.image,
-            muscle: movement.muscle,
-            description: movement.description,
-            set: sets,
-            repOrTime: repOrTime
-        )
-        
-        selectedExercises.append(newExercise)
-        showConfigModal = false
-        dismissParent = true
+        Task {
+            await patientViewModel.assignPatientExercise(
+                fisioId: fisioId,
+                patientId: patient.id,
+                exerciseId: movement.id,
+                set: sets,
+                repOrTime: repOrTime
+            )
+
+            if !patientViewModel.isError {
+                try? await patientViewModel.readPatientDetail(fisioId: fisioId, patientId: patient.id)
+                
+                await MainActor.run {
+                    showConfigModal = false
+                    dismissSheet = true
+                }
+            }
+        }
     }
 }
 
@@ -221,17 +227,17 @@ struct InputField: View {
     }
 }
 
-#Preview {
-    // Preview the modal on top of a blurred background
-    ZStack {
-        Color.gray.opacity(0.5).ignoresSafeArea()
-        
-        MovementConfigModal(
-            movement: sampleMovements[0], // "Waktu" type
-            patient: samplePatients[0],
-            selectedExercises: .constant([]),
-            showConfigModal: .constant(true),
-            dismissParent: .constant(false)
-        )
-    }
-}
+//#Preview {
+//    // Preview the modal on top of a blurred background
+//    ZStack {
+//        Color.gray.opacity(0.5).ignoresSafeArea()
+//        
+//        MovementConfigModal(
+//            movement: sampleMovements[0], // "Waktu" type
+//            patient: samplePatients[0],
+//            selectedExercises: .constant([]),
+//            showConfigModal: .constant(true),
+//            dismissParent: .constant(false)
+//        )
+//    }
+//}

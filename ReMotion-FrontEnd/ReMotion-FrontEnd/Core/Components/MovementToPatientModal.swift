@@ -12,8 +12,13 @@ struct MovementToPatientModal: View {
     @Binding var selectedExercises: [Exercise]
     @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel = ExerciseViewModel()
+    @ObservedObject var patientViewModel: PatientViewModel
+    @Binding var dismissSheet: Bool
     
     let patient: Patient
+    let fisioId: Int
+    @State private var selectedExercise: ModalExercise? = nil
+    @State private var showConfigModal = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -123,11 +128,25 @@ struct MovementToPatientModal: View {
                     ForEach(viewModel.modalExercises) { exercise in
                         ModalMovementSelectionCard(exercise: exercise)
                             .onTapGesture {
-                                print("\(exercise.name) selected")
+                                selectedExercise = exercise
+                                showConfigModal = true
                             }
                     }
                 }
                 .padding(20)
+            }
+        }
+        .sheet(isPresented: $showConfigModal) {
+            if let exercise = selectedExercise {
+                MovementConfigModal(
+                    movement: exercise,
+                    patient: patient,
+                    fisioId: fisioId,
+                    selectedExercises: $selectedExercises,
+                    showConfigModal: $showConfigModal,
+                    dismissSheet: $dismissSheet,
+                    patientViewModel: ObservedObject(initialValue: patientViewModel)
+                )
             }
         }
     }

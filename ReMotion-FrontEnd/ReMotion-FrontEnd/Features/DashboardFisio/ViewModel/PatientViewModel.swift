@@ -42,7 +42,7 @@ class PatientViewModel: ObservableObject {
                     "phase": phase,
                     "therapyStartDate": therapyStartDate,
                     "symptoms": symptoms
-                    ],
+                ],
                 responseType: AddPatientResponse.self
             )
             self.addPatientResponse = response
@@ -150,7 +150,7 @@ class PatientViewModel: ObservableObject {
         }
         
         do {
-   
+            
             let response: BaseResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)",
                 method: .delete,
@@ -179,11 +179,11 @@ class PatientViewModel: ObservableObject {
         isLoading = true
         isError = false
         errorMessage = ""
-
+        
         defer {
             isLoading = false
         }
-
+        
         do {
             let response: EditPatientExerciseResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)/exercises/edit/\(exerciseId)",
@@ -191,23 +191,65 @@ class PatientViewModel: ObservableObject {
                 parameters: ["set": set, "repOrTime": repOrTime],
                 responseType: EditPatientExerciseResponse.self
             )
-
+            
             if response.status == "success" {
                 self.isError = false
             } else {
                 self.isError = true
                 self.errorMessage = response.message
             }
-
+            
         } catch {
             self.isError = true
             self.errorMessage = "Gagal mengedit data gerakan!"
         }
     }
     
+    func assignPatientExercise(
+        fisioId: Int,
+        patientId: Int,
+        exerciseId: Int,
+        set: Int,
+        repOrTime: Int
+    ) async {
+        isLoading = true
+        isError = false
+        errorMessage = ""
+        
+        defer {
+            isLoading = false
+        }
+        print("fisioId:", fisioId)
+        print("patientId:", patientId)
+        print("exerciseId:", exerciseId)
+        print("set:", set)
+        print("repOrTime:", repOrTime)
+        do {
+            let response: AssignPatientExerciseResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/\(patientId)/exercises/assign",
+                method: .post,
+                parameters: [
+                    "exerciseId": exerciseId,
+                    "set": set,
+                    "repOrTime": repOrTime
+                ],
+                responseType: AssignPatientExerciseResponse.self
+            )
+            
+            if response.status == "success" {
+                self.isError = false
+            } else {
+                self.isError = true
+                self.errorMessage = response.message
+            }
+            
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal menambahkan gerakan ke pasien!"
+        }
+    }
 }
 
-
 struct BaseResponse: Codable {
-   let message: String?
+    let message: String?
 }
