@@ -26,6 +26,7 @@ class NewExerciseViewModel: ObservableObject {
     @Published var imageResult: UIImage? = nil
     @Published var angle: Int = 0
     @Published var poseScore: Int = 0
+    @Published var showExitModal: Bool = false
     
     @Published var leftKneeScore:Double = 0.0
     @Published var rightKneeScore:Double = 0.0

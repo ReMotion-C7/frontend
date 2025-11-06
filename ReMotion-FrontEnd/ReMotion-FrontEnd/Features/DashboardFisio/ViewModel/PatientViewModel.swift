@@ -212,13 +212,11 @@ class PatientViewModel: ObservableObject {
         set: Int,
         repOrTime: Int
     ) async {
-        isLoading = true
-        isError = false
-        errorMessage = ""
         
         defer {
             isLoading = false
         }
+      
         print("fisioId:", fisioId)
         print("patientId:", patientId)
         print("exerciseId:", exerciseId)
@@ -246,6 +244,33 @@ class PatientViewModel: ObservableObject {
         } catch {
             self.isError = true
             self.errorMessage = "Gagal menambahkan gerakan ke pasien!"
+        }
+    }
+  
+  func deletePatientExercise(fisioId: Int, patientId: Int, exerciseId: Int) async -> Bool {
+        isLoading = true
+        isError = false
+        errorMessage = ""
+        do {
+            let response: DeletePatientExerciseResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/\(patientId)/exercises/delete/\(exerciseId)",
+                method: .delete,
+                responseType: DeletePatientExerciseResponse.self
+            )
+            
+            if response.status == "success" {
+                print(response.message)
+                return true
+            } else {
+                self.isError = true
+                self.errorMessage = response.message
+                return false
+            }
+        } catch {
+            self.isError = true
+            self.errorMessage = "Gagal menghapus gerakan pasien. Periksa koneksi Anda."
+            print(error.localizedDescription)
+            return false
         }
     }
 }

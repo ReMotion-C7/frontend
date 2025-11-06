@@ -14,6 +14,18 @@ struct LibraryGerakanPage: View {
     @State private var showDeleteModal = false
     @State private var selectedExercise: Exercise?
     
+    let searchText: String
+    
+    private var filteredExercises: [Movement] {
+        if searchText.isEmpty {
+            return viewModel.exercises
+        } else {
+            return viewModel.exercises.filter {
+                $0.name.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             
@@ -33,7 +45,7 @@ struct LibraryGerakanPage: View {
                     let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: columnsCount)
                     
                     LazyVGrid(columns: columns, spacing: spacing) {
-                        ForEach(viewModel.exercises) { move in
+                        ForEach(filteredExercises) { move in
                             NavigationLink(destination:  DetailMovementPage(viewModel: viewModel, exerciseId: move.id)) {
                                 DashboardCardSmall(movement: move)
                             }
