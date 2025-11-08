@@ -45,7 +45,7 @@ enum WorkoutPhase {
 struct ReadSessionsResponse: Codable {
     var status: String
     var message: String
-    var data: [Session]
+    var data: [Session]?
 }
 
 struct ReadSessionExerciseDetailResponse: Codable {

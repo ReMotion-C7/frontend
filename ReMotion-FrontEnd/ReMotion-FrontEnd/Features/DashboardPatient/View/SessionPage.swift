@@ -47,34 +47,41 @@ struct SessionPage: View {
                                     ErrorView(message: viewModel.errorMessage)
                                 }
                                 else {
-                                    ScrollView {
-                                        VStack(spacing: 16) {
-                                            ForEach(viewModel.sessions) { exercise in
-                                                NavigationLink(destination: DetailExercisePage(userId: userId, exerciseId: exercise.id, viewModel: viewModel)) {
-                                                    ExerciseSessionCard(exercise: exercise)
+                                    if viewModel.sessions.isEmpty {
+                                        BlankView(message: "Masih belum ada sesi latihan untuk anda.")
+                                    }
+                                    else {
+                                        ScrollView {
+                                            VStack(spacing: 16) {
+                                                ForEach(viewModel.sessions) { exercise in
+                                                    NavigationLink(destination: DetailExercisePage(userId: userId, exerciseId: exercise.id, viewModel: viewModel)) {
+                                                        ExerciseSessionCard(exercise: exercise)
+                                                    }
+                                                    .buttonStyle(PlainButtonStyle())
                                                 }
-                                                .buttonStyle(PlainButtonStyle())
                                             }
                                         }
+                                        Button(action: {
+                                            self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
+                                            withAnimation(.spring()) {
+                                                showSafetyModal = true
+                                            }
+                                        }) {
+                                            HStack {
+                                                Image(systemName: "play.circle.fill")
+                                                Text("Mulai Sesi Latihan")
+                                                    .fontWeight(.semibold)
+                                            }
+                                            .padding()
+                                            .frame(maxWidth: .infinity)
+                                            .background(Color.black)
+                                            .foregroundColor(.white)
+                                            .cornerRadius(10)
+                                            .padding(.top, 10)
+                                        }
                                     }
-                                    Button(action: {
-                                        self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
-                                        withAnimation(.spring()) {
-                                            showSafetyModal = true
-                                        }
-                                    }) {
-                                        HStack {
-                                            Image(systemName: "play.circle.fill")
-                                            Text("Mulai Sesi Latihan")
-                                                .fontWeight(.semibold)
-                                        }
-                                        .padding()
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.black)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(10)
-                                        .padding(.top, 10)
-                                    }                                }
+                                    
+                                }
                             }
                             .onAppear {
                                 Task {
