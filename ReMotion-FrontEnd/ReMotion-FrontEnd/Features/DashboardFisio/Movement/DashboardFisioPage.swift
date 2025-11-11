@@ -77,7 +77,7 @@ struct DashboardFisioPage: View {
                     // Content Cards
                     if selectedMenu == "Gerakan Latihan" {
                         // Gerakan Latihan Card
-                        LibraryGerakanPage(searchText: searchText)
+                        LibraryGerakanPage()
                     } else {
                         PatientListPage(viewModel: viewModel, fisioId: fisioId, searchText: searchText)
                     }
