@@ -75,32 +75,32 @@ struct MovementSelectionCard: View {
     }
 }
 
-#Preview {
-    HStack(spacing: 16) {
-        MovementSelectionCard(
-            movement: Movement(
-                id: 1,
-                name: "Quadriceps Set",
-                type: "Waktu",
-                description: "Latihan ini dilakukan dengan posisi duduk atau berbaring.",
-                muscle: "Otot Paha Depan",
-                image: "photo"
-            )
-        )
-        .frame(width: 170)
-        
-        MovementSelectionCard(
-            movement: Movement(
-                id: 2,
-                name: "Ankle Pump",
-                type: "Repetisi",
-                description: "Latihan fisik yang dipergunakan untuk melatih otot pada betis.",
-                muscle: "Otot Betis",
-                image: "photo"
-            )
-        )
-        .frame(width: 170)
-    }
-    .padding()
-    .background(Color.gray.opacity(0.1))
-}
+//#Preview {
+//    HStack(spacing: 16) {
+//        MovementSelectionCard(
+//            movement: Movement(
+//                id: 1,
+//                name: "Quadriceps Set",
+//                type: "Waktu",
+//                description: "Latihan ini dilakukan dengan posisi duduk atau berbaring.",
+//                muscle: "Otot Paha Depan",
+//                image: "photo"
+//            )
+//        )
+//        .frame(width: 170)
+//        
+//        MovementSelectionCard(
+//            movement: Movement(
+//                id: 2,
+//                name: "Ankle Pump",
+//                type: "Repetisi",
+//                description: "Latihan fisik yang dipergunakan untuk melatih otot pada betis.",
+//                muscle: "Otot Betis",
+//                image: "photo"
+//            )
+//        )
+//        .frame(width: 170)
+//    }
+//    .padding()
+//    .background(Color.gray.opacity(0.1))
+//}
