@@ -11,7 +11,7 @@ struct SessionPage: View {
     @State private var selectedMenu = "Sesi Latihan"
     @State private var showSafetyModal = false
     @State private var navigateToExercisePage = false
-    @State private var todaysExercises: [Exercises] = []
+    @State private var todaysExercises: [NewExercises] = []
     
     let userId: Int
     
@@ -100,7 +100,7 @@ struct SessionPage: View {
                     .fullScreenCover(isPresented: $navigateToExercisePage) {
                         NavigationStack {
 //                            ExerciseSessionView(exercises: todaysExercises)
-                            NewExerciseView()
+                            NewExerciseView(exercises: todaysExercises)
                         }
                     }
                     .onChange(of: selectedMenu) {}
