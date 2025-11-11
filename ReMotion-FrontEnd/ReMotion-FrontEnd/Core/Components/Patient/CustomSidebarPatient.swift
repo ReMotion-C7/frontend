@@ -15,6 +15,8 @@ struct CustomSidebarPatient: View {
         ("Evaluasi Gerakan", "figure.run")
     ]
     
+    @EnvironmentObject var session: SessionManager
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
@@ -52,6 +54,27 @@ struct CustomSidebarPatient: View {
             }
             
             Spacer()
+            
+            Button(action: {
+                session.logout()
+            }) {
+                HStack {
+                    Image(systemName: "door.left.hand.open")
+                        .font(.system(size: 18, weight: .semibold))
+                    Text("Logout")
+                        .font(.system(size: 15, weight: .medium))
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.red)
+                )
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.horizontal)
+            
         }
         .padding(.vertical)
         .frame(minWidth: 250, maxWidth: 300, alignment: .topLeading)
