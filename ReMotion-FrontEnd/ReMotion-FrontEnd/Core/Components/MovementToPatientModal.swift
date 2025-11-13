@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+fileprivate enum ModalStep {
+    case selection
+    case config
+}
+
 struct MovementToPatientModal: View {
     @State private var searchText = ""
     @Binding var selectedExercises: [Exercise]
@@ -17,28 +22,24 @@ struct MovementToPatientModal: View {
     
     let patient: Patient
     let fisioId: Int
+    @State private var currentStep: ModalStep = .selection
     @State private var selectedExercise: ModalExercise? = nil
-    @State private var showConfigModal = false
+    @State private var showSelectionExitAlert = false
+    @State private var showConfigExitAlert = false
+    @State private var setsInput: String = ""
+    @State private var durationInput: String = ""
     
     var body: some View {
         VStack(spacing: 0) {
             headerSection
-            Divider()
-            searchSection
             
-            if viewModel.isLoading {
-                Spacer()
-                ProgressView("Memuat Gerakan...")
-                Spacer()
-            } else if viewModel.isError {
-                Spacer()
-                Text(viewModel.errorMessage)
-                    .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                Spacer()
-            } else {
-                exerciseGridSection
+            Divider()
+            
+            switch currentStep {
+            case .selection:
+                selectionBody
+            case .config:
+                configBody
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
@@ -52,11 +53,37 @@ struct MovementToPatientModal: View {
                 await viewModel.readModalExercises(name: newValue)
             }
         }
+        .interactiveDismissDisabled()
+        .alert("Tutup Pemilihan Gerakan?", isPresented: $showSelectionExitAlert) {
+            Button("Batal", role: .cancel) { }
+            Button("Tutup", role: .destructive) {
+                dismiss()
+            }
+        } message: {
+            Text("Anda belum memilih gerakan. Apakah Anda yakin ingin menutup?")
+        }
+        
+        .alert("Batalkan Menambah Gerakan?", isPresented: $showConfigExitAlert) {
+            Button("Batal", role: .cancel) { }
+            Button("Kembali", role: .destructive) {
+                currentStep = .selection
+                clearConfigInputs()
+            }
+        } message: {
+            Text("Perubahan yang Anda masukkan tidak akan disimpan. Apakah Anda yakin ingin kembali?")
+        }
+        .animation(.default, value: currentStep)
     }
     
     private var headerSection: some View {
         HStack {
-            Button(action: { dismiss() }) {
+            Button(action: {
+                if currentStep == .selection {
+                    showSelectionExitAlert = true
+                } else {
+                    showConfigExitAlert = true
+                }
+            }) {
                 Image(systemName: "xmark")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(.black)
@@ -65,7 +92,7 @@ struct MovementToPatientModal: View {
             
             Spacer()
             
-            Text("Pilih Gerakan Latihan")
+            Text(currentStep == .selection ? "Pilih Gerakan Latihan" : "Tambah Gerakan")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundColor(.black)
             
@@ -77,6 +104,35 @@ struct MovementToPatientModal: View {
         .padding(.vertical, 8)
         .background(Color.white)
     }
+    
+    @ViewBuilder
+    private var selectionBody: some View {
+        searchSection
+        exerciseGridSection
+    }
+    
+    @ViewBuilder
+    private var configBody: some View {
+        if let exercise = selectedExercise {
+            ScrollView {
+                VStack(spacing: 20) {
+                    exerciseImageSection(for: exercise)
+                    exerciseInfoSection(for: exercise)
+                    inputFieldsSection(for: exercise)
+                    addButton
+                }
+                .padding(24)
+            }
+            .background(Color(UIColor.systemGroupedBackground))
+            .onAppear {
+                clearConfigInputs()
+            }
+        } else {
+            Text("Error: Gerakan tidak ditemukan.")
+                .padding()
+        }
+    }
+    
     
     private var searchSection: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -126,79 +182,180 @@ struct MovementToPatientModal: View {
                     GridItem(.flexible(), spacing: 16)
                 ], spacing: 16) {
                     ForEach(viewModel.modalExercises) { exercise in
-                        ModalMovementSelectionCard(exercise: exercise)
-                            .onTapGesture {
-                                selectedExercise = exercise
-                                showConfigModal = true
-                            }
+                        
+                        MovementSelectionCard(
+                            name: exercise.name,
+                            type: exercise.type,
+                            muscle: exercise.muscle,
+                            imageSource: .url(exercise.image)
+                        )
+                        .onTapGesture {
+                            selectedExercise = exercise
+                            currentStep = .config
+                        }
                     }
                 }
                 .padding(20)
             }
         }
-        .sheet(isPresented: $showConfigModal) {
-            if let exercise = selectedExercise {
-                MovementConfigModal(
-                    movement: exercise,
-                    patient: patient,
-                    fisioId: fisioId,
-                    selectedExercises: $selectedExercises,
-                    showConfigModal: $showConfigModal,
-                    dismissSheet: $dismissSheet,
-                    patientViewModel: ObservedObject(initialValue: patientViewModel)
+    }
+    
+    
+    private func exerciseImageSection(for movement: ModalExercise) -> some View {
+        ZStack(alignment: .top) {
+            AsyncImage(url: URL(string: movement.image)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+                    .overlay(
+                        Image(systemName: "figure.walk")
+                            .font(.system(size: 60))
+                            .foregroundColor(.gray.opacity(0.5))
+                    )
+            }
+            .frame(height: 200)
+            .cornerRadius(16)
+            .clipped()
+        }
+    }
+    
+    private func exerciseInfoSection(for movement: ModalExercise) -> some View {
+        VStack(spacing: 12) {
+            Text(movement.name)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(.black)
+                .multilineTextAlignment(.center)
+            
+            HStack(spacing: 8) {
+                TagView(
+                    text: movement.type,
+                    icon: movement.type == "Waktu" ? "clock" : "repeat"
                 )
+                TagView(text: movement.muscle, icon: nil)
+            }
+        }
+    }
+    
+    private func inputFieldsSection(for movement: ModalExercise) -> some View {
+        VStack(spacing: 16) {
+            InputField(
+                title: "Masukkan Jumlah Set",
+                placeholder: "5",
+                text: $setsInput,
+                keyboardType: .numberPad
+            )
+            
+            InputField(
+                title: movement.type == "Waktu" ? "Masukan Durasi Waktu (detik)" : "Masukkan Jumlah Rep",
+                placeholder: movement.type == "Waktu" ? "30" : "10",
+                text: $durationInput,
+                keyboardType: .numberPad
+            )
+        }
+    }
+    
+    private var addButton: some View {
+        Button(action: addMovementWithConfig) {
+            HStack(spacing: 10) {
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .semibold))
+                Text("Tambah Gerakan")
+                    .font(.system(size: 16, weight: .semibold))
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isFormValid ? Color.black : Color.gray.opacity(0.5))
+            )
+        }
+        .disabled(!isFormValid)
+    }
+    
+    
+    private var isFormValid: Bool {
+        !setsInput.isEmpty && !durationInput.isEmpty &&
+        Int(setsInput) != nil && Int(durationInput) != nil
+    }
+    
+    private func clearConfigInputs() {
+        setsInput = ""
+        durationInput = ""
+    }
+    
+    private func addMovementWithConfig() {
+        guard let sets = Int(setsInput),
+              let repOrTime = Int(durationInput),
+              let exerciseId = selectedExercise?.id else {
+            return
+        }
+
+        Task {
+            await patientViewModel.assignPatientExercise(
+                fisioId: fisioId,
+                patientId: patient.id,
+                exerciseId: exerciseId,
+                set: sets,
+                repOrTime: repOrTime
+            )
+
+            if !patientViewModel.isError {
+                try? await patientViewModel.readPatientDetail(fisioId: fisioId, patientId: patient.id)
+                
+                await MainActor.run {
+                    dismissSheet = true
+                    dismiss()
+                }
             }
         }
     }
 }
 
-struct ModalMovementSelectionCard: View {
-    let exercise: ModalExercise
+struct TagView: View {
+    let text: String
+    let icon: String?
     
     var body: some View {
-        VStack(alignment: .leading) {
-            AsyncImage(url: URL(string: exercise.image)) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .failure(_):
-                    Image(systemName: "photo")
-                        .font(.largeTitle)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.gray.opacity(0.3))
-                default:
-                    ZStack {
-                        Color.clear
-                        ProgressView()
-                    }
-                }
+        HStack(spacing: 4) {
+            if let icon = icon {
+                Image(systemName: icon)
+                    .font(.system(size: 12))
             }
-            .frame(height: 120)
-            .clipped()
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(exercise.name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .lineLimit(1)
-                
-                HStack {
-                    Text(exercise.type)
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    Spacer()
-                    Text(exercise.muscle)
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-                }
-            }
-            .padding(12)
+            Text(text)
+                .font(.system(size: 13, weight: .medium))
         }
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .foregroundColor(.black.opacity(0.8))
+        .background(
+            Capsule()
+                .fill(Color.gray.opacity(0.15))
+        )
+    }
+}
+
+struct InputField: View {
+    let title: String
+    let placeholder: String
+    @Binding var text: String
+    var keyboardType: UIKeyboardType = .default
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.black)
+            
+            TextField(placeholder, text: $text)
+                .keyboardType(keyboardType)
+                .font(.system(size: 15))
+                .padding(16)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+        }
     }
 }
