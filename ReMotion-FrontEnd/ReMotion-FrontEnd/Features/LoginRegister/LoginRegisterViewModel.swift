@@ -40,7 +40,7 @@ class LoginRegisterViewModel: ObservableObject {
             authResponse = response
             if let data = authResponse?.data {
                 self.errorMessage = ""
-                session?.login(token: data.accessToken, role: data.user.roleId, userId: data.user.id)
+                session?.login(token: data.accessToken, role: data.user.roleId, userId: data.user.id, patientId: data.user.patientId)
             }
         } catch {
             self.errorMessage = "Gagal masuk! Pastikan akun anda sudah terdaftar."
@@ -73,7 +73,7 @@ class LoginRegisterViewModel: ObservableObject {
             print(response)
             if let data = authResponse?.data {
                 self.errorMessage = ""
-                session?.login(token: data.accessToken, role: data.user.roleId, userId: data.user.id)
+                session?.login(token: data.accessToken, role: data.user.roleId, userId: data.user.id, patientId: data.user.patientId)
             }
         } catch {
             print(error)
