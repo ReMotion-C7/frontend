@@ -39,6 +39,7 @@ struct NewExerciseView: View {
 //                case .exercise(let details, let currentSet):
                 case .exercise(_, _):
                     ExercisePhaseSidebar(currentVideoURL: currentVideoURL, onNext: viewModel.newGoToNextPhase)
+//                    ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
 //                case .rest(let duration, let nextExercise):
                 case .rest(_, _):
                     RestPhaseSidebar(onNext: viewModel.newGoToNextPhase)
@@ -46,62 +47,64 @@ struct NewExerciseView: View {
                 
             }
             
-            ZStack {
-                QuickPoseCameraView(useFrontCamera: viewModel.useFrontCamera, delegate: viewModel.quickPose)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                QuickPoseOverlayView(overlayImage: $viewModel.overlayImage)
-                
-                
-                if !viewModel.showModal {
-                    VStack {
-                        HStack {
-                            ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
-                                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-                                .scaleEffect(x: 1, y: 4, anchor: .center)
-                                .padding(.horizontal, 32)
-                                .frame(width: 500, height: 100)
-                            Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .padding(.horizontal, 32)
-                        }
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.white)
-                        )
-                        Spacer()
-                    }
-                    .padding(.top, 64)
-                }
-                
-                if viewModel.showModal {
-                    VStack {
-                        Text("Beberapa bagian tubuh masih tidak terlihat")
-                            .padding(.bottom, 8)
-                            .font(.headline)
-                            .bold()
-                            .foregroundStyle(Color.white)
-                        Text("Mundur sedikit ke belakang sehingga seluruh tubuh mulai dari ujung kepala hingga ujung kaki terlihat.")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.white)
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.red)
-                    )
-                }
-                
-            }
-            .allowsHitTesting(false)
-            .onAppear {
-                viewModel.quickPoseSetup()
-                viewModel.newStartSession(with: exercises)
-            }
-            .onDisappear {
-                viewModel.quickPose.stop()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
+                        
+//            ZStack {
+//                QuickPoseCameraView(useFrontCamera: viewModel.useFrontCamera, delegate: viewModel.quickPose)
+//                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                QuickPoseOverlayView(overlayImage: $viewModel.overlayImage)
+//                
+//                
+//                if !viewModel.showModal {
+//                    VStack {
+//                        HStack {
+//                            ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+//                                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+//                                .scaleEffect(x: 1, y: 4, anchor: .center)
+//                                .padding(.horizontal, 32)
+//                                .frame(width: 500, height: 100)
+//                            Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
+//                                .font(.largeTitle)
+//                                .fontWeight(.bold)
+//                                .padding(.horizontal, 32)
+//                        }
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 16)
+//                                .fill(Color.white)
+//                        )
+//                        Spacer()
+//                    }
+//                    .padding(.top, 64)
+//                }
+//                
+//                if viewModel.showModal {
+//                    VStack {
+//                        Text("Beberapa bagian tubuh masih tidak terlihat")
+//                            .padding(.bottom, 8)
+//                            .font(.headline)
+//                            .bold()
+//                            .foregroundStyle(Color.white)
+//                        Text("Mundur sedikit ke belakang sehingga seluruh tubuh mulai dari ujung kepala hingga ujung kaki terlihat.")
+//                            .font(.subheadline)
+//                            .foregroundStyle(Color.white)
+//                    }
+//                    .padding()
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 16)
+//                            .fill(Color.red)
+//                    )
+//                }
+//                
+//            }
+//            .allowsHitTesting(false)
+//            .onAppear {
+//                viewModel.quickPoseSetup()
+//                viewModel.newStartSession(with: exercises)
+//            }
+//            .onDisappear {
+//                viewModel.quickPose.stop()
+//            }
+//            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {
