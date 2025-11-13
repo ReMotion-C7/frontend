@@ -17,7 +17,7 @@ class PatientViewModel: ObservableObject {
     @Published var deletePatientResponse: BaseResponse?
     @Published var readUsersNonFisioResponse: ReadUsersNonFisioResponse?
     @Published var addPatientResponse: AddPatientResponse?
-    
+    @Published var editPatientResponse: ReadPatientDetailResponse?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
@@ -142,32 +142,87 @@ class PatientViewModel: ObservableObject {
         }
     }
     
-    func deletePatient(fisioId: Int, patientId: Int) async throws {
+    //    func deletePatient(fisioId: Int, patientId: Int) async throws {
+    //
+    //        isLoading = true
+    //        defer {
+    //            isLoading = false
+    //        }
+    //
+    //        do {
+    //
+    //            let response: BaseResponse = try await APIService.shared.requestAPI(
+    //                "fisio/\(fisioId)/patients/\(patientId)",
+    //                method: .delete,
+    //                responseType: BaseResponse.self
+    //            )
+    //
+    //            self.deletePatientResponse = response
+    //            self.errorMessage = ""
+    //            self.isError = false
+    //            print("Pasien berhasil dihapus")
+    //
+    //        } catch {
+    //            self.isError = true
+    //            self.errorMessage = "Gagal menghapus data pasien!"
+    //            print(error.localizedDescription)
+    //        }
+    //    }
+    
+    func editPatientDetail(fisioId: Int, patientId: Int, phase: Int, symptoms: [String]) async -> Bool {
         
         isLoading = true
+        errorMessage = ""
+        isError = false
+        
         defer {
             isLoading = false
         }
         
+        let updateParams: [String: Any] = [
+            "phase": phase,
+            "symptoms": symptoms
+        ]
+        
         do {
-            
-            let response: BaseResponse = try await APIService.shared.requestAPI(
-                "fisio/\(fisioId)/patients/\(patientId)",
-                method: .delete,
-                responseType: BaseResponse.self
+            let response: EditPatientExerciseResponse = try await APIService.shared.requestAPI(
+                "fisio/\(fisioId)/patients/edit/\(patientId)", // URL sudah benar
+                method: .patch,
+                parameters: updateParams,
+                responseType: EditPatientExerciseResponse.self // PERUBAHAN 2
             )
             
-            self.deletePatientResponse = response
-            self.errorMessage = ""
-            self.isError = false
-            print("Pasien berhasil dihapus")
+            if response.status == "success" {
+                if let currentPatient = self.patient {
+                    let updatedData = ReadPatientDetailData(
+                        id: currentPatient.id,
+                        name: currentPatient.name,
+                        gender: currentPatient.gender,
+                        phase: phase,
+                        phoneNumber: currentPatient.phoneNumber,
+                        dateOfBirth: currentPatient.dateOfBirth,
+                        therapyStartDate: currentPatient.therapyStartDate,
+                        symptoms: symptoms,
+                        exercises: currentPatient.exercises
+                    )
+                    self.patient = updatedData
+                }
+                print("Pasien berhasil diupdate")
+                return true
+            } else {
+                self.isError = true
+                self.errorMessage = response.message
+                return false
+            }
             
         } catch {
             self.isError = true
-            self.errorMessage = "Gagal menghapus data pasien!"
-            print(error.localizedDescription)
+            self.errorMessage = "Gagal mengupdate data pasien."
+            print("Update Error: \(error.localizedDescription)")
+            return false
         }
     }
+    
     
     func editPatientExercise(
         fisioId: Int,

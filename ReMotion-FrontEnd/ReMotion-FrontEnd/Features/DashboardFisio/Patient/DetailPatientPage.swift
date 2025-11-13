@@ -41,7 +41,7 @@ struct DetailPatientPage: View {
                     dateOfBirth: patientData.dateOfBirth,
                     therapyStartDate: patientData.therapyStartDate,
                     symptoms: patientData.symptoms,
-                    exercises: patientData.exercises ?? []
+                    exercises: patientData.exercises
                 )
                 
                 ScrollView {
@@ -52,17 +52,9 @@ struct DetailPatientPage: View {
                         exerciseListSection(patient: patient)
                         
                         Spacer(minLength: 20)
-                        
-                        NavigationLink(
-                            destination: EditPatientDetailPage(viewModel: viewModel, patient: patient),
-                            isActive: $isNavigatingToEdit,
-                            label: { EmptyView() }
-                        )
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 20)
+                    .padding(32)
                 }
-                .disabled(showDeleteModal || showEditModal)
                 .background(Color.white)
                 .navigationTitle("Detail Pasien")
                 .navigationBarTitleDisplayMode(.inline)
@@ -75,25 +67,12 @@ struct DetailPatientPage: View {
                                 .font(.system(size: 18, weight: .semibold))
                         }
                     }
-                    
+
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu {
-                            Button(action: {
-                                isNavigatingToEdit = true
-                            }) {
-                                Label("Ubah Detail Pasien", systemImage: "pencil")
-                            }
-                            
-                            Button(role: .destructive, action: {
-                                isShowingDeleteAlert = true
-                            }) {
-                                Label("Hapus Pasien", systemImage: "trash")
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .foregroundColor(.black)
-                                .font(.system(size: 18, weight: .bold))
-                                .rotationEffect(.degrees(90))
+                        NavigationLink(
+                            destination: EditPatientDetailPage(viewModel: viewModel, patient: patient, fisioId: fisioId)) {
+                            Image(systemName: "pencil")
+                            .font(.system(size: 18, weight: .semibold))
                         }
                     }
                 }
@@ -105,26 +84,6 @@ struct DetailPatientPage: View {
                         showExerciseSheet = false
                         dismissSheet = false
                     }
-                }
-                .alert("Hapus Pasien?", isPresented: $isShowingDeleteAlert) {
-                    Button("Hapus", role: .destructive) {
-                        Task {
-                            do {
-                                try await viewModel.deletePatient(fisioId: fisioId, patientId: patient.id)
-                                
-                                if !viewModel.isError {
-                                    dismiss()
-                                } else {
-                                    print("Gagal menghapus: \(viewModel.errorMessage)")
-                                }
-                            } catch {
-                                print("Error: \(error.localizedDescription)")
-                            }
-                        }
-                    }
-                    Button("Batal", role: .cancel) {}
-                } message: {
-                    Text("Apakah Anda yakin ingin menghapus data pasien \(patient.name)? Tindakan ini tidak dapat dibatalkan.")
                 }
                 
             }
@@ -144,21 +103,12 @@ struct DetailPatientPage: View {
                         showDeleteModal: $showDeleteModal,
                         exerciseName: exercise.name,
                         onConfirm: {
-                            Task {
+                            withAnimation(.spring()) {
                                 showDeleteModal = false
-                                
-                                let success = await viewModel.deletePatientExercise(
-                                    fisioId: fisioId,
-                                    patientId: patientId,
-                                    exerciseId: exercise.id
-                                )
-                                
-                                if success {
-                                    try? await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
-                                }
                             }
                         }
                     )
+                    
                 }
                 .transition(.opacity.combined(with: .scale))
                 .animation(.spring(), value: showDeleteModal)
@@ -177,6 +127,7 @@ struct DetailPatientPage: View {
                         viewModel: viewModel,
                         showEditModal: $showEditModal
                     )
+                    
                 }
                 .transition(.opacity.combined(with: .scale))
                 .animation(.spring(), value: showEditModal)
@@ -187,11 +138,11 @@ struct DetailPatientPage: View {
             Task {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
                 
-                viewModel.fisioId = fisioId
-                viewModel.patientId = patientId
+                 viewModel.fisioId = fisioId
+                 viewModel.patientId = patientId
             }
         }
-        
+
     }
     private func patientHeaderSection(patient: Patient) -> some View {
         HStack(spacing: 16) {
@@ -238,7 +189,7 @@ struct DetailPatientPage: View {
                     .font(.system(size: 13))
                     .foregroundColor(.gray)
                 
-                Text("Tanggal mulai terapi : \(formatDate(patient.therapyStartDate))")
+                Text("Mulai terapi : \(formatDate(patient.therapyStartDate))")
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
             }
@@ -276,8 +227,7 @@ struct DetailPatientPage: View {
             }
         }
     }
-    
-    // MARK: - Exercise List Section (dari File 2)
+
     private func exerciseListSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -341,6 +291,7 @@ struct DetailPatientPage: View {
                                     showDeleteModal = true
                                 }
                             )
+                            
                         }
                     }
                     .padding(.vertical, 4)
