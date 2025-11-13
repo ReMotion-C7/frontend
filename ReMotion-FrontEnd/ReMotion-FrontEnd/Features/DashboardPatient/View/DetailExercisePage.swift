@@ -9,13 +9,15 @@ import SwiftUI
 import AVKit
 
 struct DetailExercisePage: View {
-
+    
     let userId: Int
     let exerciseId: Int
     @ObservedObject var viewModel: SessionViewModel
     
     @State private var player: AVPlayer?
-
+    @State private var isPlaying = true
+    @State private var isVideoReady = false
+    
     // Computed property to get icon based on type
     private func typeIcon(for exercise: SessionExerciseDetail) -> String {
         switch exercise.type.lowercased() {
@@ -40,56 +42,82 @@ struct DetailExercisePage: View {
             else if let exercise = viewModel.sessionExercise {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
-                        
-                        // Image/Video
-//                        ZStack {
-//                            Rectangle()
-//                                .fill(Color.gray.opacity(0.4))
-//                                .cornerRadius(12)
-//                            
-//                            VStack(spacing: 8) {
-//                                Image(systemName: "play.circle.fill")
-//                                    .font(.system(size: 60))
-//                                    .foregroundColor(.white.opacity(0.8))
-//                                
-//                                Text("Putar Video")
-//                                    .font(.caption)
-//                                    .fontWeight(.semibold)
-//                                    .foregroundColor(.white)
-//                            }
-//                            .padding()
-//                            .background(.black.opacity(0.3))
-//                            .cornerRadius(10)
-//                        }
-//                        .frame(height: 300)
-//                        .padding(.bottom, 10)
-                        
                         ZStack {
                             if let videoString = viewModel.sessionExercise?.video,
                                let videoURL = URL(string: videoString),
                                UIApplication.shared.canOpenURL(videoURL) {
-
-                                VideoPlayerView(videoURL: videoURL)
-                                    .cornerRadius(12)
-                                    .transition(.opacity)
+                                
+                                ZStack {
+                                    VideoPlayerView(videoURL: videoURL, isPlaying: $isPlaying)
+                                        .cornerRadius(12)
+                                        .allowsHitTesting(false)
+                                        .onAppear {
+                                            isVideoReady = false
+                                            let player = AVPlayer(url: videoURL)
+                                            player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["playable"]) {
+                                                var error: NSError? = nil
+                                                let status = player.currentItem?.asset.statusOfValue(forKey: "playable", error: &error)
+                                                DispatchQueue.main.async {
+                                                    if status == .loaded {
+                                                        isVideoReady = true
+                                                    } else {
+                                                        isVideoReady = false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    
+                                    // Overlay transparan untuk tap gesture
+                                    Rectangle()
+                                        .foregroundColor(.clear)
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            isPlaying.toggle()
+                                        }
+                                    
+                                    // Overlay play icon
+                                    if !isPlaying {
+                                        Image(systemName: "play.circle.fill")
+                                            .font(.system(size: 80))
+                                            .foregroundColor(.white.opacity(0.85))
+                                            .transition(.opacity)
+                                    }
+                                    
+                                    // Overlay loading video
+                                    if !isVideoReady {
+                                        VStack(spacing: 8) {
+                                            ProgressView()
+                                                .tint(.white)
+                                            Text("Loading video...")
+                                                .foregroundColor(.white)
+                                                .font(.caption)
+                                        }
+                                        .padding()
+                                        .background(Color.black.opacity(0.6))
+                                        .cornerRadius(10)
+                                    }
+                                }
+                                .frame(height: 500)
+                                .background(Color.black)
+                                .cornerRadius(12)
+                                .animation(.easeInOut, value: isPlaying)
+                                
                             } else {
+                                // fallback jika URL invalid
                                 ZStack {
                                     Color.black
                                     VStack(spacing: 8) {
                                         ProgressView()
                                             .tint(.white)
-                                        Text("Loading video...")
+                                        Text("Memuat video...")
                                             .foregroundColor(.white)
                                             .font(.caption)
                                     }
                                 }
+                                .frame(height: 500)
+                                .cornerRadius(12)
                             }
                         }
-                        .frame(height: 500)
-                        .background(Color.black)
-                        .cornerRadius(12)
-                        .animation(.easeInOut, value: viewModel.sessionExercise?.video)
-                        
                         // Name
                         HStack {
                             Text(exercise.name)
@@ -158,6 +186,7 @@ struct DetailExercisePage: View {
             }
         }
         .onAppear {
+            isVideoReady = false
             Task {
                 try await viewModel.readSessionExerciseDetail(patientId: userId, exerciseId: exerciseId)
             }

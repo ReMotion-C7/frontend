@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVKit
 
 struct DetailMovementPage: View {
     @ObservedObject var viewModel: ExerciseViewModel
@@ -20,31 +21,32 @@ struct DetailMovementPage: View {
             } else if let movement = viewModel.exercise {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        ZStack {
-                            Rectangle().fill(Color.gray.opacity(0.4))
-                            
-                            Image(systemName: movement.video)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                                .foregroundColor(.white)
-                            
-                            VStack(spacing: 8) {
-                                Image(systemName: "play.circle.fill")
-                                    .font(.system(size: 60))
-                                    .foregroundColor(.white.opacity(0.8))
-                                Text("Putar Video")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
+                        if let videoURL = URL(string: movement.video) {
+                            VideoPlayerView(videoURL: videoURL)
+                                .frame(height: 350)
+                                .cornerRadius(12)
+                                .padding(.bottom, 10)
+                        } else {
+                            ZStack {
+                                Rectangle().fill(Color.gray.opacity(0.4))
+                                
+                                VStack(spacing: 8) {
+                                    Image(systemName: "video.slash.fill")
+                                        .font(.system(size: 60))
+                                        .foregroundColor(.white.opacity(0.8))
+                                    Text("Video tidak tersedia")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                }
+                                .padding()
+                                .background(.black.opacity(0.3))
+                                .cornerRadius(10)
                             }
-                            .padding()
-                            .background(.black.opacity(0.3))
-                            .cornerRadius(10)
+                            .frame(height: 350)
+                            .cornerRadius(12)
+                            .padding(.bottom, 10)
                         }
-                        .frame(height: 350)
-                        .cornerRadius(12)
-                        .padding(.bottom, 10)
                         
                         Text(movement.name)
                             .font(.largeTitle)

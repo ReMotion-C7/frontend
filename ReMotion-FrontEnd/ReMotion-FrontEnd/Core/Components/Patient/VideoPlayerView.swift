@@ -1,34 +1,21 @@
-//
-//  SwiftUIView.swift
-//  ReMotion-FrontEnd
-//
-//  Created by Louis Mario Wijaya on 30/10/25.
-//
-
 import SwiftUI
 import AVKit
 
-// This struct is a wrapper around the UIKit AVPlayerViewController to make it usable in SwiftUI.
 struct VideoPlayerView: UIViewControllerRepresentable {
-    
     let videoURL: URL
+    var isPlaying: Binding<Bool>? = nil   // opsional: jika tidak dikirim, video autoplay
     
-    // This function creates the underlying UIKit view controller.
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        let controller = AVPlayerViewController()
         let player = AVPlayer(url: videoURL)
+        player.isMuted = true
+        context.coordinator.player = player
         
+        let controller = AVPlayerViewController()
         controller.player = player
         controller.showsPlaybackControls = false
         controller.videoGravity = .resizeAspectFill
         
-//        controller.view.backgroundColor = UIColor.black.withAlphaComponent(0.15)
-//        controller.contentOverlayView?.backgroundColor = UIColor.black.withAlphaComponent(0.15)
-        
-        // --- FIX: Pass the created player to the coordinator ---
-        context.coordinator.player = player
-        
-        // Add an observer to detect when the video finishes playing
+        // Loop video otomatis
         NotificationCenter.default.addObserver(
             context.coordinator,
             selector: #selector(Coordinator.playerDidFinishPlaying),
@@ -36,107 +23,53 @@ struct VideoPlayerView: UIViewControllerRepresentable {
             object: player.currentItem
         )
         
-        player.play()
-        
-        // Tunggu video siap baru play, agar tidak flash putih (ubah ini jg gweh)
-//        player.currentItem?.addObserver(
-//            context.coordinator,
-//            forKeyPath: "status",
-//            options: [.new],
-//            context: nil
-//        )
+        // Jalankan sesuai mode
+        if let binding = isPlaying {
+            if binding.wrappedValue {
+                player.play()
+            } else {
+                player.pause()
+            }
+        } else {
+            player.play()
+        }
         
         return controller
     }
     
-    // This function is called whenever the SwiftUI view's state changes (e.g., videoURL changes).
     func updateUIViewController(_ controller: AVPlayerViewController, context: Context) {
-        // Get the URL of the video that's currently loaded in the player.
-        let currentURL = (controller.player?.currentItem?.asset as? AVURLAsset)?.url
+        guard let player = context.coordinator.player else { return }
         
-        // Compare the current URL with the new URL from the parent view.
-        // If they are different, we need to update the video.
-        if currentURL != videoURL {
-            
-            // 1. Create a new player with the new URL.
-            let newPlayer = AVPlayer(url: videoURL)
-            
-            // 2. Assign the new player to the controller.
-            controller.player = newPlayer
-            
-            // 3. Update the coordinator's reference to the new player.
-            context.coordinator.player = newPlayer
-            
-            // 4. IMPORTANT: Remove the old observer before adding a new one to prevent memory leaks.
-            NotificationCenter.default.removeObserver(
-                context.coordinator,
-                name: .AVPlayerItemDidPlayToEndTime,
-                object: nil // Removing for all objects is safest here
-            )
-            
-            // 5. Add the looping observer to the new player's video item.
-            NotificationCenter.default.addObserver(
-                context.coordinator,
-                selector: #selector(Coordinator.playerDidFinishPlaying),
-                name: .AVPlayerItemDidPlayToEndTime,
-                object: newPlayer.currentItem
-            )
-            
-            // 6. Play the new video.
-            newPlayer.play()
+        // Kontrol player dari binding setiap kali state berubah
+        if let binding = isPlaying {
+            if binding.wrappedValue && player.timeControlStatus != .playing {
+                player.play()
+            } else if !binding.wrappedValue && player.timeControlStatus == .playing {
+                player.pause()
+            }
         }
     }
     
-    // The Coordinator is a bridge for handling events between UIKit and SwiftUI.
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
     
     class Coordinator: NSObject {
         var parent: VideoPlayerView
-        // --- FIX: Add a variable to hold the actual player ---
         var player: AVPlayer?
         
         init(_ parent: VideoPlayerView) {
             self.parent = parent
         }
         
-        // This function is now called on the correct player
-        @objc func playerDidFinishPlaying(note: NSNotification) {
-            // Seek back to the beginning and play again to create an endless loop
+        @objc func playerDidFinishPlaying(_ note: Notification) {
+            // Loop video setelah selesai
             player?.seek(to: .zero)
             player?.play()
         }
         
-        // tambah ini jg gweh
-        // Tunggu sampai video siap baru play (hilangkan flash putih)
-//        override func observeValue(
-//            forKeyPath keyPath: String?,
-//            of object: Any?,
-//            change: [NSKeyValueChangeKey : Any]?,
-//            context: UnsafeMutableRawPointer?
-//        ) {
-//            if keyPath == "status",
-//               let item = object as? AVPlayerItem,
-//               item.status == .readyToPlay {
-//                player?.play()
-//            }
-//        }
-        
-        // ini jg masbro
-//        deinit {
-//            // Bersihkan observer saat koordinatōr hilang
-//            if let item = player?.currentItem {
-//                item.removeObserver(self, forKeyPath: "status", context: nil)
-//            }
-//            NotificationCenter.default.removeObserver(self)
-//        }
-    }
-}
-
-// Add a convenience accessor to get the player
-extension VideoPlayerView {
-    var player: AVPlayer {
-        return AVPlayer(url: videoURL)
+        deinit {
+            NotificationCenter.default.removeObserver(self)
+        }
     }
 }
