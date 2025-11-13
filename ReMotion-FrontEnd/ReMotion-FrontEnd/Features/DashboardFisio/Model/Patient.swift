@@ -59,6 +59,11 @@ struct ReadPatientDetailResponse: Codable {
     var data: ReadPatientDetailData
 }
 
+struct DeletePatientExerciseResponse: Codable {
+    let status: String
+    let message: String
+}
+
 enum Gender: String, CaseIterable {
     case laki = "Laki-laki"
     case perempuan = "Perempuan"
