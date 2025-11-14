@@ -13,6 +13,7 @@ struct SessionPage: View {
     @State private var navigateToExercisePage = false
     @State private var todaysExercises: [NewExercises] = []
     let userId: Int
+    let patientId: Int
     @StateObject var viewModel = SessionViewModel()
     
     private var formattedCurrentDate: String {
@@ -86,7 +87,7 @@ struct SessionPage: View {
                                         ScrollView {
                                             VStack(alignment: .leading, spacing: 16) {
                                                 ForEach(viewModel.sessions) { exercise in
-                                                    NavigationLink(destination: DetailExercisePage(userId: userId, exerciseId: exercise.id, viewModel: viewModel)) {
+                                                    NavigationLink(destination: DetailExercisePage(userId: patientId, exerciseId: exercise.id, viewModel: viewModel)) {
                                                         ExerciseSessionCard(exercise: exercise)
                                                     }
                                                     .buttonStyle(PlainButtonStyle())
@@ -119,7 +120,7 @@ struct SessionPage: View {
                             }
                             .onAppear {
                                 Task {
-                                    try await viewModel.readSessions(patientId: userId)
+                                    try await viewModel.readSessions(patientId: patientId)
                                 }
                             }
                         } else {
