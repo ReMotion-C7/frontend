@@ -22,4 +22,5 @@ struct UserData: Codable {
     var id: Int
     var name: String
     var roleId: Int
+    var patientId: Int
 }
