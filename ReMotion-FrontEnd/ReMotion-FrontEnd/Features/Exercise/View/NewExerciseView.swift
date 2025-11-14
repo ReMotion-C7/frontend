@@ -45,7 +45,7 @@ struct NewExerciseView: View {
                     //                    ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
                     //                case .rest(let duration, let nextExercise):
                 case .rest(_, _):
-                    RestPhaseSidebar(onNext: viewModel.newGoToNextPhase)
+                    RestPhaseSidebar(onNext: viewModel.newGoToNextPhase, viewModel: viewModel)
                 }
                 
             }
@@ -198,15 +198,16 @@ struct ExercisePhaseCamera: View {
 struct RestPhaseSidebar: View {
     
     let onNext: () -> Void
+    @ObservedObject var viewModel: NewExerciseViewModel
     
     var body: some View {
         VStack {
-            Text("Lunges")
+            Text("Istirahat")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("00:00:30")
-                .font(.largeTitle)
+            Text("\(viewModel.formattedRemainingTime)")
+                .font(.system(size: 64))
                 .fontWeight(.bold)
             
             Button(action: {
@@ -245,6 +246,9 @@ struct RestPhaseSidebar: View {
         }
         .frame(maxWidth: 400, maxHeight: .infinity)
         .background(Color.white)
+        .onAppear {
+            viewModel.startCountdown(from: 30)
+        }
     }
 }
 
