@@ -18,6 +18,8 @@ struct AddPatientModal: View {
     @State private var showSymptomInput = false
     @State private var phase: Int = 1
     
+    @State private var showExitAlert = false
+    
     let fisioId: Int
     
     @StateObject private var viewModel = PatientViewModel()
@@ -35,7 +37,7 @@ struct AddPatientModal: View {
         VStack(spacing: 0) {
             HStack {
                 Button(action: {
-                    dismiss()
+                    showExitAlert = true
                 }) {
                     Image(systemName: "xmark")
                         .font(.system(size: 18, weight: .medium))
@@ -109,6 +111,7 @@ struct AddPatientModal: View {
                                 ForEach(filteredPatients) { patient in
                                     Button(action: {
                                         selectedPatient = patient
+                                        searchText = patient.name
                                     }) {
                                         HStack(spacing: 12) {
                                             Image(systemName: "person.fill")
@@ -155,6 +158,15 @@ struct AddPatientModal: View {
                                 }
                                 
                                 Spacer()
+                                
+                                Button(action: {
+                                    selectedPatient = nil
+                                    searchText = ""
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray)
+                                }
+                                
                             }
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
@@ -167,7 +179,9 @@ struct AddPatientModal: View {
                                     .foregroundColor(.black)
                                 
                                 Button(action: {
-                                    showDatePicker.toggle()
+                                    withAnimation {
+                                        showDatePicker.toggle()
+                                    }
                                 }) {
                                     HStack {
                                         Image(systemName: "calendar")
@@ -188,6 +202,7 @@ struct AddPatientModal: View {
                                     DatePicker("", selection: $therapyStartDate, displayedComponents: .date)
                                         .datePickerStyle(GraphicalDatePickerStyle())
                                         .padding(.vertical, 8)
+                                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
                                 }
                             }
                             
@@ -219,90 +234,6 @@ struct AddPatientModal: View {
                             }
                             .padding(.top, 8)
                             
-//                            VStack(alignment: .leading, spacing: 12) {
-//                                Text("Gejala Pasien")
-//                                    .font(.system(size: 16, weight: .semibold))
-//                                    .foregroundColor(.black)
-//                                
-//                                ForEach(symptoms.indices, id: \.self) { index in
-//                                    HStack(spacing: 12) {
-//                                        Image(systemName: "circle.fill")
-//                                            .font(.system(size: 6))
-//                                            .foregroundColor(.gray)
-//                                        
-//                                        Text(symptoms[index])
-//                                            .font(.system(size: 14))
-//                                            .foregroundColor(.black)
-//                                        
-//                                        Spacer()
-//                                        
-//                                        Button(action: {
-//                                            symptoms.remove(at: index)
-//                                        }) {
-//                                            Image(systemName: "trash")
-//                                                .font(.system(size: 14))
-//                                                .foregroundColor(.red)
-//                                        }
-//                                    }
-//                                    .padding(.vertical, 12)
-//                                    .padding(.horizontal, 16)
-//                                    .background(Color.gray.opacity(0.05))
-//                                    .cornerRadius(8)
-//                                }
-//                                
-//                                if showSymptomInput {
-//                                    HStack(spacing: 12) {
-//                                        TextField("Tambahkan gejala", text: $newSymptom)
-//                                            .textFieldStyle(PlainTextFieldStyle())
-//                                            .font(.system(size: 14))
-//                                        
-//                                        Button(action: {
-//                                            if !newSymptom.isEmpty {
-//                                                symptoms.append(newSymptom)
-//                                                newSymptom = ""
-//                                                showSymptomInput = false
-//                                            }
-//                                        }) {
-//                                            Image(systemName: "checkmark")
-//                                                .font(.system(size: 14))
-//                                                .foregroundColor(.green)
-//                                        }
-//                                        
-//                                        Button(action: {
-//                                            newSymptom = ""
-//                                            showSymptomInput = false
-//                                        }) {
-//                                            Image(systemName: "xmark")
-//                                                .font(.system(size: 14))
-//                                                .foregroundColor(.red)
-//                                        }
-//                                    }
-//                                    .padding(.vertical, 12)
-//                                    .padding(.horizontal, 16)
-//                                    .background(Color.white)
-//                                    .cornerRadius(8)
-//                                    .overlay(
-//                                        RoundedRectangle(cornerRadius: 8)
-//                                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-//                                    )
-//                                } else {
-//                                    Button(action: {
-//                                        showSymptomInput = true
-//                                    }) {
-//                                        HStack(spacing: 8) {
-//                                            Image(systemName: "plus")
-//                                                .font(.system(size: 14))
-//                                                .foregroundColor(.gray)
-//                                            
-//                                            Text("Tambahkan gejala")
-//                                                .font(.system(size: 14))
-//                                                .foregroundColor(.gray)
-//                                        }
-//                                        .padding(.vertical, 12)
-//                                        .padding(.horizontal, 16)
-//                                    }
-//                                }
-//                            }
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Gejala Pasien")
                                     .font(.system(size: 16, weight: .semibold))
@@ -340,6 +271,9 @@ struct AddPatientModal: View {
                                             symptoms.append(newSymptom.trimmingCharacters(in: .whitespaces))
                                             newSymptom = ""
                                             showSymptomInput = false
+                                        } else {
+                                            newSymptom = ""
+                                            showSymptomInput = false
                                         }
                                     })
                                     .textFieldStyle(PlainTextFieldStyle())
@@ -354,7 +288,9 @@ struct AddPatientModal: View {
                                     )
                                 } else {
                                     Button(action: {
-                                        showSymptomInput = true
+                                        withAnimation {
+                                            showSymptomInput = true
+                                        }
                                     }) {
                                         HStack(spacing: 8) {
                                             Image(systemName: "plus")
@@ -421,10 +357,15 @@ struct AddPatientModal: View {
                 try await viewModel.readUsersNonFisio(fisioId: fisioId)
             }
         }
+        .alert("Batalkan Menambah Pasien?", isPresented: $showExitAlert) {
+            Button("Batal", role: .cancel) { }
+            Button("Keluar", role: .destructive) {
+                dismiss()
+            }
+        } message: {
+            Text("Data yang Anda masukkan tidak akan disimpan. Apakah Anda yakin ingin keluar?")
+        }
+        .interactiveDismissDisabled()
     }
     
 }
-
-//#Preview {
-//    AddPatientModal()
-//}
