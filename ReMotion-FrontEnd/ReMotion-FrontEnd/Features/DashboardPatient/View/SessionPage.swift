@@ -12,10 +12,15 @@ struct SessionPage: View {
     @State private var showSafetyModal = false
     @State private var navigateToExercisePage = false
     @State private var todaysExercises: [NewExercises] = []
-    
     let userId: Int
-    
     @StateObject var viewModel = SessionViewModel()
+    
+    private var formattedCurrentDate: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "id_ID")
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: Date())
+    }
     
     var body: some View {
         ZStack {
@@ -24,22 +29,19 @@ struct SessionPage: View {
             } detail: {
                 NavigationStack {
                     
-                    VStack(alignment: .leading, spacing: 20) {
-                        // Title
+                    VStack(alignment: .leading) {
                         HStack {
                             Text(selectedMenu == "Sesi Latihan" ? "Sesi Latihan" : "Evaluasi Gerakan")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
-                                .padding(.leading, 12)
-                            
-                            Spacer()
                         }
-                        .padding(.bottom, 10)
+                        Text(formattedCurrentDate)
+                            .fontWeight(.semibold)
+                            .padding(.top, 6)
                         
-                        // Content Cards
                         if selectedMenu == "Sesi Latihan" {
                             
-                            VStack {
+                            VStack (alignment: .leading) {
                                 if viewModel.isLoading {
                                     LoadingView(message: "Memuat sesi latihan anda...")
                                 }
@@ -51,8 +53,38 @@ struct SessionPage: View {
                                         BlankView(message: "Masih belum ada sesi latihan untuk anda.")
                                     }
                                     else {
+                                        VStack {
+                                            HStack {
+                                                Image(systemName: "exclamationmark.triangle.fill")
+                                                    .foregroundColor(.gray)
+                                                    .font(.title3)
+                                                
+                                                Text("Latihan di bawah ini telah disesuaikan oleh terapis Anda.")
+                                                    .font(.default)
+                                                    .fontWeight(.bold)
+                                                    .foregroundColor(.secondary)
+                                                
+                                                Spacer()
+                                            }
+                                            .padding(.bottom, 6)
+                                            
+                                            Text("Mohon lakukan sesuai jumlah dan durasi yang dianjurkan, karena latihan berlebih dapat berisiko menimbulkan cedera atau memperlambat pemulihan.")
+                                                .foregroundColor(Color(
+                                                    red: 163/255,
+                                                    green: 163/255,
+                                                    blue: 163/255
+                                                ))
+                                        }
+                                        .padding(.vertical, 20)
+                                        .padding(.horizontal, 16)
+                                        .background(Color(UIColor.systemGray6))
+                                        .cornerRadius(12)
+                                        .padding(.top, 12)
+                                        
+                                        
+                                        
                                         ScrollView {
-                                            VStack(spacing: 16) {
+                                            VStack(alignment: .leading, spacing: 16) {
                                                 ForEach(viewModel.sessions) { exercise in
                                                     NavigationLink(destination: DetailExercisePage(userId: userId, exerciseId: exercise.id, viewModel: viewModel)) {
                                                         ExerciseSessionCard(exercise: exercise)
@@ -61,6 +93,8 @@ struct SessionPage: View {
                                                 }
                                             }
                                         }
+                                        .padding(.top, 12)
+                                        
                                         Button(action: {
                                             self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
                                             withAnimation(.spring()) {
@@ -87,9 +121,8 @@ struct SessionPage: View {
                                 Task {
                                     try await viewModel.readSessions(patientId: userId)
                                 }
-                            }                            
+                            }
                         } else {
-                            // Isi pake evaluasi gerakan
                             Text("Ini Evaluasi Gerakan")
                         }
                         
@@ -99,7 +132,6 @@ struct SessionPage: View {
                     .padding(.horizontal, 40)
                     .fullScreenCover(isPresented: $navigateToExercisePage) {
                         NavigationStack {
-//                            ExerciseSessionView(exercises: todaysExercises)
                             NewExerciseView(exercises: todaysExercises)
                         }
                     }
@@ -121,7 +153,3 @@ struct SessionPage: View {
         }
     }
 }
-
-//#Preview {
-//    SessionPage()
-//}
