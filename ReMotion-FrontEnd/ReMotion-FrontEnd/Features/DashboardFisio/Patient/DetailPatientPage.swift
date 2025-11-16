@@ -5,7 +5,6 @@
 //  Created by Gabriela on 24/10/25.
 //
 
-
 import SwiftUI
 
 struct DetailPatientPage: View {
@@ -23,13 +22,24 @@ struct DetailPatientPage: View {
     @State private var dismissSheet = false
     
     var body: some View {
-        
         VStack {
             if viewModel.isLoading {
-                Text("Memuat data...")
+                ProgressView("Memuat data...")
+                    .progressViewStyle(CircularProgressViewStyle())
             }
             else if viewModel.errorMessage != "" {
-                Text("Error: \(viewModel.errorMessage)")
+                VStack(spacing: 16) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 50))
+                        .foregroundColor(.red.opacity(0.6))
+                    Text("Terjadi Kesalahan")
+                        .font(.system(size: 18, weight: .semibold))
+                    Text(viewModel.errorMessage)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
             }
             else if let patientData = viewModel.patient {
                 let patient = Patient(
@@ -45,16 +55,24 @@ struct DetailPatientPage: View {
                 )
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 22) {
                         patientHeaderSection(patient: patient)
                         therapyInfoSection(patient: patient)
-                        symptomsSection(patient: patient)
+                        complaintsSection(patient: patient)
+                        
+                        if let diagnostic = patientData.diagnostic, !diagnostic.isEmpty {
+                            diagnosticSection(diagnostic: diagnostic)
+                        }
+                        
                         exerciseListSection(patient: patient)
                         
                         Spacer(minLength: 20)
                     }
-                    .padding(32)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 32)
                 }
+                .padding(24)
                 .background(Color.white)
                 .navigationTitle("Detail Pasien")
                 .navigationBarTitleDisplayMode(.inline)
@@ -64,16 +82,17 @@ struct DetailPatientPage: View {
                         Button(action: { dismiss() }) {
                             Image(systemName: "chevron.left")
                                 .foregroundColor(.black)
-                                .font(.system(size: 18, weight: .semibold))
+                                .font(.system(size: 20, weight: .medium))
                         }
                     }
 
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(
-                            destination: EditPatientDetailPage(viewModel: viewModel, patient: patient, fisioId: fisioId)) {
-                            Image(systemName: "pencil")
-                            .font(.system(size: 18, weight: .semibold))
-                        }
+                            NavigationLink(destination: EditPatientDetailPage(viewModel: viewModel, patient: patient, fisioId: fisioId)) {
+                                Image(systemName: "pencil")
+                                    .foregroundColor(.black)
+                                    .font(.system(size: 20, weight: .medium))
+                            }
+                
                     }
                 }
                 .sheet(isPresented: $showExerciseSheet) {
@@ -85,7 +104,6 @@ struct DetailPatientPage: View {
                         dismissSheet = false
                     }
                 }
-                
             }
         }
         .overlay {
@@ -108,7 +126,6 @@ struct DetailPatientPage: View {
                             }
                         }
                     )
-                    
                 }
                 .transition(.opacity.combined(with: .scale))
                 .animation(.spring(), value: showDeleteModal)
@@ -127,48 +144,45 @@ struct DetailPatientPage: View {
                         viewModel: viewModel,
                         showEditModal: $showEditModal
                     )
-                    
                 }
                 .transition(.opacity.combined(with: .scale))
                 .animation(.spring(), value: showEditModal)
             }
-            
         }
         .onAppear {
             Task {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
-                
-                 viewModel.fisioId = fisioId
-                 viewModel.patientId = patientId
+                viewModel.fisioId = fisioId
+                viewModel.patientId = patientId
             }
         }
-
     }
+    
     private func patientHeaderSection(patient: Patient) -> some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             Circle()
                 .fill(Color.black)
-                .frame(width: 60, height: 60)
+                .frame(width: 56, height: 56)
                 .overlay(
                     Image(systemName: "person.fill")
                         .foregroundColor(.white)
-                        .font(.system(size: 28))
+                        .font(.system(size: 26))
                 )
             
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(patient.name)
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.black)
                     
-                    Text(patient.gender)
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(.black.opacity(0.6))
+                    Text(patient.gender == "Laki-laki" || patient.gender == "Laki - laki" ? "Laki - Laki" : patient.gender)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.black.opacity(0.7))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
                         .background(
                             Capsule()
-                                .fill(Color.gray.opacity(0.2))
+                                .fill(Color(UIColor.systemGray5))
                         )
                 }
                 
@@ -179,52 +193,77 @@ struct DetailPatientPage: View {
             
             Spacer()
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
     }
     
     private func therapyInfoSection(patient: Patient) -> some View {
-        HStack(spacing: 12) {
-            HStack(spacing: 8) {
+        HStack(spacing: 10) {
+            HStack(spacing: 6) {
                 Image(systemName: "calendar")
-                    .font(.system(size: 13))
+                    .font(.system(size: 12))
                     .foregroundColor(.gray)
                 
                 Text("Mulai terapi : \(formatDate(patient.therapyStartDate))")
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 12)
             .padding(.vertical, 10)
             .background(Color(UIColor.systemGray6))
-            .cornerRadius(8)
+            .cornerRadius(6)
+
             
             HStack(spacing: 6) {
-                Text("Fase \(patient.phase)")
+                Text("Fase \(patient.phase) (Post-Op)")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 6)
                     .fill(patient.getPhaseColor())
             )
         }
     }
     
-    private func symptomsSection(patient: Patient) -> some View {
+    private func complaintsSection(patient: Patient) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Gejala")
-                .font(.system(size: 20, weight: .bold))
+            Text("Keluhan Pasien")
+                .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.black)
             
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 ForEach(patient.symptoms, id: \.self) { symptom in
-                    Text("• \(symptom)")
-                        .font(.system(size: 14))
-                        .foregroundColor(.black.opacity(0.8))
+                    HStack(alignment: .top, spacing: 8) {
+                        Text("•")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.black)
+                        Text(symptom)
+                            .font(.system(size: 14))
+                            .foregroundColor(.black.opacity(0.8))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
+        }
+    }
+    
+    private func diagnosticSection(diagnostic: String) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Hasil Diagnosa")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(.black)
+            
+            Text(diagnostic)
+                .font(.system(size: 14))
+                .foregroundColor(.black.opacity(0.7))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(UIColor.systemGray6).opacity(0.6))
+                .cornerRadius(12)
         }
     }
 
@@ -232,7 +271,7 @@ struct DetailPatientPage: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Daftar Gerakan Latihan")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.black)
                 
                 Spacer()
@@ -242,15 +281,15 @@ struct DetailPatientPage: View {
                 }) {
                     HStack(spacing: 6) {
                         Image(systemName: "plus")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 13, weight: .semibold))
                         Text("Tambah Gerakan")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 6)
                             .fill(Color.black)
                     )
                 }
@@ -291,7 +330,6 @@ struct DetailPatientPage: View {
                                     showDeleteModal = true
                                 }
                             )
-                            
                         }
                     }
                     .padding(.vertical, 4)
@@ -312,8 +350,3 @@ struct DetailPatientPage: View {
         return dateString
     }
 }
-
-//
-//#Preview {
-//    Text("Preview dinonaktifkan - butuh ViewModel")
-//}
