@@ -22,6 +22,17 @@ struct NewExercises: Codable, Identifiable {
     let repOrTime: Int
 }
 
+// VERSION 2
+struct NewExercisesV2: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let method: String // "Repetisi", "Waktu"
+    let video: String
+    let muscle: String
+    let set: Int
+    let repOrTime: Int
+}
+
 struct NewNextExerciseInfo {
     let name: String
     let video: String
@@ -56,10 +67,33 @@ struct NewSession: Identifiable, Codable {
     var repOrTime: Int
 }
 
+// VERSION 2
+struct NewSessionV2: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var method: String
+    var image: String
+    var muscle: String
+    var set: Int
+    var repOrTime: Int
+}
+
 struct NewSessionExerciseDetail: Identifiable, Codable {
     var id: Int
     var name: String
     var type: String
+    var description: String
+    var video: String
+    var muscle: String
+    var set: Int
+    var repOrTime: Int
+}
+
+// VERSION 2
+struct NewSessionExerciseDetailV2: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var method: String
     var description: String
     var video: String
     var muscle: String

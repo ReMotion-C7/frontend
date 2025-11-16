@@ -25,6 +25,17 @@ struct Exercises: Codable, Identifiable {
     let repOrTime: Int
 }
 
+// VERSION 2
+struct ExercisesV2: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let method: String // "Repetisi", "Waktu"
+    let video: String
+    let muscle: String
+    let set: Int
+    let repOrTime: Int
+}
+
 // MARK: - Models for App's Internal Logic
 
 // A simple struct to hold information about the upcoming exercise for the rest screen
@@ -64,10 +75,33 @@ struct Session: Identifiable, Codable {
     var repOrTime: Int
 }
 
+// VERSION 2
+struct SessionV2: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var method: String
+    var image: String
+    var muscle: String
+    var set: Int
+    var repOrTime: Int
+}
+
 struct SessionExerciseDetail: Identifiable, Codable {
     var id: Int
     var name: String
     var type: String
+    var description: String
+    var video: String
+    var muscle: String
+    var set: Int
+    var repOrTime: Int
+}
+
+// VERSION 2
+struct SessionExerciseDetailV2: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var method: String
     var description: String
     var video: String
     var muscle: String
