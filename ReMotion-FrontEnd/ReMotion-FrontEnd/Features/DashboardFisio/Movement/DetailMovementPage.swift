@@ -53,12 +53,6 @@ struct DetailMovementPage: View {
                             .fontWeight(.bold)
                         
                         HStack(spacing: 10) {
-                            Label(movement.type, systemImage: "timer")
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color.gray.opacity(0.15))
-                                .cornerRadius(8)
-                            
                             Text(movement.muscle)
                                 .fontWeight(.medium)
                                 .padding(.horizontal, 12)
@@ -67,7 +61,31 @@ struct DetailMovementPage: View {
                                 .foregroundColor(.white)
                                 .clipShape(Capsule())
                             
-                            Spacer()
+                            Rectangle()
+                                .frame(width: 1, height: 20)
+                                .foregroundColor(.gray.opacity(0.6))
+                            
+                            Text(movement.type)
+                                .fontWeight(.medium)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.gray)
+                                        .opacity(0.6)
+                                )
+                            
+                            Text(movement.category)
+                                .fontWeight(.medium)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.gray)
+                                        .opacity(0.6)
+                                )
                         }
                         
                         Text(movement.description)
@@ -122,4 +140,24 @@ struct DetailMovementPage: View {
             }
         }
     }
+}
+
+#Preview {
+    DetailMovementPage(
+        viewModel: {
+            let vm = ExerciseViewModel()
+            vm.exercise = MovementDetail(
+                id: 1,
+                name: "Jumping Jacks",
+                type: "AGA",
+                category: "Keseimbangan",
+                description: "Full-body exercise.",
+                muscle: "Seluruh Tubuh",
+                video: "https://example.com/jumping_jacks.jpg"
+            )
+            vm.isLoading = false
+            return vm
+        }(),
+        exerciseId: 1
+    )
 }
