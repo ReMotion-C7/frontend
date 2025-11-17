@@ -32,7 +32,7 @@ struct PatientCard: View {
                             .foregroundColor(.black)
                         
                         // Phase
-                        Text("Fase \(patient.phase)")
+                        Text("\(patient.phase)")
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.white)
                             .padding(.horizontal, 12)
