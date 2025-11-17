@@ -19,8 +19,8 @@ struct DetailExercisePage: View {
     @State private var isVideoReady = false
     
     // Computed property to get icon based on type
-    private func typeIcon(for exercise: SessionExerciseDetail) -> String {
-        switch exercise.type.lowercased() {
+    private func typeIcon(for exercise: SessionExerciseDetailV2) -> String {
+        switch exercise.method.lowercased() {
         case "waktu":
             return "clock"
         case "repetisi":
@@ -128,7 +128,7 @@ struct DetailExercisePage: View {
                             HStack(spacing: 6) {
                                 Image(systemName: typeIcon(for: exercise))
                                     .font(.callout)
-                                Text(exercise.type)
+                                Text(exercise.method)
                                     .fontWeight(.medium)
                             }
                             .padding(.horizontal, 12)
@@ -160,8 +160,8 @@ struct DetailExercisePage: View {
                             .foregroundColor(.gray)
                             
                             HStack(spacing: 4) {
-                                Image(systemName: exercise.type.lowercased() == "waktu" ? "clock" : "arrow.counterclockwise")
-                                Text(exercise.type.lowercased() == "waktu"
+                                Image(systemName: exercise.method.lowercased() == "waktu" ? "clock" : "arrow.counterclockwise")
+                                Text(exercise.method.lowercased() == "waktu"
                                      ? "\(exercise.repOrTime) Detik"
                                      : "\(exercise.repOrTime)x Repetisi")
                             }

@@ -14,8 +14,8 @@ class SessionViewModel: ObservableObject {
     @Published var readSessionResponses: ReadSessionsResponse?
     @Published var readSessionExerciseDetailResponse: ReadSessionExerciseDetailResponse?
     @Published var isLoading: Bool = false
-    @Published var sessions: [Session] = []
-    @Published var sessionExercise: SessionExerciseDetail? = nil
+    @Published var sessions: [SessionV2] = []
+    @Published var sessionExercise: SessionExerciseDetailV2? = nil
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
     

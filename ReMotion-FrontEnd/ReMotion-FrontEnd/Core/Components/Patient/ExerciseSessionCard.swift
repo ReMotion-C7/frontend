@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExerciseSessionCard: View {
-    let exercise: Session
+    let exercise: SessionV2
     
     var body: some View {
         HStack {
@@ -64,13 +64,13 @@ struct ExerciseSessionCard: View {
                         }
                         
                         HStack(spacing: 4) {
-                            Image(systemName: exercise.type.lowercased() == "waktu"
+                            Image(systemName: exercise.method.lowercased() == "waktu"
                                   ? "clock"
                                   : "arrow.counterclockwise")
                             .font(.system(size: 12))
                             .foregroundColor(.gray)
                             
-                            Text(exercise.type.lowercased() == "waktu"
+                            Text(exercise.method.lowercased() == "waktu"
                                  ? "\(exercise.repOrTime) detik"
                                  : "\(exercise.repOrTime)x repetisi")
                             .font(.system(size: 12))
