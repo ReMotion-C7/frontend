@@ -23,17 +23,14 @@ struct DashboardFisioPage: View {
         } detail: {
             NavigationStack {
                 VStack(alignment: .leading, spacing: 20) {
-                    
-                    // Title
                     HStack {
                         Text(selectedMenu == "Pasien" ? "Pasien" : "Gerakan Latihan")
                             .font(.largeTitle)
-                            .fontWeight(.bold)
+                            .fontWeight(.black)
                             .padding(.leading, 12)
                         
                         Spacer()
                         
-                        // Button Add
                         Button(action: {
                             if selectedMenu == "Pasien" {
                                 showAddPatientModal = true
@@ -104,14 +101,9 @@ struct DashboardFisioPage: View {
                     AddMovementPage()
                 }
                 .onChange(of: selectedMenu) { _ in
-                    // Reset navigation state when switching tabs
                     navigateToAddGerakan = false
                 }
             }
         }
     }
 }
-
-//#Preview {
-//    DashboardFisioPage()
-//}
