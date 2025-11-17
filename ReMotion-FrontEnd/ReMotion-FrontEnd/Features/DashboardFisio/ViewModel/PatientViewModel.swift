@@ -27,21 +27,23 @@ class PatientViewModel: ObservableObject {
     @Published var fisioId: Int?
     @Published var patientId: Int?
     
-    func addPatient(fisioId: Int, userId: Int, phase: Int, therapyStartDate: String, symptoms: [String]) async throws {
+    func addPatient(fisioId: Int, userId: Int, phaseId: Int, therapyStartDate: String, symptoms: [String], diagnostic: String) async throws {
         print(fisioId)
         print(userId)
-        print(phase)
+        print(phaseId)
         print(therapyStartDate)
         print(symptoms)
+        print(diagnostic)
         do {
             let response: AddPatientResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/add",
                 method: .post,
                 parameters: [
                     "userId": userId,
-                    "phase": phase,
+                    "phaseId": phaseId,
                     "therapyStartDate": therapyStartDate,
-                    "symptoms": symptoms
+                    "symptoms": symptoms,
+                    "diagnostic": diagnostic
                 ],
                 responseType: AddPatientResponse.self
             )
@@ -271,7 +273,7 @@ class PatientViewModel: ObservableObject {
         defer {
             isLoading = false
         }
-      
+        
         print("fisioId:", fisioId)
         print("patientId:", patientId)
         print("exerciseId:", exerciseId)
@@ -301,8 +303,8 @@ class PatientViewModel: ObservableObject {
             self.errorMessage = "Gagal menambahkan gerakan ke pasien!"
         }
     }
-  
-  func deletePatientExercise(fisioId: Int, patientId: Int, exerciseId: Int) async -> Bool {
+    
+    func deletePatientExercise(fisioId: Int, patientId: Int, exerciseId: Int) async -> Bool {
         isLoading = true
         isError = false
         errorMessage = ""
