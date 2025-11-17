@@ -13,7 +13,6 @@ struct ExerciseSessionCard: View {
     var body: some View {
         HStack {
             HStack(spacing: 16) {
-                // Image
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.gray.opacity(0.1))
                     .frame(width: 240, height: 120)
@@ -28,10 +27,10 @@ struct ExerciseSessionCard: View {
                                     .aspectRatio(contentMode: .fill)
                                     .frame(maxWidth: .infinity)
                                     .frame(height: 160)
-                                    .clipped() // potong bagian yang keluar frame
+                                    .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             case .failure(_):
-                                Image(systemName: "photo") // fallback
+                                Image(systemName: "photo")
                                     .font(.system(size: 60))
                                     .foregroundColor(.gray.opacity(0.3))
                             @unknown default:
@@ -41,12 +40,10 @@ struct ExerciseSessionCard: View {
                     )
                 
                 VStack(alignment: .leading, spacing: 10) {
-                    // Name
                     Text(exercise.name)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.black)
                     
-                    // Muscle
                     Text(exercise.muscle)
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.white)
@@ -56,7 +53,6 @@ struct ExerciseSessionCard: View {
                         .cornerRadius(12)
                     
                     HStack(spacing: 16) {
-                        // Sets
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.counterclockwise")
                                 .font(.system(size: 12))
@@ -67,7 +63,6 @@ struct ExerciseSessionCard: View {
                                 .foregroundColor(.gray)
                         }
                         
-                        // Type
                         HStack(spacing: 4) {
                             Image(systemName: exercise.type.lowercased() == "waktu"
                                   ? "clock"
@@ -84,7 +79,6 @@ struct ExerciseSessionCard: View {
                     }
                 }
             }
-            .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
             .cornerRadius(16)
             
@@ -92,7 +86,6 @@ struct ExerciseSessionCard: View {
             
             Image(systemName: "chevron.right")
                 .foregroundColor(.gray)
-                .padding(.trailing, 24)
                 .font(.system(size: 16, weight: .semibold))
         }
         .frame(width: .infinity)
@@ -100,9 +93,3 @@ struct ExerciseSessionCard: View {
         .shadow(color: .black.opacity(0.01), radius: 8, x: 0, y: 2)
     }
 }
-
-//#Preview {
-//    ExerciseSessionCard(
-//        exercise: samplePatients[0].exercises[0]
-//    )
-//}

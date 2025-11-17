@@ -10,17 +10,6 @@ import SwiftUI
 struct DashboardCardSmall: View {
     let movement: Movement
     
-    private var labelIcon: String {
-        switch movement.type.lowercased() {
-        case "waktu":
-            return "timer"
-        case "repetisi":
-            return "arrow.counterclockwise"
-        default:
-            return "clock"
-        }
-    }
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             // Image
@@ -38,10 +27,10 @@ struct DashboardCardSmall: View {
                                 .aspectRatio(contentMode: .fill)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 160)
-                                .clipped() // potong bagian yang keluar frame
+                                .clipped()
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                         case .failure(_):
-                            Image(systemName: "photo") // fallback
+                            Image(systemName: "photo")
                                 .font(.system(size: 60))
                                 .foregroundColor(.gray.opacity(0.3))
                         @unknown default:
@@ -59,20 +48,6 @@ struct DashboardCardSmall: View {
                         .foregroundColor(.black)
                     
                     Spacer()
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: labelIcon)
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-                        Text(movement.type)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(Color.gray.opacity(0.15))
-                    .cornerRadius(3)
                 }
                 
                 // Muscle
@@ -91,6 +66,34 @@ struct DashboardCardSmall: View {
                     .foregroundColor(.gray)
                     .lineLimit(2)
                     .truncationMode(.tail)
+                
+                Divider()
+                
+                HStack{
+                    // Type
+                    Text(movement.type)
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.gray)
+                                .opacity(0.6)
+                        )
+                    
+                    // Category
+                    Text(movement.category)
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.gray)
+                                .opacity(0.6)
+                        )
+                }
             }
             .padding(.horizontal, 10)
             .padding(.bottom, 10)
@@ -104,13 +107,13 @@ struct DashboardCardSmall: View {
     }
 }
 
-//#Preview {
-//    ScrollView(.horizontal, showsIndicators: false) {
-//        HStack(spacing: 20) {
-//            ForEach(sampleMovements) { movement in
-//                DashboardCardSmall(movement: movement)
-//            }
-//        }
-//        .padding()
-//    }
-//}
+#Preview {
+    ScrollView(.horizontal, showsIndicators: false) {
+        HStack(spacing: 20) {
+            ForEach(sampleMovements) { movement in
+                DashboardCardSmall(movement: movement)
+            }
+        }
+        .padding()
+    }
+}
