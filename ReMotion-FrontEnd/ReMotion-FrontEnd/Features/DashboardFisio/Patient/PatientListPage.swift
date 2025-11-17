@@ -49,7 +49,7 @@ struct PatientListPage: View {
         }
     }
     
-    private var filteredPatients: [ReadPatientData] {
+    private var filteredPatients: [ReadPatientDataV2] {
         if searchText.isEmpty {
             return viewModel.patients
         } else {
