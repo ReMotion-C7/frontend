@@ -28,7 +28,7 @@ struct ReadUsersNonFisioData: Identifiable, Codable {
 struct ReadPatientResponse: Codable {
     var status: String
     var message: String
-    var data: [ReadPatientData]
+    var data: [ReadPatientDataV2]
 }
 
 struct ReadPatientData: Identifiable, Codable {
@@ -128,6 +128,35 @@ struct ReadPatientData: Identifiable, Codable {
             return "Fase 4 (Post-Op)"
         default:
             return "Fase \(phase)"
+        }
+    }
+}
+
+// VERSION 2
+struct ReadPatientDataV2: Identifiable, Codable {
+    var id: Int
+    var name: String
+    var phase: String
+    var phoneNumber: String
+    var dateOfBirth: String
+    var therapyStartDate: String
+    
+    public func getPhaseColor() -> Color {
+        switch phase {
+        case "Fase 1 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 2 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 3 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 4 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Pre-Op":
+            return Color(red: 1.0, green: 0.7, blue: 0.3)
+        case "Non-Op":
+            return Color(red: 0.4, green: 0.8, blue: 0.4)
+        default:
+            return Color.gray
         }
     }
 }
@@ -243,6 +272,40 @@ struct ReadPatientDetailData: Identifiable, Codable {
     }
 }
 
+// VERSION 2
+struct ReadPatientDetailDataV2: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let gender: String
+    let phase: String
+    let phoneNumber: String
+    let diagnostic: String
+    let dateOfBirth: String
+    let therapyStartDate: String
+    let symptoms: [String]
+    let exercises: [Exercise]
+    
+    public func getPhaseColor() -> Color {
+        switch phase {
+        case "Fase 1 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 2 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 3 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 4 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Pre-Op":
+            return Color(red: 1.0, green: 0.7, blue: 0.3)
+        case "Non-Op":
+            return Color(red: 0.4, green: 0.8, blue: 0.4)
+        default:
+            return Color.gray
+        }
+    }
+}
+
+
 struct EditPatientExerciseResponse: Codable {
     let status: String
     let message: String
@@ -274,6 +337,39 @@ struct Patient: Identifiable, Codable {
             return Color(red: 0.4, green: 0.8, blue: 0.4)
         case 4:
             return Color(red: 0.3, green: 0.6, blue: 1.0)
+        default:
+            return Color.gray
+        }
+    }
+}
+
+// VERSION 2
+struct PatientV2: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let gender: String
+    let phase: String
+    let phoneNumber: String
+    let diagnostic: String
+    let dateOfBirth: String
+    let therapyStartDate: String
+    let symptoms: [String]
+    let exercises: [Exercise]
+    
+    public func getPhaseColor() -> Color {
+        switch phase {
+        case "Fase 1 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 2 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 3 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Fase 4 (Post-Op)":
+            return Color(red: 1.0, green: 0.4, blue: 0.4)
+        case "Pre-Op":
+            return Color(red: 1.0, green: 0.7, blue: 0.3)
+        case "Non-Op":
+            return Color(red: 0.4, green: 0.8, blue: 0.4)
         default:
             return Color.gray
         }
@@ -319,6 +415,18 @@ struct Exercise: Identifiable, Codable {
 struct Progress: Identifiable, Codable {
     let id: Int
     let date: String
+}
+
+// VERSION 2
+struct ExerciseV2: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let method: String
+    let image: String
+    let muscle: String
+    let description: String
+    var set: Int
+    var repOrTime: Int
 }
 
 let samplePatients: [Patient] = [

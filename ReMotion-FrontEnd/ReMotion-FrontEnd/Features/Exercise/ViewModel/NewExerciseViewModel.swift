@@ -35,8 +35,10 @@ class NewExerciseViewModel: ObservableObject {
     @Published var leftKneeScore:Double = 0.0
     @Published var rightKneeScore:Double = 0.0
     
+    
     let idealKneeAngle = 90.0
     
+    @Published var remainingTime: Int = 0
     private var timer: Timer?
     
     func quickPoseSetup() {
@@ -87,8 +89,8 @@ class NewExerciseViewModel: ObservableObject {
                                 break
                             }
                             
-//                            case .inside:
-//                                print("Inside score: \(result.stringValue)")
+                            //                            case .inside:
+                            //                                print("Inside score: \(result.stringValue)")
                             
                         default:
                             break
@@ -138,29 +140,30 @@ class NewExerciseViewModel: ObservableObject {
     }
     
     private func newGenerateWorkoutPhases(from exercises: [NewExercises]) -> [NewWorkoutPhase] {
+        print("INI NGE GENERATE WORKOUT PHASE BRO")
         var phases: [NewWorkoutPhase] = []
         let defaultRestDuration: TimeInterval = 30.0
-
+        
         for (exerciseIndex, exercise) in exercises.enumerated() {
             for currentSet in 1...exercise.set {
                 // 1. Add the EXERCISE phase
                 phases.append(.exercise(details: exercise, currentSet: currentSet))
-
+                
                 // 2. Add a REST phase if it's not the absolute final set
                 let isLastExercise = (exerciseIndex == exercises.count - 1)
                 let isLastSetOfExercise = (currentSet == exercise.set)
-
+                
                 if !(isLastExercise && isLastSetOfExercise) {
                     let nextExerciseInfo: NewNextExerciseInfo
                     
                     if !isLastSetOfExercise {
                         // Next is another set of the SAME exercise
-                        let setInfo = "\(exercise.repOrTime) \(exercise.type == "Waktu" ? "Detik" : "Rep")"
+                        let setInfo = "\(exercise.repOrTime) \(exercise.method == "Waktu" ? "Detik" : "Rep")"
                         nextExerciseInfo = NewNextExerciseInfo(name: exercise.name, video: exercise.video, muscle: exercise.muscle, setInfo: setInfo)
                     } else {
                         // Next is the FIRST set of the NEXT exercise
                         let nextExercise = exercises[exerciseIndex + 1]
-                        let setInfo = "\(nextExercise.set)x \(nextExercise.repOrTime) \(nextExercise.type == "Waktu" ? "Detik" : "Rep")"
+                        let setInfo = "\(nextExercise.set)x \(nextExercise.repOrTime) \(nextExercise.method == "Waktu" ? "Detik" : "Rep")"
                         nextExerciseInfo = NewNextExerciseInfo(name: nextExercise.name, video: nextExercise.video, muscle: nextExercise.muscle, setInfo: setInfo)
                     }
                     
@@ -171,51 +174,84 @@ class NewExerciseViewModel: ObservableObject {
         return phases
     }
     
-//    func checkCountdown() {
-//        Task {
-//            try? await Task.sleep(for: .seconds(3))
-//            if !self.showModal {
-//                self.startCountdown = true
-//                print("UDAH BANG 3 DETIK")
-//            }
-//        }
-//    }
-//    
-//    func resetReadyCountdown() {
-//        self.startCountdown = false
-//    }
-//    
-//    func startBeginCountdown() {
-//        if !self.showModal && self.startCountdown {
-//            self.beginCountdown = true
-//            timer?.invalidate()
-//            
-//            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-//                guard let self = self else { return }
-//                
-//                if self.displayedCountdown > 0 {
-//                    self.displayedCountdown -= 1
-//                } else {
-//                    self.timer?.invalidate()
-//                    print("UDAH BANG TIMER NYA 5 DETIK")
-//                    
-//                    self.displayResultModal = true
-//                    if let lastFrame = self.lastImage, let overlay = self.overlayImage,
-//                       let combined = self.combineImages(background: lastFrame, overlay: overlay) {
-//                        self.imageResult = combined
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    private func combineImages(background: UIImage, overlay: UIImage) -> UIImage? {
-//        UIGraphicsBeginImageContextWithOptions(background.size, false, 0.0)
-//        background.draw(in: CGRect(origin: .zero, size: background.size))
-//        overlay.draw(in: CGRect(origin: .zero, size: background.size), blendMode: .normal, alpha: 1.0)
-//        let combinedImage = UIGraphicsGetImageFromCurrentImageContext()
-//        UIGraphicsEndImageContext()
-//        return combinedImage
-//    }
+    func startCountdown(from remainingTime: Int) {
+        // Stop existing timer if running
+        timer?.invalidate()
+        self.remainingTime = remainingTime
+        
+        // Create a new timer that ticks every second
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            
+            if self.remainingTime > 0 {
+                self.remainingTime -= 1
+            } else {
+                self.timer?.invalidate()
+                self.newGoToNextPhase()
+            }
+        }
+    }
+    
+    func stopCountdown() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    var formattedRemainingTime: String {
+        let hours = remainingTime / 3600
+        let minutes = (remainingTime % 3600) / 60
+        let seconds = remainingTime % 60
+        
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    
+    
+    //    func checkCountdown() {
+    //        Task {
+    //            try? await Task.sleep(for: .seconds(3))
+    //            if !self.showModal {
+    //                self.startCountdown = true
+    //                print("UDAH BANG 3 DETIK")
+    //            }
+    //        }
+    //    }
+    //
+    //    func resetReadyCountdown() {
+    //        self.startCountdown = false
+    //    }
+    //
+    //    func startBeginCountdown() {
+    //        if !self.showModal && self.startCountdown {
+    //            self.beginCountdown = true
+    //            timer?.invalidate()
+    //
+    //            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+    //                guard let self = self else { return }
+    //
+    //                if self.displayedCountdown > 0 {
+    //                    self.displayedCountdown -= 1
+    //                } else {
+    //                    self.timer?.invalidate()
+    //                    print("UDAH BANG TIMER NYA 5 DETIK")
+    //
+    //                    self.displayResultModal = true
+    //                    if let lastFrame = self.lastImage, let overlay = self.overlayImage,
+    //                       let combined = self.combineImages(background: lastFrame, overlay: overlay) {
+    //                        self.imageResult = combined
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //
+    //    private func combineImages(background: UIImage, overlay: UIImage) -> UIImage? {
+    //        UIGraphicsBeginImageContextWithOptions(background.size, false, 0.0)
+    //        background.draw(in: CGRect(origin: .zero, size: background.size))
+    //        overlay.draw(in: CGRect(origin: .zero, size: background.size), blendMode: .normal, alpha: 1.0)
+    //        let combinedImage = UIGraphicsGetImageFromCurrentImageContext()
+    //        UIGraphicsEndImageContext()
+    //        return combinedImage
+    //    }
     
 }

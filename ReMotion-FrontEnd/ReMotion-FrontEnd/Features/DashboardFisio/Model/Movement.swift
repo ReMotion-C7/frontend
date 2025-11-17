@@ -39,7 +39,28 @@ struct ModalExercise: Codable, Identifiable {
     let image: String
 }
 
+// VERSION 2
+struct ModalExerciseV2: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let type: String
+    let category: String
+    let muscle: String
+    let image: String
+}
+
 struct Movement: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let type: String
+    let category: String
+    let description: String
+    let muscle: String
+    let image: String
+}
+
+// VERSION 2
+struct MovementV2: Identifiable, Codable {
     let id: Int
     let name: String
     let type: String
@@ -59,6 +80,18 @@ struct MovementDetail: Identifiable, Codable {
     let video: String
 }
 
+// VERSION 2
+struct MovementDetailV2: Identifiable, Codable {
+    let id: Int
+    let name: String
+    let type: String
+    let category: String
+    let description: String
+    let muscle: String
+    let video: String
+}
+
+// Dummy
 let sampleMovements: [Movement] = [
     Movement(
         id: 1,
