@@ -36,75 +36,138 @@ struct NewExerciseView: View {
             
             if let currentPhase = viewModel.newCurrentPhase {
                 switch currentPhase {
-//                case .exercise(let details, let currentSet):
-                case .exercise(_, _):
-                    ExercisePhaseSidebar(currentVideoURL: currentVideoURL, onNext: viewModel.newGoToNextPhase)
-//                    ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
-//                case .rest(let duration, let nextExercise):
-                case .rest(_, _):
-                    RestPhaseSidebar(onNext: viewModel.newGoToNextPhase)
+                    //                case .exercise(let details, let currentSet):
+                case .exercise(let exercise, let currentSet):
+                    ExercisePhaseSidebar(exercise: exercise, currentSet: currentSet, currentVideoURL: currentVideoURL, onNext: viewModel.newGoToNextPhase,
+                                         viewModel: viewModel, startCountdown: { value in
+                        viewModel.startCountdown(from: value)
+                    })
+                    ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
+                case .rest(_, let nextExercise):
+                    RestPhaseSidebar(onNext: viewModel.newGoToNextPhase, viewModel: viewModel)
+                    //                    Text("apalah ini bang")
+                    if let url = currentVideoURL {
+                        VideoPlayerView(videoURL: url)
+                            .overlay(
+                                ZStack(alignment: .leading) {
+                                    Color.black.opacity(0.8)   // dimming layer
+                                    VStack(alignment: .leading) {
+                                        Text("Gerakan selanjutnya...")
+                                            .font(.system(size: 36))
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.white)
+                                            .padding(.bottom, 12)
+                                        Text(nextExercise.name)
+                                            .font(.system(size: 64))
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.white)
+                                            .padding(.bottom, 6)
+                                        Text(nextExercise.muscle)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+                                            .padding(.vertical, 16)
+                                            .padding(.horizontal, 32)
+                                            .background(
+                                                Capsule()
+                                                    .fill(Color.white)
+                                            )
+                                        HStack {
+                                            HStack(spacing: 8) {
+                                                Image(systemName: "arrow.counterclockwise")
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                                Text(nextExercise.setInfo)
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(Color.black.opacity(0.25))
+                                            .cornerRadius(20)
+                                            HStack(spacing: 8) {
+                                                Image(systemName: "arrow.counterclockwise")
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                                
+                                                Text("15x Set")
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(Color.black.opacity(0.25))
+                                            .cornerRadius(20)
+                                            
+                                        }
+                                        ProgressView()
+                                    }
+                                    .padding(.leading, 48)
+                                }
+                            )
+                    }
+                    
                 }
                 
             }
             
-            ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
-                        
-//            ZStack {
-//                QuickPoseCameraView(useFrontCamera: viewModel.useFrontCamera, delegate: viewModel.quickPose)
-//                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                QuickPoseOverlayView(overlayImage: $viewModel.overlayImage)
-//                
-//                
-//                if !viewModel.showModal {
-//                    VStack {
-//                        HStack {
-//                            ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
-//                                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-//                                .scaleEffect(x: 1, y: 4, anchor: .center)
-//                                .padding(.horizontal, 32)
-//                                .frame(width: 500, height: 100)
-//                            Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
-//                                .font(.largeTitle)
-//                                .fontWeight(.bold)
-//                                .padding(.horizontal, 32)
-//                        }
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 16)
-//                                .fill(Color.white)
-//                        )
-//                        Spacer()
-//                    }
-//                    .padding(.top, 64)
-//                }
-//                
-//                if viewModel.showModal {
-//                    VStack {
-//                        Text("Beberapa bagian tubuh masih tidak terlihat")
-//                            .padding(.bottom, 8)
-//                            .font(.headline)
-//                            .bold()
-//                            .foregroundStyle(Color.white)
-//                        Text("Mundur sedikit ke belakang sehingga seluruh tubuh mulai dari ujung kepala hingga ujung kaki terlihat.")
-//                            .font(.subheadline)
-//                            .foregroundStyle(Color.white)
-//                    }
-//                    .padding()
-//                    .background(
-//                        RoundedRectangle(cornerRadius: 16)
-//                            .fill(Color.red)
-//                    )
-//                }
-//                
-//            }
-//            .allowsHitTesting(false)
-//            .onAppear {
-//                viewModel.quickPoseSetup()
-//                viewModel.newStartSession(with: exercises)
-//            }
-//            .onDisappear {
-//                viewModel.quickPose.stop()
-//            }
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            //            ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
+            
+            //            ZStack {
+            //                QuickPoseCameraView(useFrontCamera: viewModel.useFrontCamera, delegate: viewModel.quickPose)
+            //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            //                QuickPoseOverlayView(overlayImage: $viewModel.overlayImage)
+            //
+            //
+            //                if !viewModel.showModal {
+            //                    VStack {
+            //                        HStack {
+            //                            ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+            //                                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+            //                                .scaleEffect(x: 1, y: 4, anchor: .center)
+            //                                .padding(.horizontal, 32)
+            //                                .frame(width: 500, height: 100)
+            //                            Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
+            //                                .font(.largeTitle)
+            //                                .fontWeight(.bold)
+            //                                .padding(.horizontal, 32)
+            //                        }
+            //                        .background(
+            //                            RoundedRectangle(cornerRadius: 16)
+            //                                .fill(Color.white)
+            //                        )
+            //                        Spacer()
+            //                    }
+            //                    .padding(.top, 64)
+            //                }
+            //
+            //                if viewModel.showModal {
+            //                    VStack {
+            //                        Text("Beberapa bagian tubuh masih tidak terlihat")
+            //                            .padding(.bottom, 8)
+            //                            .font(.headline)
+            //                            .bold()
+            //                            .foregroundStyle(Color.white)
+            //                        Text("Mundur sedikit ke belakang sehingga seluruh tubuh mulai dari ujung kepala hingga ujung kaki terlihat.")
+            //                            .font(.subheadline)
+            //                            .foregroundStyle(Color.white)
+            //                    }
+            //                    .padding()
+            //                    .background(
+            //                        RoundedRectangle(cornerRadius: 16)
+            //                            .fill(Color.red)
+            //                    )
+            //                }
+            //
+            //            }
+            //            .allowsHitTesting(false)
+            //            .onAppear {
+            //                viewModel.quickPoseSetup()
+            //                viewModel.newStartSession(with: exercises)
+            //            }
+            //            .onDisappear {
+            //                viewModel.quickPose.stop()
+            //            }
+            //            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: Button(action: {
@@ -122,6 +185,9 @@ struct NewExerciseView: View {
             Button("Batal", role: .cancel) {
                 viewModel.showExitModal = false
             }
+        }
+        .onAppear {
+            viewModel.newStartSession(with: exercises)
         }
     }
 }
@@ -182,34 +248,35 @@ struct ExercisePhaseCamera: View {
         .allowsHitTesting(false)
         .onAppear {
             viewModel.quickPoseSetup()
-            viewModel.newStartSession(with: exercises)
+            //            viewModel.newStartSession(with: exercises)
         }
         .onDisappear {
             viewModel.quickPose.stop()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+        
     }
 }
 
 struct RestPhaseSidebar: View {
     
     let onNext: () -> Void
+    @ObservedObject var viewModel: NewExerciseViewModel
     
     var body: some View {
         VStack {
-            Text("Lunges")
+            Text("Istirahat")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("00:00:30")
-                .font(.largeTitle)
+            Text("\(viewModel.formattedRemainingTime)")
+                .font(.system(size: 64))
                 .fontWeight(.bold)
             
             Button(action: {
                 print("Selanjutnya tapped")
                 onNext()
-
+                
             }) {
                 HStack {
                     Image(systemName: "play.fill") // SF Symbol
@@ -242,17 +309,24 @@ struct RestPhaseSidebar: View {
         }
         .frame(maxWidth: 400, maxHeight: .infinity)
         .background(Color.white)
+        .onAppear {
+            viewModel.startCountdown(from: 30)
+        }
     }
 }
 
 struct ExercisePhaseSidebar: View {
     
+    let exercise: NewExercises
+    let currentSet: Int
     let currentVideoURL: URL?
     let onNext: () -> Void
+    let viewModel: NewExerciseViewModel
+    let startCountdown: (Int) -> Void
     
     var body: some View {
         VStack {
-            Text("Lunges")
+            Text(exercise.name)
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
@@ -274,13 +348,21 @@ struct ExercisePhaseSidebar: View {
             }
             .padding(.vertical, 24)
             
-            Text("Set: 1/10")
+            Text(exercise.method)
+            
+            Text("\(currentSet) / \(exercise.set)")
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("30x")
-                .font(.system(size: 64))
-                .fontWeight(.bold)
+            if(exercise.method != "Waktu") {
+                Text("\(exercise.repOrTime)x")
+                    .font(.system(size: 64))
+                    .fontWeight(.bold)
+            } else {
+                Text("\(viewModel.formattedRemainingTime)")
+                    .font(.system(size: 64))
+                    .fontWeight(.bold)
+            }
             
             Button(action: {
                 print("Selanjutnya tapped")
@@ -319,5 +401,10 @@ struct ExercisePhaseSidebar: View {
         }
         .frame(maxWidth: 400, maxHeight: .infinity)
         .background(Color.white)
+        .onAppear {
+            if exercise.method == "Waktu" {
+                startCountdown(exercise.repOrTime)
+            }
+        }
     }
 }

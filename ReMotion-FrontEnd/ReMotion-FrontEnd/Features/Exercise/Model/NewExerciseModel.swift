@@ -15,7 +15,8 @@ struct NewExerciseAPIResponse: Codable {
 struct NewExercises: Codable, Identifiable {
     let id: Int
     let name: String
-    let type: String // "Repetition", "Repetisi", "Waktu"
+//    let type: String // "Repetition", "Repetisi", "Waktu"
+    let method: String
     let video: String
     let muscle: String
     let set: Int
