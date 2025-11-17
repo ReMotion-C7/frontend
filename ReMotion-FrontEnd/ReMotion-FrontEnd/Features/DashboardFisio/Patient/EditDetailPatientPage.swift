@@ -12,7 +12,7 @@ struct EditPatientDetailPage: View {
     let patient: Patient
     let fisioId: Int
     
-    @State private var selectedPhase: Int
+    @State private var selectedPhaseIndex: Int
     @State private var symptoms: [String]
     @State private var diagnostic: String
     
@@ -27,10 +27,12 @@ struct EditPatientDetailPage: View {
         self.patient = patient
         self.fisioId = fisioId
         
-        _selectedPhase = State(initialValue: patient.phase)
+        // Find initial phase index from PhaseUtil
+        let initialIndex = PhaseUtil.allPhases.firstIndex(of: patient.phase) ?? 0
+        _selectedPhaseIndex = State(initialValue: initialIndex)
         _symptoms = State(initialValue: patient.symptoms.isEmpty ? [""] : patient.symptoms)
         
-        if let patientDetail = viewModel.patient, let diag = patientDetail.diagnostic {
+        if let diag = patient.diagnostic {
             _diagnostic = State(initialValue: diag)
         } else {
             _diagnostic = State(initialValue: "")
@@ -96,45 +98,20 @@ struct EditPatientDetailPage: View {
                 .foregroundColor(.black)
             
             Menu {
-                Button(action: { selectedPhase = 1 }) {
-                    HStack {
-                        Text("Fase 1 (Pre-Op)")
-                        if selectedPhase == 1 {
-                            Spacer()
-                            Image(systemName: "checkmark")
-                        }
-                    }
-                }
-                Button(action: { selectedPhase = 2 }) {
-                    HStack {
-                        Text("Fase 2 (Post-Op)")
-                        if selectedPhase == 2 {
-                            Spacer()
-                            Image(systemName: "checkmark")
-                        }
-                    }
-                }
-                Button(action: { selectedPhase = 3 }) {
-                    HStack {
-                        Text("Fase 3 (Post-Op)")
-                        if selectedPhase == 3 {
-                            Spacer()
-                            Image(systemName: "checkmark")
-                        }
-                    }
-                }
-                Button(action: { selectedPhase = 4 }) {
-                    HStack {
-                        Text("Fase 4 (Post-Op)")
-                        if selectedPhase == 4 {
-                            Spacer()
-                            Image(systemName: "checkmark")
+                ForEach(0..<PhaseUtil.allPhases.count, id: \.self) { index in
+                    Button(action: { selectedPhaseIndex = index }) {
+                        HStack {
+                            Text(PhaseUtil.allPhases[index])
+                            if selectedPhaseIndex == index {
+                                Spacer()
+                                Image(systemName: "checkmark")
+                            }
                         }
                     }
                 }
             } label: {
                 HStack {
-                    Text("Fase \(selectedPhase) \(getPhaseLabel(selectedPhase))")
+                    Text(PhaseUtil.allPhases[selectedPhaseIndex])
                         .font(.system(size: 15))
                         .foregroundColor(.black)
                     Spacer()
@@ -264,11 +241,12 @@ struct EditPatientDetailPage: View {
                     }
                     
                     let trimmedDiagnostic = diagnostic.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let selectedPhaseName = PhaseUtil.allPhases[selectedPhaseIndex]
                     
                     let success = await viewModel.editPatientDetail(
                         fisioId: fisioId,
                         patientId: patient.id,
-                        phase: selectedPhase,
+                        phase: selectedPhaseName,
                         symptoms: validSymptoms,
                         diagnostic: trimmedDiagnostic.isEmpty ? nil : trimmedDiagnostic
                     )
@@ -325,7 +303,7 @@ struct EditPatientDetailPage: View {
                         )
                 }
                 
-                Text(patient.phoneNumber + " | " + formatDate(patient.dateOfBirth))
+                Text(patient.phoneNumber + " | " + DateFormatHelper.format(patient.dateOfBirth))
                     .font(.system(size: 13))
                     .foregroundColor(.gray)
             }
@@ -341,7 +319,7 @@ struct EditPatientDetailPage: View {
                 .font(.system(size: 12))
                 .foregroundColor(.gray)
             
-            Text("Tanggal mulai terapi : \(formatDate(patient.therapyStartDate))")
+            Text("Tanggal mulai terapi : \(DateFormatHelper.format(patient.therapyStartDate))")
                 .font(.system(size: 12))
                 .foregroundColor(.gray)
         }
@@ -349,28 +327,5 @@ struct EditPatientDetailPage: View {
         .padding(.vertical, 10)
         .background(Color(UIColor.systemGray6))
         .cornerRadius(6)
-    }
-    
-    private func getPhaseLabel(_ phase: Int) -> String {
-        switch phase {
-        case 1:
-            return "(Pre-Op)"
-        case 2, 3, 4:
-            return "(Post-Op)"
-        default:
-            return ""
-        }
-    }
-    
-    private func formatDate(_ dateString: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        if let date = dateFormatter.date(from: dateString) {
-            dateFormatter.dateFormat = "dd MMMM yyyy"
-            dateFormatter.locale = Locale(identifier: "id_ID")
-            return dateFormatter.string(from: date)
-        }
-        return dateString
     }
 }

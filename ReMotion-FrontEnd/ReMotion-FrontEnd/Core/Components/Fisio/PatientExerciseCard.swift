@@ -14,7 +14,7 @@ struct PatientExerciseCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Image section with menu
+
             ZStack(alignment: .topTrailing) {
                 AsyncImage(url: URL(string: exercise.image)) { phase in
                     switch phase {
@@ -47,7 +47,6 @@ struct PatientExerciseCard: View {
                 .frame(width: 320, height: 180)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 
-                // Menu button
                 Menu {
                     Button(action: { onEdit?() }) {
                         Label("Edit", systemImage: "pencil")
@@ -70,10 +69,8 @@ struct PatientExerciseCard: View {
                 }
                 .padding(12)
             }
-            
-            // Content section
+
             VStack(alignment: .leading, spacing: 10) {
-                // Title and type badge
                 HStack(alignment: .center, spacing: 8) {
                     Text(exercise.name)
                         .font(.system(size: 16, weight: .bold))
@@ -98,7 +95,6 @@ struct PatientExerciseCard: View {
                     )
                 }
                 
-                // Muscle badge
                 Text(exercise.muscle)
                     .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.white)
@@ -108,8 +104,7 @@ struct PatientExerciseCard: View {
                         Capsule()
                             .fill(Color.black)
                     )
-                
-                // Set and Rep/Time info
+
                 HStack(spacing: 12) {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.clockwise")
@@ -130,7 +125,6 @@ struct PatientExerciseCard: View {
                     }
                 }
                 
-                // Description
                 Text(exercise.description)
                     .font(.system(size: 12))
                     .foregroundColor(.gray.opacity(0.8))
@@ -140,13 +134,12 @@ struct PatientExerciseCard: View {
             }
             .padding(14)
         }
-        .frame(width: 320)
+        .frame(width: 320, height: 340)
         .background(Color.white)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
     }
-    
-    // Helper functions untuk handle berbagai format type dari backend
+ 
     private func getExerciseTypeText() -> String {
         let type = exercise.type.lowercased()
         if type.contains("waktu") || type.contains("time") {
@@ -154,7 +147,7 @@ struct PatientExerciseCard: View {
         } else if type.contains("repetisi") || type.contains("rep") {
             return "Repetisi"
         }
-        return exercise.type // Return original jika tidak match
+        return exercise.type
     }
     
     private func getExerciseIcon() -> String {
@@ -176,41 +169,3 @@ struct PatientExerciseCard: View {
     }
 }
 
-// MARK: - Preview
-#Preview {
-    VStack(spacing: 20) {
-        // Preview card dengan tipe Waktu
-        PatientExerciseCard(
-            exercise: Exercise(
-                id: 1,
-                name: "Quadriceps Set",
-                type: "Waktu",
-                image: "https://via.placeholder.com/320x180",
-                muscle: "Otot Paha Depan",
-                description: "Latihan ini dilakukan dengan posisi duduk atau berbaring, lalu mengepalkan otot paha depan seolah-olah bagian belakang lutut...",
-                set: 15,
-                repOrTime: 10
-            ),
-            onEdit: { print("Edit tapped") },
-            onDelete: { print("Delete tapped") }
-        )
-        
-        // Preview card dengan tipe Repetisi
-        PatientExerciseCard(
-            exercise: Exercise(
-                id: 2,
-                name: "Ankle Pump",
-                type: "Repetisi",
-                image: "https://via.placeholder.com/320x180",
-                muscle: "Otot Betis",
-                description: "Latihan fisik yang dipergunakan untuk melatih otot pada betis dan pergelangan kaki.",
-                set: 15,
-                repOrTime: 30
-            ),
-            onEdit: { print("Edit tapped") },
-            onDelete: { print("Delete tapped") }
-        )
-    }
-    .padding()
-    .background(Color.gray.opacity(0.1))
-}

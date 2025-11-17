@@ -41,18 +41,9 @@ struct DetailPatientPage: View {
                         .padding(.horizontal, 32)
                 }
             }
-            else if let patientData = viewModel.patient {
-                let patient = Patient(
-                    id: patientData.id,
-                    name: patientData.name,
-                    gender: patientData.gender,
-                    phase: patientData.phase,
-                    phoneNumber: patientData.phoneNumber,
-                    dateOfBirth: patientData.dateOfBirth,
-                    therapyStartDate: patientData.therapyStartDate,
-                    symptoms: patientData.symptoms,
-                    exercises: patientData.exercises
-                )
+            else if let patientDetail = viewModel.patient {
+
+                let patient = patientDetail.toPatient()
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 22) {
@@ -60,7 +51,7 @@ struct DetailPatientPage: View {
                         therapyInfoSection(patient: patient)
                         complaintsSection(patient: patient)
                         
-                        if let diagnostic = patientData.diagnostic, !diagnostic.isEmpty {
+                        if let diagnostic = patient.diagnostic, !diagnostic.isEmpty {
                             diagnosticSection(diagnostic: diagnostic)
                         }
                         
@@ -87,12 +78,11 @@ struct DetailPatientPage: View {
                     }
 
                     ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: EditPatientDetailPage(viewModel: viewModel, patient: patient, fisioId: fisioId)) {
-                                Image(systemName: "pencil")
-                                    .foregroundColor(.black)
-                                    .font(.system(size: 20, weight: .medium))
-                            }
-                
+                        NavigationLink(destination: EditPatientDetailPage(viewModel: viewModel, patient: patient, fisioId: fisioId)) {
+                            Image(systemName: "pencil")
+                                .foregroundColor(.black)
+                                .font(.system(size: 20, weight: .medium))
+                        }
                     }
                 }
                 .sheet(isPresented: $showExerciseSheet) {
@@ -186,7 +176,7 @@ struct DetailPatientPage: View {
                         )
                 }
                 
-                Text(patient.phoneNumber + " | " + formatDate(patient.dateOfBirth))
+                Text(patient.phoneNumber + " | " + DateFormatHelper.format(patient.dateOfBirth))
                     .font(.system(size: 13))
                     .foregroundColor(.gray)
             }
@@ -203,7 +193,7 @@ struct DetailPatientPage: View {
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
                 
-                Text("Mulai terapi : \(formatDate(patient.therapyStartDate))")
+                Text("Mulai terapi : \(DateFormatHelper.format(patient.therapyStartDate))")
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
             }
@@ -214,7 +204,7 @@ struct DetailPatientPage: View {
 
             
             HStack(spacing: 6) {
-                Text("Fase \(patient.phase) (Post-Op)")
+                Text(patient.getPhaseDisplayText())
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(.white)
             }
@@ -336,17 +326,5 @@ struct DetailPatientPage: View {
                 }
             }
         }
-    }
-    
-    private func formatDate(_ dateString: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        if let date = dateFormatter.date(from: dateString) {
-            dateFormatter.dateFormat = "dd MMMM yyyy"
-            dateFormatter.locale = Locale(identifier: "id_ID")
-            return dateFormatter.string(from: date)
-        }
-        return dateString
     }
 }
