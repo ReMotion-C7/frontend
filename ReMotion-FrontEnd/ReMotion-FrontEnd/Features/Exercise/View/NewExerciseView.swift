@@ -42,15 +42,75 @@ struct NewExerciseView: View {
                                          viewModel: viewModel, startCountdown: { value in
                         viewModel.startCountdown(from: value)
                     })
-                    //                    ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
-                    //                case .rest(let duration, let nextExercise):
-                case .rest(_, _):
+                    ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
+                case .rest(_, let nextExercise):
                     RestPhaseSidebar(onNext: viewModel.newGoToNextPhase, viewModel: viewModel)
+                    //                    Text("apalah ini bang")
+                    if let url = currentVideoURL {
+                        VideoPlayerView(videoURL: url)
+                            .overlay(
+                                ZStack(alignment: .leading) {
+                                    Color.black.opacity(0.8)   // dimming layer
+                                    VStack(alignment: .leading) {
+                                        Text("Gerakan selanjutnya...")
+                                            .font(.system(size: 36))
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.white)
+                                            .padding(.bottom, 12)
+                                        Text(nextExercise.name)
+                                            .font(.system(size: 64))
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.white)
+                                            .padding(.bottom, 6)
+                                        Text(nextExercise.muscle)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+                                            .padding(.vertical, 16)
+                                            .padding(.horizontal, 32)
+                                            .background(
+                                                Capsule()
+                                                    .fill(Color.white)
+                                            )
+                                        HStack {
+                                            HStack(spacing: 8) {
+                                                Image(systemName: "arrow.counterclockwise")
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                                Text(nextExercise.setInfo)
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(Color.black.opacity(0.25))
+                                            .cornerRadius(20)
+                                            HStack(spacing: 8) {
+                                                Image(systemName: "arrow.counterclockwise")
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                                
+                                                Text("15x Set")
+                                                    .font(.system(size: 22, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(Color.black.opacity(0.25))
+                                            .cornerRadius(20)
+                                            
+                                        }
+                                        ProgressView()
+                                    }
+                                    .padding(.leading, 48)
+                                }
+                            )
+                    }
+                    
                 }
                 
             }
             
-            ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
+            //            ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
             
             //            ZStack {
             //                QuickPoseCameraView(useFrontCamera: viewModel.useFrontCamera, delegate: viewModel.quickPose)
@@ -126,6 +186,9 @@ struct NewExerciseView: View {
                 viewModel.showExitModal = false
             }
         }
+        .onAppear {
+            viewModel.newStartSession(with: exercises)
+        }
     }
 }
 
@@ -185,7 +248,7 @@ struct ExercisePhaseCamera: View {
         .allowsHitTesting(false)
         .onAppear {
             viewModel.quickPoseSetup()
-            viewModel.newStartSession(with: exercises)
+            //            viewModel.newStartSession(with: exercises)
         }
         .onDisappear {
             viewModel.quickPose.stop()
@@ -285,13 +348,13 @@ struct ExercisePhaseSidebar: View {
             }
             .padding(.vertical, 24)
             
-            Text(exercise.type)
+            Text(exercise.method)
             
             Text("\(currentSet) / \(exercise.set)")
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            if(exercise.type != "Waktu") {
+            if(exercise.method != "Waktu") {
                 Text("\(exercise.repOrTime)x")
                     .font(.system(size: 64))
                     .fontWeight(.bold)
@@ -339,7 +402,7 @@ struct ExercisePhaseSidebar: View {
         .frame(maxWidth: 400, maxHeight: .infinity)
         .background(Color.white)
         .onAppear {
-            if exercise.type == "Waktu" {
+            if exercise.method == "Waktu" {
                 startCountdown(exercise.repOrTime)
             }
         }

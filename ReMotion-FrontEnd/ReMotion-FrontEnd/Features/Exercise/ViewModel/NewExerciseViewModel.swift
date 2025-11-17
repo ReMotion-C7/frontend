@@ -140,6 +140,7 @@ class NewExerciseViewModel: ObservableObject {
     }
     
     private func newGenerateWorkoutPhases(from exercises: [NewExercises]) -> [NewWorkoutPhase] {
+        print("INI NGE GENERATE WORKOUT PHASE BRO")
         var phases: [NewWorkoutPhase] = []
         let defaultRestDuration: TimeInterval = 30.0
         
@@ -157,12 +158,12 @@ class NewExerciseViewModel: ObservableObject {
                     
                     if !isLastSetOfExercise {
                         // Next is another set of the SAME exercise
-                        let setInfo = "\(exercise.repOrTime) \(exercise.type == "Waktu" ? "Detik" : "Rep")"
+                        let setInfo = "\(exercise.repOrTime) \(exercise.method == "Waktu" ? "Detik" : "Rep")"
                         nextExerciseInfo = NewNextExerciseInfo(name: exercise.name, video: exercise.video, muscle: exercise.muscle, setInfo: setInfo)
                     } else {
                         // Next is the FIRST set of the NEXT exercise
                         let nextExercise = exercises[exerciseIndex + 1]
-                        let setInfo = "\(nextExercise.set)x \(nextExercise.repOrTime) \(nextExercise.type == "Waktu" ? "Detik" : "Rep")"
+                        let setInfo = "\(nextExercise.set)x \(nextExercise.repOrTime) \(nextExercise.method == "Waktu" ? "Detik" : "Rep")"
                         nextExerciseInfo = NewNextExerciseInfo(name: nextExercise.name, video: nextExercise.video, muscle: nextExercise.muscle, setInfo: setInfo)
                     }
                     
@@ -186,6 +187,7 @@ class NewExerciseViewModel: ObservableObject {
                 self.remainingTime -= 1
             } else {
                 self.timer?.invalidate()
+                self.newGoToNextPhase()
             }
         }
     }
