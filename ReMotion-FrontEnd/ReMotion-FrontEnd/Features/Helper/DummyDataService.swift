@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import QuickPoseCore
 
 struct DummyDataService {
     
@@ -24,7 +25,11 @@ struct DummyDataService {
                 video: "https://tjyoilicubnsdpujursp.supabase.co/storage/v1/object/public/ReMotion/Squat%20Landscape.mp4",
                 muscle: "Quadriceps",
                 set: 3,
-                repOrTime: 10
+                repOrTime: 10,
+                jointsToTrack: [
+                    .init(type: .knee, side: .left),
+                    .init(type: .knee, side: .right)
+                ]
             ),
             NewExercises(
                 id: 2,
@@ -33,7 +38,11 @@ struct DummyDataService {
                 video: "https://tjyoilicubnsdpujursp.supabase.co/storage/v1/object/public/ReMotion/Lunges%20Landscape.mp4",
                 muscle: "Quadriceps",
                 set: 3,
-                repOrTime: 10
+                repOrTime: 10,
+                jointsToTrack: [
+                    .init(type: .knee, side: .left),
+                    .init(type: .knee, side: .right)
+                ]
             ),
             NewExercises(
                 id: 3,
@@ -42,7 +51,10 @@ struct DummyDataService {
                 video: "https://tjyoilicubnsdpujursp.supabase.co/storage/v1/object/public/ReMotion/One%20Leg%20Balance%20Landscape.mp4",
                 muscle: "Whole Legs Balance",
                 set: 3,
-                repOrTime: 10
+                repOrTime: 10,
+                jointsToTrack: [
+                    .init(type: .knee, side: .left)                    
+                ]
             )
         ]
         

@@ -207,12 +207,14 @@ struct ExercisePhaseCamera: View {
             if !viewModel.showModal {
                 VStack {
                     HStack {
-                        ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+//                        ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+                        ProgressView(value: viewModel.averageJointScore)
                             .progressViewStyle(LinearProgressViewStyle(tint: .blue))
                             .scaleEffect(x: 1, y: 4, anchor: .center)
                             .padding(.horizontal, 32)
                             .frame(width: 500, height: 100)
-                        Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
+//                        Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
+                        Text("\(Int(viewModel.averageJointScore * 100))%")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .padding(.horizontal, 32)
