@@ -21,7 +21,7 @@ class PatientViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
     @Published var isError: Bool = false
-    @Published var patients: [ReadPatientData] = []
+    @Published var patients: [ReadPatientDataV2] = []
     @Published var users: [ReadUsersNonFisioData] = []
     @Published var patient: ReadPatientDetailData?
     @Published var fisioId: Int?

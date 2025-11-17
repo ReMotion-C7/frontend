@@ -28,7 +28,7 @@ struct ReadUsersNonFisioData: Identifiable, Codable {
 struct ReadPatientResponse: Codable {
     var status: String
     var message: String
-    var data: [ReadPatientData]
+    var data: [ReadPatientDataV2]
 }
 
 struct ReadPatientData: Identifiable, Codable {

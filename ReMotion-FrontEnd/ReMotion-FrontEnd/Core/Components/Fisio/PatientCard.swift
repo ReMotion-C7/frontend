@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PatientCard: View {
-    let patient: ReadPatientData
+    let patient: ReadPatientDataV2
     
     var body: some View {
         VStack(spacing: 0) {
