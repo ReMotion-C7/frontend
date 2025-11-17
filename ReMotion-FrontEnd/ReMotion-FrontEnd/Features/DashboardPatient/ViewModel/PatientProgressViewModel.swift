@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Alamofire
 
 @MainActor
 class ProgressCalendarViewModel: ObservableObject {
@@ -26,24 +27,27 @@ class ProgressCalendarViewModel: ObservableObject {
         isLoading = true
         errorMessage = ""
         
-        guard let url = URL(string: "https://your-base-url.com/v1/patients/\(patientId)/progresses") else {
-            errorMessage = "URL tidak valid."
-            isLoading = false
-            return
-        }
+        let dateDecoder = JSONDecoder()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+        
+        let endpoint = "patients/\(patientId)/progresses"
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let apiResponse = try await APIService.shared.requestAPI(
+                endpoint,
+                method: .get,
+                decoder: dateDecoder,
+                responseType: ProgressApiResponse.self
+            )
             
-            let apiResponse = try JSONDecoder().decode(ProgressApiResponse.self, from: data)
-            
-            let dates = apiResponse.data.compactMap { progress in
-                dateFormatter.date(from: progress.date)
-            }
-            self.sessionDates = Set(dates)
+            self.sessionDates = Set(apiResponse.data.map { $0.date })
             
         } catch {
-            errorMessage = "Gagal memuat data progress: \(error.localizedDescription)"
+            print("Error fetching progress: \(error.localizedDescription)")
+            self.errorMessage = "Gagal memuat data progress. Silakan coba lagi."
         }
         
         isLoading = false

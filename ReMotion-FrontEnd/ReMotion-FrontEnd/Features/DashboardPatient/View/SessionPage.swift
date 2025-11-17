@@ -32,7 +32,7 @@ struct SessionPage: View {
                     
                     VStack(alignment: .leading) {
                         HStack {
-                            Text(selectedMenu == "Sesi Latihan" ? "Sesi Latihan" : "Evaluasi Gerakan")
+                            Text(selectedMenu == "Sesi Latihan" ? "Sesi Latihan" : "Progres Kalendar")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                         }
@@ -124,7 +124,7 @@ struct SessionPage: View {
                                 }
                             }
                         } else {
-                            Text("Ini Evaluasi Gerakan")
+                            ProgressCalendarView(patientId: patientId)
                         }
                         
                         Spacer()

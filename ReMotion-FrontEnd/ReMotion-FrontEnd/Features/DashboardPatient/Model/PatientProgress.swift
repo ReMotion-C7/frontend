@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PatientProgress: Codable, Identifiable {
     let id: Int
-    let date: String
+    let date: Date
 }
 
 struct ProgressApiResponse: Codable {

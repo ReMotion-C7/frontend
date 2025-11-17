@@ -24,6 +24,7 @@ final class APIService {
         method: HTTPMethod,
         parameters: Parameters? = nil,
         headers: HTTPHeaders? = nil,
+        decoder: JSONDecoder? = nil,
         responseType: T.Type
     ) async throws -> T {
         try await request(
@@ -32,6 +33,7 @@ final class APIService {
             parameters: parameters,
             encoding: JSONEncoding.default,
             headers: headers,
+            decoder: decoder,
             responseType: responseType
         )
     }
@@ -42,6 +44,7 @@ final class APIService {
         parameters: Parameters?,
         encoding: ParameterEncoding,
         headers: HTTPHeaders?,
+        decoder: JSONDecoder? = nil,
         responseType: T.Type
     ) async throws -> T {
         
@@ -54,6 +57,8 @@ final class APIService {
         let url = "\(host)\(endpoint)"
         print(url)
         
+        let effectiveDecoder = decoder ?? JSONDecoder()
+        
         return try await withCheckedThrowingContinuation { continuation in
             
             AF.request(
@@ -64,7 +69,7 @@ final class APIService {
                 headers: finalHeaders
             )
             .validate()
-            .responseDecodable(of: T.self) { response in
+            .responseDecodable(of: T.self, decoder: effectiveDecoder) { response in
                 
                 switch response.result {
                 case .success(let data):
@@ -76,7 +81,6 @@ final class APIService {
                     print(
                         "📄 Raw failure data: \(String(data: response.data ?? Data(), encoding: .utf8) ?? "Unable to decode raw data")"
                     )
-                    // Detect expired token (401)
                     if response.response?.statusCode == 401 {
                         print("⚠️ Unauthorized — token may be expired")
                         SessionManager.shared.logout()

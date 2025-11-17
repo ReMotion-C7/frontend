@@ -9,31 +9,33 @@ import SwiftUI
 
 struct ProgressCalendar: View {
     @State private var currentMonth = Date()
-    @State private var sessionDates: Set<Date> = []
+    
+    let sessionDates: Set<Date>
     
     let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 7)
     let daysOfWeek = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"]
     
-    init() {
-        _sessionDates = State(initialValue: getHardcodedSessionDates())
+    
+    private var daysInMonth: [Date?] {
+        let calendar = Calendar.current
+        guard let interval = calendar.dateInterval(of: .month, for: currentMonth) else { return [] }
+        
+        let firstWeekday = calendar.component(.weekday, from: interval.start)
+        let adjustedFirstWeekday = (firstWeekday == 1) ? 6 : (firstWeekday - 2)
+        
+        var days: [Date?] = Array(repeating: nil, count: adjustedFirstWeekday)
+        
+        var date = interval.start
+        while date < interval.end {
+            days.append(date)
+            date = calendar.date(byAdding: .day, value: 1, to: date)!
+        }
+        
+        return days
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Kalender Progress")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.primary)
-                
-                Text("Pantau sesi latihanmu.")
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
-            .padding(.bottom, 32)
-            
             HStack(spacing: 20) {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
@@ -79,13 +81,15 @@ struct ProgressCalendar: View {
             .padding(.bottom, 16)
             
             LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(getDaysInMonth(), id: \.self) { date in
-                    if let date = date {
+                ForEach(0..<daysInMonth.count, id: \.self) { index in
+                    let date = daysInMonth[index]
+                    
+                    if let validDate = date {
                         DayCell(
-                            date: date,
-                            hasSession: hasSession(date),
-                            isToday: Calendar.current.isDateInToday(date),
-                            isFuture: date > Date()
+                            date: validDate,
+                            hasSession: hasSession(validDate),
+                            isToday: Calendar.current.isDateInToday(validDate),
+                            isFuture: validDate > Date()
                         )
                     } else {
                         Color.clear
@@ -95,13 +99,10 @@ struct ProgressCalendar: View {
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
-        
             
             Spacer()
         }
-        .background(Color(UIColor.systemGroupedBackground))
     }
-
     
     func monthYearString() -> String {
         let formatter = DateFormatter()
@@ -122,22 +123,6 @@ struct ProgressCalendar: View {
         }
     }
     
-    func getDaysInMonth() -> [Date?] {
-        let calendar = Calendar.current
-        let interval = calendar.dateInterval(of: .month, for: currentMonth)!
-        let firstWeekday = calendar.component(.weekday, from: interval.start)
-        let adjustedFirstWeekday = (firstWeekday + 5) % 7
-        var days: [Date?] = Array(repeating: nil, count: adjustedFirstWeekday)
-
-        var date = interval.start
-        while date < interval.end {
-            days.append(date)
-            date = calendar.date(byAdding: .day, value: 1, to: date)!
-        }
-        
-        return days
-    }
-    
     func hasSession(_ date: Date) -> Bool {
         sessionDates.contains { Calendar.current.isDate($0, inSameDayAs: date) }
     }
@@ -145,24 +130,6 @@ struct ProgressCalendar: View {
     func completedDaysInMonth() -> Int {
         let calendar = Calendar.current
         return sessionDates.filter { calendar.isDate($0, equalTo: currentMonth, toGranularity: .month) }.count
-    }
-    
-    func getCurrentStreak() -> Int {
-        let calendar = Calendar.current
-        let sortedDates = sessionDates.sorted(by: >)
-        var streak = 0
-        var checkDate = calendar.startOfDay(for: Date())
-        
-        for date in sortedDates {
-            if calendar.isDate(date, inSameDayAs: checkDate) {
-                streak += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
-            } else if date < checkDate {
-                break
-            }
-        }
-        
-        return streak
     }
 }
 
@@ -220,40 +187,22 @@ struct DayCell: View {
     }
 }
 
-
 func getHardcodedSessionDates() -> Set<Date> {
     let calendar = Calendar.current
     var dates = Set<Date>()
-    
     let sessionDays = [
-
-        DateComponents(year: 2025, month: 10, day: 27),
-        DateComponents(year: 2025, month: 10, day: 28),
-        DateComponents(year: 2025, month: 10, day: 29),
-        DateComponents(year: 2025, month: 10, day: 30),
-        DateComponents(year: 2025, month: 10, day: 31),
-        DateComponents(year: 2025, month: 11, day: 1),
-        DateComponents(year: 2025, month: 11, day: 2),
         DateComponents(year: 2025, month: 11, day: 3),
         DateComponents(year: 2025, month: 11, day: 4),
-        DateComponents(year: 2025, month: 11, day: 8),
-        DateComponents(year: 2025, month: 11, day: 9),
-        DateComponents(year: 2025, month: 11, day: 10),
-        DateComponents(year: 2025, month: 11, day: 11),
-        DateComponents(year: 2025, month: 11, day: 12),
-        DateComponents(year: 2025, month: 11, day: 13),
-        DateComponents(year: 2025, month: 11, day: 14),
+        DateComponents(year: 2025, month: 11, day: 5),
     ]
-    
     for dayComponent in sessionDays {
         if let date = calendar.date(from: dayComponent) {
             dates.insert(calendar.startOfDay(for: date))
         }
     }
-    
     return dates
 }
 
 #Preview {
-    ProgressCalendar()
+    ProgressCalendar(sessionDates: getHardcodedSessionDates())
 }
