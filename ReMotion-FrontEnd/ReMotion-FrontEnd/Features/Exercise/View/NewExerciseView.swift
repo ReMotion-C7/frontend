@@ -229,12 +229,10 @@ struct ExercisePhaseCamera: View {
             if viewModel.showModal {
                 VStack {
                     Text("Beberapa bagian tubuh masih tidak terlihat")
+                        .multilineTextAlignment(.center)
                         .padding(.bottom, 8)
-                        .font(.headline)
+                        .font(.system(size: 72))
                         .bold()
-                        .foregroundStyle(Color.white)
-                    Text("Mundur sedikit ke belakang sehingga seluruh tubuh mulai dari ujung kepala hingga ujung kaki terlihat.")
-                        .font(.subheadline)
                         .foregroundStyle(Color.white)
                 }
                 .padding()

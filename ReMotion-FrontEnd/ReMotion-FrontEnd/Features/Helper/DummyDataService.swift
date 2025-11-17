@@ -20,7 +20,7 @@ struct DummyDataService {
             NewExercises(
                 id: 1,
                 name: "Squat",
-                type: "Repetition",
+                method: "Repetition",
                 video: "https://tjyoilicubnsdpujursp.supabase.co/storage/v1/object/public/ReMotion/Squat%20Landscape.mp4",
                 muscle: "Quadriceps",
                 set: 3,
@@ -29,7 +29,7 @@ struct DummyDataService {
             NewExercises(
                 id: 2,
                 name: "Lunges",
-                type: "Repetisi",
+                method: "Repetisi",
                 video: "https://tjyoilicubnsdpujursp.supabase.co/storage/v1/object/public/ReMotion/Lunges%20Landscape.mp4",
                 muscle: "Quadriceps",
                 set: 3,
@@ -38,7 +38,7 @@ struct DummyDataService {
             NewExercises(
                 id: 3,
                 name: "Single Leg Balance",
-                type: "Waktu",
+                method: "Waktu",
                 video: "https://tjyoilicubnsdpujursp.supabase.co/storage/v1/object/public/ReMotion/One%20Leg%20Balance%20Landscape.mp4",
                 muscle: "Whole Legs Balance",
                 set: 3,
