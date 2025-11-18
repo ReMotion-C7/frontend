@@ -23,6 +23,35 @@ class ExerciseViewModel: ObservableObject {
     @Published var durationInput: String = ""
     @Published var modalExercises: [ModalExercise] = []
     
+    @Published var allModalExercises: [ModalExercise] = []
+    
+    func loadAllModalExercises() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
+                "fisio/exercises/modal",
+                method: .get,
+                responseType: ReadModalExercisesResponse.self
+            )
+            
+            if response.status == "success" {
+                self.allModalExercises = response.data ?? []
+                self.modalExercises = self.allModalExercises
+            } else {
+                self.allModalExercises = []
+                self.modalExercises = []
+            }
+        } catch {
+            self.allModalExercises = []
+            self.modalExercises = []
+            isError = true
+            errorMessage = "Gagal memuat gerakan."
+        }
+    }
+
+    
     func readExercises() async throws {
         
         isLoading = true
@@ -42,6 +71,8 @@ class ExerciseViewModel: ObservableObject {
                 self.errorMessage = ""
                 self.isError = false
                 self.exercises = data
+                
+                await self.loadAllModalExercises()
             }
         } catch {
             self.isError = true
@@ -113,8 +144,6 @@ class ExerciseViewModel: ObservableObject {
         return newExercise
     }
     
-    
-    
     func addExerciseToPatient(currentExercises: [Exercise]) -> Exercise? {
         guard let currentExercise = self.exercise else {
             self.isError = true
@@ -144,53 +173,92 @@ class ExerciseViewModel: ObservableObject {
             set: sets,
             repOrTime: repOrTime
         )
-        
-        
-        
         print("Created exercise (from detail stub): \(newExercise.name)")
         return newExercise
     }
     
-    func readModalExercises(name: String? = nil) async {
-        isLoading = true
-        isError = false
-        errorMessage = ""
+//    func readModalExercises(
+//        name: String? = nil,
+//        type: String? = nil,
+//        category: String? = nil
+//    ) async {
+//        isLoading = true
+//        isError = false
+//        errorMessage = ""
+//        
+//        if name != nil {
+//            self.modalExercises = []
+//        }
+//        
+//        defer { isLoading = false }
+//        
+//        var endpoint = "fisio/exercises/modal"
+//        var queryItems: [String] = []
+//        
+//        // Build query params
+//        if let name, !name.isEmpty,
+//           let encoded = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+//            queryItems.append("name=\(encoded)")
+//        }
+//        
+//        if let type, !type.isEmpty {
+//            queryItems.append("type=\(type)")
+//        }
+//        
+//        if let category, !category.isEmpty {
+//            queryItems.append("category=\(category)")
+//        }
+//        
+//        if !queryItems.isEmpty {
+//            endpoint += "?" + queryItems.joined(separator: "&")
+//        }
+//        
+//        do {
+//            let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
+//                endpoint,
+//                method: .get,
+//                responseType: ReadModalExercisesResponse.self
+//            )
+//            
+//            if response.status == "success" {
+//                print("INI MODAL EXERCISE BANG \(response.data)")
+//                self.modalExercises = response.data ?? []
+//            } else {
+//                self.modalExercises = []
+//            }
+//            
+//        } catch {
+//            self.isError = true
+//            self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
+//            self.modalExercises = []
+//            print(error.localizedDescription)
+//        }
+//    }
+
+    
+    func filterModalExercises(
+        name: String? = nil,
+        type: String? = nil,
+        category: String? = nil
+    ) {
+        var filtered = allModalExercises
         
-        if name != nil {
-            self.modalExercises = []
+        // Filter by name
+        if let name, !name.isEmpty {
+            filtered = filtered.filter { $0.name.lowercased().contains(name.lowercased()) }
         }
         
-        defer {
-            isLoading = false
+        // Filter by type
+        if let type, !type.isEmpty {
+            filtered = filtered.filter { $0.type == type }
         }
         
-        var endpoint = "fisio/exercises/modal"
-        
-        if let searchQuery = name, !searchQuery.isEmpty {
-            if let encodedQuery = searchQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                endpoint += "?name=\(encodedQuery)"
-            }
+        // Filter by category
+        if let category, !category.isEmpty {
+            filtered = filtered.filter { $0.category == category }
         }
-        
-        do {
-            let response: ReadModalExercisesResponse = try await APIService.shared.requestAPI(
-                endpoint,
-                method: .get,
-                responseType: ReadModalExercisesResponse.self
-            )
-            
-            if response.status == "success" {
-                self.modalExercises = response.data ?? []
-            } else {
-                self.modalExercises = []
-            }
-            
-        } catch {
-            self.isError = true
-            self.errorMessage = "Gagal mencari gerakan. Silakan coba lagi."
-            self.modalExercises = []
-            print(error.localizedDescription)
-        }
+
+        self.modalExercises = filtered
     }
     
     func deleteExercise(exerciseId: Int) async -> Bool {

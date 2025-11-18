@@ -33,22 +33,18 @@ struct MovementSelectionCard: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        HStack(spacing: 36) {
             imageSection
             contentSection
         }
+        .frame(maxWidth: .infinity, minHeight: 110, maxHeight: 110)
         .background(Color.white)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+        .shadow(color: .black.opacity(0.01), radius: 8, x: 0, y: 2)
     }
     
     @ViewBuilder
     private var imageSection: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.1))
-                .frame(height: 130)
-            
             switch imageSource {
             case .sfSymbol(let symbolName):
                 Image(systemName: symbolName)
@@ -76,50 +72,21 @@ struct MovementSelectionCard: View {
                 }
             }
         }
-        .frame(height: 130)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .frame(width: 110, height: 110)
     }
     
     private var contentSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            
+        HStack(spacing: 12) {
             Text(name)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(.black)
-                .lineLimit(2)
+                .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
-                .frame(height: 36, alignment: .top)
-            
-            HStack(spacing: 8) {
-                HStack(alignment: .center, spacing: 4) {
-                    Image(systemName: type == "Waktu" ? "clock.fill" : "repeat")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-                    
-                    Text(type)
-                        .font(.system(size: 12,  weight: .semibold))
-                        .foregroundColor(Color.black.opacity(0.4))
-                    
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background( Rectangle()
-                    .fill(Color(UIColor.systemGray5))
-                    .cornerRadius(4))
-        
-                
-                Text(muscle)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(
-                        Capsule()
-                            .fill(Color.black)
-                    )
-                    .lineLimit(1)
-            }
-            
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "chevron.right")
+                .foregroundColor(.gray)
+                .font(.system(size: 16, weight: .semibold))
         }
         .padding(16)
     }

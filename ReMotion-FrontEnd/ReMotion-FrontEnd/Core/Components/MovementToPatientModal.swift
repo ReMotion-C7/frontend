@@ -28,6 +28,14 @@ struct MovementToPatientModal: View {
     @State private var showConfigExitAlert = false
     @State private var setsInput: String = ""
     @State private var durationInput: String = ""
+    @State private var selectedType: String? = nil
+    @State private var selectedCategory: String? = nil
+    @State private var method: Int = 1
+    
+    let methodOptions: [(id: Int, name: String)] = [
+        (1, "Repetisi"),
+        (2, "Waktu")
+    ]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -45,12 +53,14 @@ struct MovementToPatientModal: View {
         .background(Color(UIColor.systemGroupedBackground))
         .onAppear {
             Task {
-                await viewModel.readModalExercises()
+//                await viewModel.readModalExercises()
+                try await viewModel.readExercises()
             }
         }
         .onChange(of: searchText) { oldValue, newValue in
             Task {
-                await viewModel.readModalExercises(name: newValue)
+//                await viewModel.readModalExercises(name: newValue)
+                await viewModel.loadAllModalExercises()
             }
         }
         .interactiveDismissDisabled()
@@ -108,6 +118,7 @@ struct MovementToPatientModal: View {
     @ViewBuilder
     private var selectionBody: some View {
         searchSection
+        categorySection
         exerciseGridSection
     }
     
@@ -117,7 +128,6 @@ struct MovementToPatientModal: View {
             ScrollView {
                 VStack(spacing: 20) {
                     exerciseImageSection(for: exercise)
-                    exerciseInfoSection(for: exercise)
                     inputFieldsSection(for: exercise)
                     addButton
                 }
@@ -132,7 +142,6 @@ struct MovementToPatientModal: View {
                 .padding()
         }
     }
-    
     
     private var searchSection: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -170,19 +179,111 @@ struct MovementToPatientModal: View {
         .background(Color.white)
     }
     
+    private var categorySection: some View {
+        VStack() {
+            HStack(spacing: 12) {
+                filterButton(
+                    title: "AGA",
+                    isSelected: selectedType == "AGA"
+                ) {
+                    toggleType("AGA")
+                }
+                
+                filterButton(
+                    title: "AGB",
+                    isSelected: selectedType == "AGB"
+                ) {
+                    toggleType("AGB")
+                }
+                
+                filterButton(
+                    title: "Keseimbangan",
+                    isSelected: selectedCategory == "Keseimbangan"
+                ) {
+                    toggleCategory("Keseimbangan")
+                }
+                
+                filterButton(
+                    title: "Penguatan",
+                    isSelected: selectedCategory == "Penguatan"
+                ) {
+                    toggleCategory("Penguatan")
+                }
+                Spacer()
+            }
+            .padding(.vertical, 12)
+        }
+        .padding(.horizontal, 20)
+    }
+    
+    private func applyFilter() {
+        Task {
+//            await viewModel.readModalExercises(
+//                name: searchText,
+//                type: selectedType,
+//                category: selectedCategory
+//            )
+            viewModel.filterModalExercises(name: searchText, type: selectedType, category: selectedCategory)
+        }
+    }
+    
+    private func filterButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(isSelected ? .white : .black.opacity(0.8))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isSelected ? Color.black : Color.white)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                        )
+                )
+        }
+    }
+    
+    func toggleType(_ type: String) {
+        if selectedType == type {
+            selectedType = nil
+        } else {
+            selectedType = type
+        }
+        applyFilter()
+    }
+    
+    func toggleCategory(_ category: String) {
+        if selectedCategory == category {
+            selectedCategory = nil
+        } else {
+            selectedCategory = category
+        }
+        applyFilter()
+    }
+    
     private var exerciseGridSection: some View {
         ScrollView {
-            if viewModel.modalExercises.isEmpty && !searchText.isEmpty {
-                Text("Gerakan \"\(searchText)\" tidak ditemukan.")
+            if viewModel.isLoading {
+                ProgressView("Memuat Gerakan...")
+                    .padding(.top, 50)
+            }
+            else if viewModel.modalExercises.isEmpty && (!searchText.isEmpty || selectedType != nil || selectedCategory != nil) {
+                Text("Gerakan tidak ditemukan dengan kriteria yang Anda masukkan.")
                     .foregroundColor(.gray)
                     .padding(.top, 50)
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.flexible(), spacing: 16),
-                    GridItem(.flexible(), spacing: 16)
-                ], spacing: 16) {
+            }
+            
+            else if viewModel.modalExercises.isEmpty {
+                Text("Tidak ada gerakan yang tersedia.")
+                    .foregroundColor(.gray)
+                    .padding(.top, 50)
+            }
+            
+            else {
+                VStack {
                     ForEach(viewModel.modalExercises) { exercise in
-                        
                         MovementSelectionCard(
                             name: exercise.name,
                             type: exercise.type,
@@ -195,11 +296,10 @@ struct MovementToPatientModal: View {
                         }
                     }
                 }
-                .padding(20)
+                .padding(.horizontal, 20)
             }
         }
     }
-    
     
     private func exerciseImageSection(for movement: ModalExercise) -> some View {
         ZStack(alignment: .top) {
@@ -216,31 +316,25 @@ struct MovementToPatientModal: View {
                             .foregroundColor(.gray.opacity(0.5))
                     )
             }
+            
+            VStack(spacing: 12) {
+                Text(movement.name)
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.center)
+                
+                TagView(text: movement.muscle, icon: nil)
+            }
             .frame(height: 200)
             .cornerRadius(16)
             .clipped()
         }
     }
     
-    private func exerciseInfoSection(for movement: ModalExercise) -> some View {
-        VStack(spacing: 12) {
-            Text(movement.name)
-                .font(.system(size: 22, weight: .bold))
-                .foregroundColor(.black)
-                .multilineTextAlignment(.center)
-            
-            HStack(spacing: 8) {
-                TagView(
-                    text: movement.type,
-                    icon: movement.type == "Waktu" ? "clock" : "repeat"
-                )
-                TagView(text: movement.muscle, icon: nil)
-            }
-        }
-    }
-    
     private func inputFieldsSection(for movement: ModalExercise) -> some View {
         VStack(spacing: 16) {
+            MethodPickerView(method: $method, methodOptions: methodOptions)
+            
             InputField(
                 title: "Masukkan Jumlah Set",
                 placeholder: "5",
@@ -293,16 +387,17 @@ struct MovementToPatientModal: View {
               let exerciseId = selectedExercise?.id else {
             return
         }
-
+        
         Task {
             await patientViewModel.assignPatientExercise(
                 fisioId: fisioId,
                 patientId: patient.id,
                 exerciseId: exerciseId,
+                methodId: method,
                 set: sets,
                 repOrTime: repOrTime
             )
-
+            
             if !patientViewModel.isError {
                 try? await patientViewModel.readPatientDetail(fisioId: fisioId, patientId: patient.id)
                 
@@ -356,6 +451,40 @@ struct InputField: View {
                 .padding(16)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
+        }
+    }
+}
+
+struct MethodPickerView: View {
+    @Binding var method: Int
+    let methodOptions: [(id: Int, name: String)]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Pilih Tipe Latihan (Repetisi/Durasi)")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.black)
+            
+            Menu {
+                ForEach(methodOptions, id: \.id) { option in
+                    Button(option.name) {
+                        method = option.id
+                    }
+                }
+            } label: {
+                HStack {
+                    Text(methodOptions.first(where: { $0.id == method })?.name ?? "Pilih Metode")
+                        .font(.system(size: 15))
+                        .foregroundColor(.black)
+                    Spacer()
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(.gray)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(8)
+            }
         }
     }
 }
