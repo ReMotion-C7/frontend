@@ -23,16 +23,10 @@ struct LoginPage: View {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     ZStack {
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color(red: 0.05, green: 0.15, blue: 0.2),
-                                Color(red: 0.0, green: 0.05, blue: 0.1)
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                        
-                        
+                        Image("Background Login")
+                            .resizable()
+                            .scaledToFill()
+                            .edgesIgnoringSafeArea(.all)
                     }
                     .frame(width: geometry.size.width * 0.5)
                     
@@ -48,13 +42,12 @@ struct LoginPage: View {
                             .foregroundColor(.black)
                             .padding(.top, 8)
                         
-                        // Email/Phone field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Email/Phone Number")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.black)
                             
-                            TextField("example@email.com/08XXXXXX", text: $email)
+                            TextField("Masukkan email kamu", text: $email)
                                 .foregroundStyle(Color.black)
                                 .padding()
                                 .background(Color.white)
@@ -73,26 +66,25 @@ struct LoginPage: View {
                             
                             HStack {
                                 if isPasswordVisible {
-                                    TextField("", text: $password)
+                                    TextField("Masukkan password kamu", text: $password)
+                                        .foregroundColor(Color.black)
                                 } else {
-                                    SecureField("", text: $password)
+                                    SecureField("Masukkan password kamu", text: $password)
                                         .foregroundColor(Color.black)
                                 }
                                 
-                                if !password.isEmpty {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.5))
-                                        .padding(.trailing, 8)
+                                Button(action: {
+                                    isPasswordVisible.toggle()
+                                }) {
+                                    Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
+                                        .foregroundColor(.gray)
                                 }
                             }
                             .padding()
                             .background(Color.white)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(
-                                        password.isEmpty ? Color.white : Color(red: 0.2, green: 0.8, blue: 0.5),
-                                        lineWidth: 2
-                                    )
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                             )
                             .cornerRadius(8)
                         }
@@ -135,7 +127,7 @@ struct LoginPage: View {
                                 }
                                 
                                 self.isClicked = true
-
+                                
                             }
                             
                         }) {
