@@ -100,8 +100,17 @@ struct NewExercises: Codable, Identifiable {
     let set: Int
     let repOrTime: Int
     
-    let jointsToTrack: [JointConfig]
-    
+    var jointsToTrack: [JointConfig]
+}
+
+struct NewOldExercises: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let method: String
+    let video: String
+    let muscle: String
+    let set: Int
+    let repOrTime: Int
 }
 
 // VERSION 2

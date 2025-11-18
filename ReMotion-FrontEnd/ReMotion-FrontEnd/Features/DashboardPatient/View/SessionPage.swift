@@ -97,9 +97,18 @@ struct SessionPage: View {
                                         .padding(.top, 12)
                                         
                                         Button(action: {
-                                            self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
-                                            withAnimation(.spring()) {
-                                                showSafetyModal = true
+                                            //                                            self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
+                                            Task {
+                                                // because your function is async throws
+                                                do {
+                                                    self.todaysExercises = try await viewModel.readExercises(patientId: patientId)
+                                                    
+                                                    withAnimation(.spring()) {
+                                                        showSafetyModal = true
+                                                    }
+                                                } catch {
+                                                    print("Failed fetching exercises: \(error)")
+                                                }
                                             }
                                         }) {
                                             HStack {
