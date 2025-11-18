@@ -9,6 +9,7 @@ import Foundation
 import QuickPoseCore
 import Combine
 import SwiftUI
+import AVFoundation
 
 class NewExerciseViewModel: ObservableObject {
     @Published var quickPose = QuickPose(sdkKey: "01K8MHW0TEMZC3V03HWGB7D1MQ")
@@ -44,24 +45,41 @@ class NewExerciseViewModel: ObservableObject {
     @Published var jointsToTrack: [JointConfig] = []
     @Published var jointScores: [String: Double] = [:]
     
+    private var audioPlayer: AVAudioPlayer?
+    
+    func playSound(named soundName: String) {
+        guard let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") else {
+            print("❌ Sound file not found")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.play()
+        } catch {
+            print("❌ Could not play sound: \(error)")
+        }
+    }
+    
+    
     func quickPoseSetup() {
         
         guard let currentPhase = newCurrentPhase else { return }
+        
+        switch currentPhase {
+        case .exercise(let details, _):
+            self.jointsToTrack = details.jointsToTrack
             
-            switch currentPhase {
-            case .exercise(let details, _):
-                self.jointsToTrack = details.jointsToTrack
-                                
-                jointScores.removeAll()
-                            
-//                quickPose.stop()
-//                quickPoseSetup()
-                
-            case .rest:
-                print("Rest phase - keeping previous joints")
-                break
-            }
-
+            jointScores.removeAll()
+            
+            //                quickPose.stop()
+            //                quickPoseSetup()
+            
+        case .rest:
+            print("Rest phase - keeping previous joints")
+            break
+        }
+        
         
         let basicStyle = QuickPose.Style(
             relativeFontSize: 0.5,
@@ -155,7 +173,7 @@ class NewExerciseViewModel: ObservableObject {
             return .rangeOfMotion(.ankle(side: side, clockwiseDirection: true), style: style)
         }
     }
-
+    
     private func processMeasurements(_ measurements: [QuickPose.Feature: QuickPose.FeatureResult]) {
         for (feature, result) in measurements {
             switch feature {
