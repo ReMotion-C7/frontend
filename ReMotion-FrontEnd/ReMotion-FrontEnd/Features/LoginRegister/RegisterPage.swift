@@ -17,6 +17,7 @@ struct RegisterPage: View {
     @State private var jenisKelamin = "Laki - Laki"
     @State private var genderId = 1
     @State private var isPasswordVisible = false
+    @State private var isConfirmPasswordVisible = false
     
     @State private var isClicked: Bool = false
     
@@ -31,27 +32,16 @@ struct RegisterPage: View {
             GeometryReader { geometry in
                 HStack(spacing: 0) {
                     ZStack {
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color(red: 0.05, green: 0.15, blue: 0.2),
-                                Color(red: 0.0, green: 0.05, blue: 0.1)
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                        
-                        Circle()
-                            .fill(Color(red: 0.2, green: 0.8, blue: 0.5).opacity(0.3))
-                            .frame(width: 500, height: 500)
-                            .blur(radius: 50)
-                            .offset(x: -100, y: 100)
+                        Image("Background Login")
+                            .resizable()
+                            .scaledToFill()
+                            .edgesIgnoringSafeArea(.all)
                     }
                     .frame(width: geometry.size.width * 0.5)
                     
                     
-                    ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
-                            Spacer().frame(height: 30)
+                            Spacer()
                             
                             Text("Buat Akun")
                                 .font(.system(size: 42, weight: .bold))
@@ -68,7 +58,7 @@ struct RegisterPage: View {
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(.black)
                                     
-                                    TextField("John Doe", text: $namaLengkap)
+                                    TextField("Masukkan nama lengkap", text: $namaLengkap)
                                         .padding()
                                         .background(Color.white)
                                         .overlay(
@@ -83,7 +73,7 @@ struct RegisterPage: View {
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(.black)
                                     
-                                    TextField("08XXXXXXXX", text: $nomorHandphone)
+                                    TextField("Masukkan nomor handphone", text: $nomorHandphone)
                                         .keyboardType(.phonePad)
                                         .padding()
                                         .background(Color.white)
@@ -102,7 +92,7 @@ struct RegisterPage: View {
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.black)
                                 
-                                TextField("example@email.com", text: $email)
+                                TextField("Masukkan email", text: $email)
                                     .keyboardType(.emailAddress)
                                     .autocapitalization(.none)
                                     .padding()
@@ -117,30 +107,21 @@ struct RegisterPage: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Password")
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.black)
                                 
                                 HStack {
                                     if isPasswordVisible {
-                                        TextField("", text: $password)
+                                        TextField("Masukkan password", text: $password)
                                     } else {
-                                        SecureField("", text: $password)
+                                        SecureField("Masukkan password", text: $password)
                                     }
                                     
-                                    if !password.isEmpty {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.5))
-                                            .padding(.trailing, 8)
+                                    Button(action: { isPasswordVisible.toggle() }) {
+                                        Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
+                                            .foregroundColor(.gray)
                                     }
                                 }
                                 .padding()
                                 .background(Color.white)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(
-                                            password.isEmpty ? Color.gray.opacity(0.3) : Color(red: 0.2, green: 0.8, blue: 0.5),
-                                            lineWidth: password.isEmpty ? 1 : 2
-                                        )
-                                )
                                 .cornerRadius(8)
                             }
                             
@@ -148,30 +129,21 @@ struct RegisterPage: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Konfirmasi Password")
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.black)
                                 
                                 HStack {
-                                    if isPasswordVisible {
-                                        TextField("", text: $konfirmasiPassword)
+                                    if isConfirmPasswordVisible {
+                                        TextField("Masukkan lagi password", text: $konfirmasiPassword)
                                     } else {
-                                        SecureField("", text: $konfirmasiPassword)
+                                        SecureField("Masukkan lagi password", text: $konfirmasiPassword)
                                     }
                                     
-                                    if !konfirmasiPassword.isEmpty && konfirmasiPassword == password {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.5))
-                                            .padding(.trailing, 8)
+                                    Button(action: { isConfirmPasswordVisible.toggle() }) {
+                                        Image(systemName: isConfirmPasswordVisible ? "eye" : "eye.slash")
+                                            .foregroundColor(.gray)
                                     }
                                 }
                                 .padding()
                                 .background(Color.white)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(
-                                            konfirmasiPassword.isEmpty ? Color.gray.opacity(0.3) : (konfirmasiPassword == password ? Color(red: 0.2, green: 0.8, blue: 0.5) : Color.red),
-                                            lineWidth: konfirmasiPassword.isEmpty ? 1 : 2
-                                        )
-                                )
                                 .cornerRadius(8)
                             }
                             
@@ -299,12 +271,11 @@ struct RegisterPage: View {
                             .frame(maxWidth: .infinity)
                             .padding(.top, 16)
                             
-                            Spacer().frame(height: 40)
+                            Spacer()
                         }
                         .padding(.horizontal, 60)
-                    }
-                    .frame(width: geometry.size.width * 0.5)
-                    .background(Color(red: 0.95, green: 0.95, blue: 0.95))
+                        .frame(width: geometry.size.width * 0.5)
+                        .background(Color(red: 0.95, green: 0.95, blue: 0.95))
                 }
             }
             .onAppear {
