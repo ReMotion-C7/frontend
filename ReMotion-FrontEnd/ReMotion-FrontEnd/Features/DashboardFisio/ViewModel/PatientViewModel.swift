@@ -147,7 +147,6 @@ class PatientViewModel: ObservableObject {
                 print("✅ Patient detail loaded successfully")
                 print("Patient name: \(data.name)")
                 print("Phase: \(data.phase)")
-                print("Exercises count: \(data.exercises.count)")
             } catch let error as AFError {
                 self.isError = true
                 

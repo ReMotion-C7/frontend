@@ -291,8 +291,8 @@ struct DetailPatientPage: View {
                         .font(.system(size: 50))
                         .foregroundColor(.gray.opacity(0.3))
                     
-                    Text("Belum ada gerakan latihan ditambahkan")
-                        .font(.system(size: 14))
+                    Text("Belum ada gerakan latihan ditambahkan.")
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                     
