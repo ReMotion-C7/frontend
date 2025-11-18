@@ -26,7 +26,7 @@ struct DashboardFisioPage: View {
                     HStack {
                         Text(selectedMenu == "Pasien" ? "Pasien" : "Gerakan Latihan")
                             .font(.largeTitle)
-                            .fontWeight(.black)
+                            .fontWeight(.bold)
                             .padding(.leading, 12)
                         
                         Spacer()

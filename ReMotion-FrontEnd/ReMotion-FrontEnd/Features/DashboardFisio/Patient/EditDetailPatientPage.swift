@@ -27,7 +27,6 @@ struct EditPatientDetailPage: View {
         self.patient = patient
         self.fisioId = fisioId
         
-        // Find initial phase index from PhaseUtil
         let initialIndex = PhaseUtil.allPhases.firstIndex(of: patient.phase) ?? 0
         _selectedPhaseIndex = State(initialValue: initialIndex)
         _symptoms = State(initialValue: patient.symptoms.isEmpty ? [""] : patient.symptoms)
@@ -44,7 +43,6 @@ struct EditPatientDetailPage: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     patientHeaderSection(patient: patient)
-                    
                     therapyInfoSection(patient: patient)
                     phaseEditorSection
                     symptomsEditorSection
@@ -77,12 +75,12 @@ struct EditPatientDetailPage: View {
                 }
             }
         }
-        .alert("Berhasil", isPresented: $showingSuccessAlert) {
+        .alert("Berhasil!", isPresented: $showingSuccessAlert) {
             Button("OK", role: .cancel) {
                 dismiss()
             }
         } message: {
-            Text("Data pasien berhasil diperbarui")
+            Text("Data pasien berhasil diperbarui.")
         }
         .alert("Update Gagal", isPresented: $showingErrorAlert) {
             Button("OK", role: .cancel) {}
@@ -121,7 +119,8 @@ struct EditPatientDetailPage: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(alignment: .leading)
+                .frame(width: 300)
                 .background(Color.white)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
@@ -250,7 +249,7 @@ struct EditPatientDetailPage: View {
                         symptoms: validSymptoms,
                         diagnostic: trimmedDiagnostic.isEmpty ? nil : trimmedDiagnostic
                     )
-
+                    
                     if success {
                         try? await viewModel.readPatientDetail(fisioId: fisioId, patientId: patient.id)
                         showingSuccessAlert = true

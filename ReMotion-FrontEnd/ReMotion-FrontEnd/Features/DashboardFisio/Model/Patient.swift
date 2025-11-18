@@ -284,6 +284,14 @@ struct Exercise: Identifiable, Codable {
 struct Progress: Identifiable, Codable {
     let id: Int
     let date: String
+    
+    // Helper method to convert string date to Date object
+    func toDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return dateFormatter.date(from: date)
+    }
 }
 
 
