@@ -1,5 +1,5 @@
 //
-//  EditDetailPatientPage.swift
+//  EditPatientDetailPage.swift
 //  ReMotion-FrontEnd
 //
 //  Created by Gabriela on 04/11/25.
@@ -12,41 +12,54 @@ struct EditPatientDetailPage: View {
     let patient: Patient
     let fisioId: Int
     
-    @State private var selectedPhase: Int
+    @State private var selectedPhaseIndex: Int
     @State private var symptoms: [String]
+    @State private var diagnostic: String
     
     @Environment(\.dismiss) var dismiss
     
     @State private var showingErrorAlert = false
+    @State private var showingSuccessAlert = false
     @State private var alertMessage = ""
-    
     
     init(viewModel: PatientViewModel, patient: Patient, fisioId: Int) {
         self.viewModel = viewModel
         self.patient = patient
         self.fisioId = fisioId
         
-        _selectedPhase = State(initialValue: patient.phase)
-        _symptoms = State(initialValue: patient.symptoms)
+        // Find initial phase index from PhaseUtil
+        let initialIndex = PhaseUtil.allPhases.firstIndex(of: patient.phase) ?? 0
+        _selectedPhaseIndex = State(initialValue: initialIndex)
+        _symptoms = State(initialValue: patient.symptoms.isEmpty ? [""] : patient.symptoms)
+        
+        if let diag = patient.diagnostic {
+            _diagnostic = State(initialValue: diag)
+        } else {
+            _diagnostic = State(initialValue: "")
+        }
     }
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     patientHeaderSection(patient: patient)
+                    
                     therapyInfoSection(patient: patient)
                     phaseEditorSection
                     symptomsEditorSection
+                    diagnosticEditorSection
                     
-                    Spacer(minLength: 100)
+                    Spacer(minLength: 80)
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 24)
+                .padding(.top, 16)
+                .padding(.bottom, 20)
             }
             
             saveButtonSection
         }
+        .padding(20)
         .background(Color.white)
         .navigationTitle("Ubah Detail Pasien")
         .navigationBarTitleDisplayMode(.inline)
@@ -56,13 +69,20 @@ struct EditPatientDetailPage: View {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                        Text("Back")
+                            .font(.system(size: 16, weight: .medium))
+                        Text("Kembali")
                             .font(.system(size: 16))
                     }
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
                 }
             }
+        }
+        .alert("Berhasil", isPresented: $showingSuccessAlert) {
+            Button("OK", role: .cancel) {
+                dismiss()
+            }
+        } message: {
+            Text("Data pasien berhasil diperbarui")
         }
         .alert("Update Gagal", isPresented: $showingErrorAlert) {
             Button("OK", role: .cancel) {}
@@ -71,37 +91,37 @@ struct EditPatientDetailPage: View {
         }
     }
     
-    
     private var phaseEditorSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Pilih Fase Pasien")
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.black)
             
             Menu {
-                Button(action: { selectedPhase = 1 }) {
-                    Text("Fase 1")
-                }
-                Button(action: { selectedPhase = 2 }) {
-                    Text("Fase 2")
-                }
-                Button(action: { selectedPhase = 3 }) {
-                    Text("Fase 3")
+                ForEach(0..<PhaseUtil.allPhases.count, id: \.self) { index in
+                    Button(action: { selectedPhaseIndex = index }) {
+                        HStack {
+                            Text(PhaseUtil.allPhases[index])
+                            if selectedPhaseIndex == index {
+                                Spacer()
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
                 }
             } label: {
                 HStack {
-                    Text("Fase \(selectedPhase)")
+                    Text(PhaseUtil.allPhases[selectedPhaseIndex])
                         .font(.system(size: 15))
                         .foregroundColor(.black)
                     Spacer()
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.black)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(.gray)
                 }
-                .frame(alignment: .leading)
-                .frame(width: 200)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color.white)
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
@@ -113,47 +133,94 @@ struct EditPatientDetailPage: View {
     
     private var symptomsEditorSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Gejala Pasien")
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundColor(.black)
+            HStack {
+                Text("Keluhan Pasien")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.black)
+                
+                Spacer()
+                
+                Text("\(symptoms.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.count) keluhan")
+                    .font(.system(size: 13))
+                    .foregroundColor(.gray)
+            }
             
-            ForEach(symptoms.indices, id: \.self) { index in
-                HStack(spacing: 12) {
-                    Circle()
-                        .fill(Color.gray.opacity(0.4))
-                        .frame(width: 8, height: 8)
-                    
-                    TextField("Deskripsi gejala...", text: $symptoms[index])
-                        .font(.system(size: 14))
-                        .padding(.vertical, 14)
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        symptoms.remove(at: index)
-                    }) {
-                        Image(systemName: "trash")
-                            .foregroundColor(.gray)
-                            .font(.system(size: 16))
+            VStack(spacing: 8) {
+                ForEach(symptoms.indices, id: \.self) { index in
+                    HStack(alignment: .center, spacing: 12) {
+                        Circle()
+                            .fill(Color.black)
+                            .frame(width: 6, height: 6)
+                        
+                        ZStack(alignment: .leading) {
+                            if symptoms[index].isEmpty {
+                                Text("Deskripsi keluhan pasien...")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray.opacity(0.5))
+                            }
+                            
+                            TextField("", text: $symptoms[index])
+                                .font(.system(size: 14))
+                                .foregroundColor(.black)
+                        }
+                        
+                        if symptoms.count > 1 {
+                            Button(action: {
+                                symptoms.remove(at: index)
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.gray.opacity(0.6))
+                                    .font(.system(size: 20))
+                            }
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(UIColor.systemGray6).opacity(0.6))
+                    .cornerRadius(8)
                 }
-                .padding(.horizontal, 16)
-                .background(Color(UIColor.systemGray6))
-                .cornerRadius(8)
             }
             
             Button(action: {
                 symptoms.append("")
             }) {
                 HStack(spacing: 6) {
-                    Image(systemName: "plus")
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 16))
+                    Text("Tambahkan keluhan")
                         .font(.system(size: 14, weight: .medium))
-                    Text("Tambahkan gejala")
-                        .font(.system(size: 14))
                 }
-                .foregroundColor(.gray)
+                .foregroundColor(.black)
             }
             .padding(.top, 4)
+        }
+    }
+    
+    private var diagnosticEditorSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Hasil Diagnosa")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.black)
+            
+            ZStack(alignment: .topLeading) {
+                if diagnostic.isEmpty {
+                    Text("Tuliskan hasil diagnosa pasien...")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray.opacity(0.5))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 20)
+                }
+                
+                TextEditor(text: $diagnostic)
+                    .font(.system(size: 14))
+                    .foregroundColor(.black)
+                    .scrollContentBackground(.hidden)
+                    .frame(minHeight: 140, maxHeight: 200)
+                    .padding(8)
+            }
+            .background(Color(UIColor.systemGray6).opacity(0.6))
+            .cornerRadius(8)
         }
     }
     
@@ -163,17 +230,30 @@ struct EditPatientDetailPage: View {
             
             Button(action: {
                 Task {
-                    let validSymptoms = symptoms.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+                    let validSymptoms = symptoms
+                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                        .filter { !$0.isEmpty }
+                    
+                    if validSymptoms.isEmpty {
+                        alertMessage = "Minimal harus ada satu keluhan pasien"
+                        showingErrorAlert = true
+                        return
+                    }
+                    
+                    let trimmedDiagnostic = diagnostic.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let selectedPhaseName = PhaseUtil.allPhases[selectedPhaseIndex]
                     
                     let success = await viewModel.editPatientDetail(
                         fisioId: fisioId,
                         patientId: patient.id,
-                        phase: selectedPhase,
-                        symptoms: validSymptoms
+                        phase: selectedPhaseName,
+                        symptoms: validSymptoms,
+                        diagnostic: trimmedDiagnostic.isEmpty ? nil : trimmedDiagnostic
                     )
 
                     if success {
-                        dismiss()
+                        try? await viewModel.readPatientDetail(fisioId: fisioId, patientId: patient.id)
+                        showingSuccessAlert = true
                     } else {
                         alertMessage = viewModel.errorMessage
                         showingErrorAlert = true
@@ -186,77 +266,66 @@ struct EditPatientDetailPage: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background(Color.black)
-                    .cornerRadius(10)
+                    .cornerRadius(8)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
         }
         .background(Color.white)
+        .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: -2)
     }
     
-    
     private func patientHeaderSection(patient: Patient) -> some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             Circle()
                 .fill(Color.black)
-                .frame(width: 64, height: 64)
+                .frame(width: 56, height: 56)
                 .overlay(
                     Image(systemName: "person.fill")
                         .foregroundColor(.white)
-                        .font(.system(size: 30))
+                        .font(.system(size: 26))
                 )
             
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(patient.name)
-                        .font(.system(size: 26, weight: .bold))
+                        .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.black)
                     
-                    Text(patient.gender)
+                    Text(patient.gender == "Laki-laki" || patient.gender == "Laki - laki" ? "Laki - Laki" : patient.gender)
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.black.opacity(0.6))
+                        .foregroundColor(.black.opacity(0.7))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
                         .background(
                             Capsule()
-                                .fill(Color.gray.opacity(0.2))
+                                .fill(Color(UIColor.systemGray5))
                         )
                 }
                 
-                Text(patient.phoneNumber + " | " + formatDate(patient.dateOfBirth))
+                Text(patient.phoneNumber + " | " + DateFormatHelper.format(patient.dateOfBirth))
                     .font(.system(size: 13))
                     .foregroundColor(.gray)
             }
+            
             Spacer()
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 12)
     }
     
     private func therapyInfoSection(patient: Patient) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             Image(systemName: "calendar")
-                .font(.system(size: 14))
+                .font(.system(size: 12))
                 .foregroundColor(.gray)
             
-            Text("Mulai terapi : \(formatDate(patient.therapyStartDate))")
-                .font(.system(size: 13))
+            Text("Tanggal mulai terapi : \(DateFormatHelper.format(patient.therapyStartDate))")
+                .font(.system(size: 12))
                 .foregroundColor(.gray)
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .background(Color(UIColor.systemGray6))
-        .cornerRadius(8)
-    }
-    
-    private func formatDate(_ dateString: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        if let date = dateFormatter.date(from: dateString) {
-            dateFormatter.dateFormat = "dd MMMM yyyy"
-            dateFormatter.locale = Locale(identifier: "id_ID")
-            return dateFormatter.string(from: date)
-        }
-        return dateString
+        .cornerRadius(6)
     }
 }
