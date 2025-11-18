@@ -12,7 +12,7 @@ struct CustomSidebarPatient: View {
     
     private let menus = [
         ("Sesi Latihan", "square.grid.2x2.fill"),
-        ("Evaluasi Gerakan", "figure.run")
+        ("Progres Kalendar", "figure.run")
     ]
     
     @EnvironmentObject var session: SessionManager

@@ -207,12 +207,14 @@ struct ExercisePhaseCamera: View {
             if !viewModel.showModal {
                 VStack {
                     HStack {
-                        ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+//                        ProgressView(value: (viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0)
+                        ProgressView(value: viewModel.averageJointScore)
                             .progressViewStyle(LinearProgressViewStyle(tint: .blue))
                             .scaleEffect(x: 1, y: 4, anchor: .center)
                             .padding(.horizontal, 32)
                             .frame(width: 500, height: 100)
-                        Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
+//                        Text("\(Int(((viewModel.leftKneeScore + viewModel.rightKneeScore) / 2.0) * 100))%")
+                        Text("\(Int(viewModel.averageJointScore * 100))%")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .padding(.horizontal, 32)
@@ -229,12 +231,10 @@ struct ExercisePhaseCamera: View {
             if viewModel.showModal {
                 VStack {
                     Text("Beberapa bagian tubuh masih tidak terlihat")
+                        .multilineTextAlignment(.center)
                         .padding(.bottom, 8)
-                        .font(.headline)
+                        .font(.system(size: 72))
                         .bold()
-                        .foregroundStyle(Color.white)
-                    Text("Mundur sedikit ke belakang sehingga seluruh tubuh mulai dari ujung kepala hingga ujung kaki terlihat.")
-                        .font(.subheadline)
                         .foregroundStyle(Color.white)
                 }
                 .padding()
