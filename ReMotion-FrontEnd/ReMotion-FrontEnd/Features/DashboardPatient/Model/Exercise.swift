@@ -59,6 +59,12 @@ struct ReadSessionsResponse: Codable {
     var data: [SessionV2]?
 }
 
+struct ReadNewExercisesResponse: Codable {
+    var status: String
+    var message: String
+    var data: [NewOldExercises]?
+}
+
 struct ReadSessionExerciseDetailResponse: Codable {
     var status: String
     var message: String
