@@ -54,9 +54,9 @@ struct AddPatientModal: View {
                     .foregroundColor(.black)
                 
                 Menu {
-                    Picker("Pilih Fase", selection: $phase) {
-                        ForEach(phaseOptions, id: \.id) { option in
-                            Text(option.name).tag(option.id)
+                    ForEach(phaseOptions, id: \.id) { option in
+                        Button(option.name) {
+                            phase = option.id
                         }
                     }
                 } label: {

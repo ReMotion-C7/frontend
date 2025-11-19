@@ -293,6 +293,7 @@ class PatientViewModel: ObservableObject {
         fisioId: Int,
         patientId: Int,
         exerciseId: Int,
+        methodId: Int,
         set: Int,
         repOrTime: Int
     ) async {
@@ -312,6 +313,7 @@ class PatientViewModel: ObservableObject {
                 method: .post,
                 parameters: [
                     "exerciseId": exerciseId,
+                    "methodId": methodId,
                     "set": set,
                     "repOrTime": repOrTime
                 ],
