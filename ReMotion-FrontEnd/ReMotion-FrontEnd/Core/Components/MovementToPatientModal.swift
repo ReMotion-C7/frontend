@@ -58,10 +58,11 @@ struct MovementToPatientModal: View {
             }
         }
         .onChange(of: searchText) { oldValue, newValue in
-            Task {
-//                await viewModel.readModalExercises(name: newValue)
-                await viewModel.loadAllModalExercises()
-            }
+            viewModel.filterModalExercises(
+                name: newValue,
+                type: selectedType,
+                category: selectedCategory
+            )
         }
         .interactiveDismissDisabled()
         .alert("Tutup Pemilihan Gerakan?", isPresented: $showSelectionExitAlert) {

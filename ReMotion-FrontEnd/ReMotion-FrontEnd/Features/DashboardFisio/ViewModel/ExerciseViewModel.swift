@@ -22,6 +22,7 @@ class ExerciseViewModel: ObservableObject {
     @Published var setsInput: String = ""
     @Published var durationInput: String = ""
     @Published var modalExercises: [ModalExercise] = []
+    @Published var searchText: String = ""
     
     @Published var allModalExercises: [ModalExercise] = []
     
@@ -235,6 +236,10 @@ class ExerciseViewModel: ObservableObject {
 //        }
 //    }
 
+    func updateSearchText(_ text: String, type: String? = nil, category: String? = nil) {
+        self.searchText = text
+        filterModalExercises(name: text, type: type, category: category)
+    }
     
     func filterModalExercises(
         name: String? = nil,

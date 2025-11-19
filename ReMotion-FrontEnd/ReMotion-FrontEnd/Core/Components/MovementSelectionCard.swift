@@ -59,15 +59,15 @@ struct MovementSelectionCard: View {
                     case .success(let image):
                         image.resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(height: 130)
+                            .frame(height: 110)
                     case .failure(_):
                         Image(systemName: "photo")
                             .font(.largeTitle)
                             .foregroundColor(.gray.opacity(0.3))
-                            .frame(height: 130)
+                            .frame(height: 110)
                     default:
                         ProgressView()
-                            .frame(height: 130)
+                            .frame(height: 110)
                     }
                 }
             }
