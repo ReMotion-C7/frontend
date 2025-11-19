@@ -56,6 +56,7 @@ struct DetailPatientPage: View {
                         }
                         
                         exerciseListSection(patient: patient)
+                        progressCalendarSection()
                         
                         Spacer(minLength: 20)
                     }
@@ -144,6 +145,37 @@ struct DetailPatientPage: View {
                 try await viewModel.readPatientDetail(fisioId: fisioId, patientId: patientId)
                 viewModel.fisioId = fisioId
                 viewModel.patientId = patientId
+            }
+        }
+    }
+    
+    private func progressCalendarSection() -> some View {
+        VStack(alignment: .leading, spacing: 40) {
+            Text("Progres Latihan")
+                .font(.system(size: 24, weight: .bold))
+                .foregroundColor(.black)
+            
+            if viewModel.isLoading {
+                ProgressView("Memuat kalender...")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+            } else if viewModel.isError && !viewModel.errorMessage.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "calendar.badge.exclamationmark")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray.opacity(0.3))
+                    
+                    Text(viewModel.errorMessage)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+                .background(Color(UIColor.systemGray6).opacity(0.5))
+                .cornerRadius(12)
+            } else {
+                ProgressCalendar(sessionDates: viewModel.patientProgressDates)
             }
         }
     }
@@ -261,7 +293,7 @@ struct DetailPatientPage: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("Daftar Gerakan Latihan")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.black)
                 
                 Spacer()
@@ -291,8 +323,8 @@ struct DetailPatientPage: View {
                         .font(.system(size: 50))
                         .foregroundColor(.gray.opacity(0.3))
                     
-                    Text("Belum ada gerakan latihan ditambahkan")
-                        .font(.system(size: 14))
+                    Text("Belum ada gerakan latihan ditambahkan.")
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                     

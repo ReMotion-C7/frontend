@@ -134,7 +134,7 @@ struct PatientDetail: Identifiable, Codable, PhaseCompatible {
     let therapyStartDate: String
     let diagnostic: String?
     let symptoms: [String]
-    let exercises: [Exercise]
+    let exercises: [Exercise]?
     let progresses: [Progress]?
     
     init(
@@ -147,7 +147,7 @@ struct PatientDetail: Identifiable, Codable, PhaseCompatible {
         therapyStartDate: String,
         diagnostic: String? = nil,
         symptoms: [String],
-        exercises: [Exercise],
+        exercises: [Exercise]? = nil,
         progresses: [Progress]? = nil
     ) {
         self.id = id
@@ -173,7 +173,7 @@ struct PatientDetail: Identifiable, Codable, PhaseCompatible {
             dateOfBirth: dateOfBirth,
             therapyStartDate: therapyStartDate,
             symptoms: symptoms,
-            exercises: exercises,
+            exercises: exercises ?? [],
             diagnostic: diagnostic,
             progresses: progresses
         )
@@ -242,7 +242,7 @@ struct Patient: Identifiable, Codable, PhaseCompatible {
         self.dateOfBirth = detail.dateOfBirth
         self.therapyStartDate = detail.therapyStartDate
         self.symptoms = detail.symptoms
-        self.exercises = detail.exercises
+        self.exercises = detail.exercises ?? []
         self.diagnostic = detail.diagnostic
         self.progresses = detail.progresses
     }
@@ -284,6 +284,14 @@ struct Exercise: Identifiable, Codable {
 struct Progress: Identifiable, Codable {
     let id: Int
     let date: String
+    
+    // Helper method to convert string date to Date object
+    func toDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return dateFormatter.date(from: date)
+    }
 }
 
 

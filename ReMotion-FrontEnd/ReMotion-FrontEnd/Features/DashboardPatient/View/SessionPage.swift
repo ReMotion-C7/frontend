@@ -32,7 +32,7 @@ struct SessionPage: View {
                     
                     VStack(alignment: .leading) {
                         HStack {
-                            Text(selectedMenu == "Sesi Latihan" ? "Sesi Latihan" : "Progres Kalendar")
+                            Text(selectedMenu == "Sesi Latihan" ? "Sesi Latihan" : "Progres Latihan")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                         }
