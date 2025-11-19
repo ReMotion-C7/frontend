@@ -191,3 +191,20 @@ struct NewSessionExerciseDetailV2: Identifiable, Codable {
     var set: Int
     var repOrTime: Int
 }
+
+
+struct PatientProgressDate: Codable, Identifiable {
+    let id: Int
+    let date: Date
+}
+
+struct ProgressDateApiResponse: Codable {
+    let status: String
+    let message: String
+    let data: [PatientProgressDate]
+}
+
+struct AddProgressResponse: Codable {
+    let status: String
+    let message: String
+}
