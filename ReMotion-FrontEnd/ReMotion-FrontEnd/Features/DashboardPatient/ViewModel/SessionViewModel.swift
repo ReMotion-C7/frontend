@@ -101,6 +101,23 @@ class SessionViewModel: ObservableObject {
                 .init(type: .ankle, side: .right)
             ]
             
+        case "bridging":
+            return [
+                .init(type: .knee,  side: .left),
+                .init(type: .knee,  side: .right),
+                .init(type: .hip,   side: .left),
+                .init(type: .hip,   side: .right),
+            ]
+        case let s where s.contains("leg extension") || s.contains("leg-extension") || s.contains("legextension"):
+            // your example used left-side joints only — keep that or add logic to choose side
+            return [
+                .init(type: .ankle, side: .left),
+                .init(type: .knee,  side: .left),
+                .init(type: .hip,   side: .left)
+            ]
+
+
+            
             // match variations like "one leg balance", "one-leg balance", etc.
         case let s where s.contains("one leg") || s.contains("one-leg") || s.contains("oneleg"):
             // your example used left-side joints only — keep that or add logic to choose side

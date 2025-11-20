@@ -17,13 +17,13 @@ extension PhaseCompatible {
     func getPhaseColor() -> Color {
         switch phase {
         case "Fase 1 (Post-Op)":
-            return Color("redPhase")
+            return Color("RedPhase")
         case "Fase 2 (Post-Op)":
-            return Color("redPhase")
+            return Color("RedPhase")
         case "Fase 3 (Post-Op)":
-            return Color("redPhase")
+            return Color("RedPhase")
         case "Fase 4 (Post-Op)":
-            return Color("redPhase")
+            return Color("RedPhase")
         case "Pre-Op":
             return Color("orangePhase")
         case "Non-Op":
