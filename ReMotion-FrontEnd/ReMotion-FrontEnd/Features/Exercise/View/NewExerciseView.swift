@@ -16,6 +16,7 @@ struct NewExerciseView: View {
     @StateObject var viewModel = NewExerciseViewModel()
     
     let exercises: [NewExercises]
+    let patientId: Int
     
     private var currentVideoURL: URL? {
         guard let currentPhase = viewModel.newCurrentPhase else { return nil }
@@ -31,17 +32,37 @@ struct NewExerciseView: View {
         return URL(string: urlString)
     }
     
+    private var isLastPhase: Bool {
+        viewModel.currentPhaseIndex == viewModel.workoutPhases.count - 1
+    }
+    
     var body: some View {
         HStack {
-            
             if let currentPhase = viewModel.newCurrentPhase {
                 switch currentPhase {
                     //                case .exercise(let details, let currentSet):
                 case .exercise(let exercise, let currentSet):
-                    ExercisePhaseSidebar(exercise: exercise, currentSet: currentSet, currentVideoURL: currentVideoURL, onNext: viewModel.newGoToNextPhase,
-                                         viewModel: viewModel, startCountdown: { value in
-                        viewModel.startCountdown(from: value)
-                    })
+                    ExercisePhaseSidebar(
+                        exercise: exercise,
+                        currentSet: currentSet,
+                        currentVideoURL: currentVideoURL,
+                        onNext: {
+                            // This closure now handles both "Next" and "Finish"
+                            if isLastPhase {
+                                Task {
+                                    await viewModel.finishSession(patientId: patientId)
+                                    dismiss() // Redirect back to SessionPage
+                                }
+                            } else {
+                                viewModel.newGoToNextPhase()
+                            }
+                        },
+                        viewModel: viewModel,
+                        isLastPhase: isLastPhase, // <-- PASS THE NEW BOOLEAN
+                        startCountdown: { value in
+                            viewModel.startCountdown(from: value)
+                        }
+                    )
                     ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
                 case .rest(_, let nextExercise):
                     RestPhaseSidebar(onNext: viewModel.newGoToNextPhase, viewModel: viewModel)
@@ -328,6 +349,7 @@ struct ExercisePhaseSidebar: View {
     let currentVideoURL: URL?
     let onNext: () -> Void
     let viewModel: NewExerciseViewModel
+    let isLastPhase: Bool
     let startCountdown: (Int) -> Void
     
     var body: some View {
@@ -371,12 +393,12 @@ struct ExercisePhaseSidebar: View {
             }
             
             Button(action: {
-                print("Selanjutnya tapped")
+                print(isLastPhase ? "Selesai Latihan tapped" : "Selanjutnya tapped")
                 onNext()
             }) {
                 HStack {
-                    Image(systemName: "play.fill") // SF Symbol
-                    Text("Selanjutnya")
+                    Image(systemName: isLastPhase ? "checkmark.circle.fill" : "play.fill")
+                    Text(isLastPhase ? "Selesai Latihan" : "Selanjutnya")
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)

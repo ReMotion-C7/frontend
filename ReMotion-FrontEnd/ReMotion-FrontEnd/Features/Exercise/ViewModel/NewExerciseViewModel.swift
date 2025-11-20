@@ -10,6 +10,7 @@ import QuickPoseCore
 import Combine
 import SwiftUI
 import AVFoundation
+import Alamofire
 
 class NewExerciseViewModel: ObservableObject {
     @Published var quickPose = QuickPose(sdkKey: "01K8MHW0TEMZC3V03HWGB7D1MQ")
@@ -362,4 +363,58 @@ class NewExerciseViewModel: ObservableObject {
     //        return combinedImage
     //    }
     
+    
+    func finishSession(patientId: Int) async {
+        // 1. Prepare the date and decoder
+        let today = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0) // Use UTC for consistency
+        
+        let todayString = dateFormatter.string(from: today)
+        
+        let dateDecoder = JSONDecoder()
+        dateDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+        
+        do {
+            // 2. Fetch existing progress dates
+            let endpoint = "patients/\(patientId)/progresses"
+            let progressResponse = try await APIService.shared.requestAPI(
+                endpoint,
+                method: .get,
+                decoder: dateDecoder,
+                responseType: ProgressDateApiResponse.self
+            )
+            
+            let existingDates = progressResponse.data.map { $0.date }
+            
+            // 3. Check if today's date already exists
+            let hasExercisedToday = existingDates.contains { date in
+                Calendar.current.isDate(date, inSameDayAs: today)
+            }
+            
+            if hasExercisedToday {
+                print("✅ Progress for today already recorded. Skipping.")
+                // No need to do anything else, just proceed to dismiss the view.
+            } else {
+                // 4. If it doesn't exist, add the new progress
+                print("📝 Recording progress for today: \(todayString)")
+                let addEndpoint = "patients/\(patientId)/progresses/add"
+                let parameters: [String: String] = ["date": todayString]
+                
+                let _: AddProgressResponse = try await APIService.shared.requestAPI(
+                    addEndpoint,
+                    method: .post,
+                    parameters: parameters,
+                    responseType: AddProgressResponse.self
+                )
+                print("✅ Successfully added progress for today.")
+            }
+            
+        } catch {
+            // If anything fails (fetching or adding), just print the error.
+            // The user experience is to simply go back to the session page.
+            print("❌ Failed to record progress: \(error.localizedDescription)")
+        }
+    }
 }
