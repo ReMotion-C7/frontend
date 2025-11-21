@@ -57,6 +57,7 @@ struct NewExerciseView: View {
                                 viewModel.newGoToNextPhase()
                             }
                         },
+                        onPrevious: viewModel.newGoToPreviousPhase,
                         viewModel: viewModel,
                         isLastPhase: isLastPhase, // <-- PASS THE NEW BOOLEAN
                         startCountdown: { value in
@@ -65,8 +66,12 @@ struct NewExerciseView: View {
                     )
                     ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
                 case .rest(_, let nextExercise):
-                    RestPhaseSidebar(onNext: viewModel.newGoToNextPhase, viewModel: viewModel)
-                    //                    Text("apalah ini bang")
+                    RestPhaseSidebar(
+                        onNext: viewModel.newGoToNextPhase,
+                        onPrevious: viewModel.newGoToPreviousPhase,
+                        onAddTime: viewModel.addRestTime,
+                        viewModel: viewModel
+                    )
                     if let url = currentVideoURL {
                         VideoPlayerView(videoURL: url)
                             .overlay(
@@ -288,6 +293,8 @@ struct ExercisePhaseCamera: View {
 struct RestPhaseSidebar: View {
     
     let onNext: () -> Void
+    let onPrevious: () -> Void
+    let onAddTime: (Int) -> Void
     @ObservedObject var viewModel: NewExerciseViewModel
     
     var body: some View {
@@ -301,12 +308,25 @@ struct RestPhaseSidebar: View {
                 .fontWeight(.bold)
             
             Button(action: {
+                print("+20d tapped")
+                onAddTime(20)
+            }) {
+                Text("+20 detik")
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .font(.subheadline)
+                    .frame(maxWidth: 320)
+                    .padding()
+                    .background(Color(.sRGB, white: 0.15, opacity: 1))
+                    .cornerRadius(16)
+            }
+            
+            Button(action: {
                 print("Selanjutnya tapped")
                 onNext()
-                
             }) {
                 HStack {
-                    Image(systemName: "play.fill") // SF Symbol
+                    Image(systemName: "arrow.forward")
                     Text("Selanjutnya")
                         .fontWeight(.semibold)
                 }
@@ -319,11 +339,12 @@ struct RestPhaseSidebar: View {
             }
             
             Button(action: {
-                print("Ulangi tapped")
+                print("Sebelumnya tapped")
+                onPrevious()
             }) {
                 HStack {
-                    Image(systemName: "arrow.clockwise")
-                    Text("Ulangi")
+                    Image(systemName: "arrow.backward")
+                    Text("Sebelumnya")
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
@@ -348,6 +369,7 @@ struct ExercisePhaseSidebar: View {
     let currentSet: Int
     let currentVideoURL: URL?
     let onNext: () -> Void
+    let onPrevious: () -> Void
     let viewModel: NewExerciseViewModel
     let isLastPhase: Bool
     let startCountdown: (Int) -> Void
@@ -358,7 +380,7 @@ struct ExercisePhaseSidebar: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("Otot Paha Depan")
+            Text(exercise.muscle)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(Color.black)
@@ -397,7 +419,7 @@ struct ExercisePhaseSidebar: View {
                 onNext()
             }) {
                 HStack {
-                    Image(systemName: isLastPhase ? "checkmark.circle.fill" : "play.fill")
+                    Image(systemName: isLastPhase ? "checkmark.circle.fill" : "arrow.forward")
                     Text(isLastPhase ? "Selesai Latihan" : "Selanjutnya")
                         .fontWeight(.semibold)
                 }
@@ -410,11 +432,12 @@ struct ExercisePhaseSidebar: View {
             }
             
             Button(action: {
-                print("Ulangi tapped")
+                print("Sebelumnya tapped")
+                onPrevious()
             }) {
                 HStack {
-                    Image(systemName: "arrow.clockwise")
-                    Text("Ulangi")
+                    Image(systemName: "arrow.backward")
+                    Text("Sebelumnya")
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
