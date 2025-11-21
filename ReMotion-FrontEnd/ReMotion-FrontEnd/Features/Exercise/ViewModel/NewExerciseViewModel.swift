@@ -242,11 +242,11 @@ class NewExerciseViewModel: ObservableObject {
         }
     }
     
-    func newGoToPreviousPhase() {
-        if currentPhaseIndex > 0 {
-            currentPhaseIndex -= 1
-        }
-    }
+//    func newGoToPreviousPhase() {
+//        if currentPhaseIndex > 0 {
+//            currentPhaseIndex -= 1
+//        }
+//    }
     
     private func newGenerateWorkoutPhases(from exercises: [NewExercises]) -> [NewWorkoutPhase] {
         print("INI NGE GENERATE WORKOUT PHASE BRO")
@@ -415,6 +415,21 @@ class NewExerciseViewModel: ObservableObject {
             // If anything fails (fetching or adding), just print the error.
             // The user experience is to simply go back to the session page.
             print("❌ Failed to record progress: \(error.localizedDescription)")
+        }
+    }
+    
+    func newGoToPreviousPhase() {
+        // Only go back if we are not at the very first phase
+        if currentPhaseIndex > 0 {
+            currentPhaseIndex -= 1
+        }
+    }
+
+    func addRestTime(seconds: Int) {
+        // Simply add the specified number of seconds to the current remaining time
+        // This will work even if the timer is already running.
+        if remainingTime > 0 {
+            remainingTime += seconds
         }
     }
 }
