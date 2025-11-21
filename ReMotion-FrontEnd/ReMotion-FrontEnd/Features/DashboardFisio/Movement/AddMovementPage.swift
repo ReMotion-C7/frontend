@@ -103,7 +103,6 @@ struct AddMovementPage: View {
                     .border(Color.gray.opacity(0.1), width: 1)
             }
             
-            // Add Button
             Button(action: {
             }) {
                 Text("Unggah Gerakan")
@@ -111,7 +110,7 @@ struct AddMovementPage: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, maxHeight: 300)
                     .padding()
-                    .background(Color.black)
+                    .background(GradientPurple())
                     .cornerRadius(8)
             }
             .padding(.top, 10)

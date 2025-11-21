@@ -23,6 +23,8 @@ struct DashboardFisioPage: View {
         } detail: {
             NavigationStack {
                 VStack(alignment: .leading, spacing: 20) {
+                    
+                    // MARK: - Title & Add Button
                     HStack {
                         Text(selectedMenu == "Pasien" ? "Pasien" : "Gerakan Latihan")
                             .font(.largeTitle)
@@ -42,6 +44,7 @@ struct DashboardFisioPage: View {
                                 Image(systemName: "plus")
                                     .fontWeight(.bold)
                                     .padding(.leading, 10)
+                                
                                 Text(selectedMenu == "Pasien" ? "Tambah Pasien Baru" : "Tambah Gerakan Baru")
                                     .fontWeight(.semibold)
                                     .padding(.trailing, 10)
@@ -49,14 +52,13 @@ struct DashboardFisioPage: View {
                             .padding(.vertical, 10)
                             .padding(.horizontal, 6)
                             .foregroundColor(.white)
-                            .background(Color.black)
+                            .background(GradientPurple())
                             .cornerRadius(8)
-                            .padding(.trailing, 55)
                         }
+                        .padding(.trailing, 8)
                     }
                     .padding(.bottom, 10)
                     
-                    // Search Bar
                     HStack {
                         TextField("Cari \(selectedMenu == "Pasien" ? "pasien" : "gerakan") ...", text: $searchText)
                             .textFieldStyle(PlainTextFieldStyle())
@@ -70,10 +72,7 @@ struct DashboardFisioPage: View {
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(8)
                     .padding(.horizontal, 10)
-                    
-                    // Content Cards
                     if selectedMenu == "Gerakan Latihan" {
-                        // Gerakan Latihan Card
                         LibraryGerakanPage()
                     } else {
                         PatientListPage(viewModel: viewModel, fisioId: fisioId, searchText: searchText)
@@ -82,7 +81,7 @@ struct DashboardFisioPage: View {
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 40)
+                .padding(.horizontal, 40)
                 .sheet(isPresented: $showAddPatientModal, onDismiss: {
                     Task {
                         do {
@@ -96,7 +95,6 @@ struct DashboardFisioPage: View {
                         .presentationDetents([.large])
                         .presentationDragIndicator(.hidden)
                 }
-
                 .navigationDestination(isPresented: $navigateToAddGerakan) {
                     AddMovementPage()
                 }
@@ -106,4 +104,8 @@ struct DashboardFisioPage: View {
             }
         }
     }
+}
+
+#Preview {
+    DashboardFisioPage(fisioId: 1)
 }

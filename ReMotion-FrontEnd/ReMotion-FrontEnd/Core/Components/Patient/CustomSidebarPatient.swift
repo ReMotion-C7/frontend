@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CustomSidebarPatient: View {
     @Binding var selectedMenu: String
-    
+    @State private var showLogoutAlert = false
     private let menus = [
         ("Sesi Latihan", "square.grid.2x2.fill"),
         ("Progres Latihan", "figure.run")
@@ -45,8 +45,21 @@ struct CustomSidebarPatient: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(selectedMenu == menu.0 ? Color.black : Color.gray.opacity(0.15))
+                        Group {
+                            if selectedMenu == menu.0 {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [Color("lightPurple"), Color("darkPurple")],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                            } else {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.gray.opacity(0.15))
+                            }
+                        }
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -55,25 +68,41 @@ struct CustomSidebarPatient: View {
             
             Spacer()
             
-            Button(action: {
-                session.logout()
-            }) {
-                HStack {
-                    Image(systemName: "door.left.hand.open")
-                        .font(.system(size: 18, weight: .semibold))
-                    Text("Logout")
-                        .font(.system(size: 15, weight: .medium))
+            HStack(spacing: 12) {
+                Image(systemName: "person.crop.circle.fill")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 40, height: 40)
+                    .foregroundColor(.gray)
+                    .clipShape(Circle())
+                    .padding(.trailing, 8)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Pasien")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.black)
                 }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.red)
-                )
+                
+                Spacer()
+                
+                Button(action: {
+                    showLogoutAlert = true
+                }) {
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                        .font(.system(size: 20))
+                        .foregroundColor(.black)
+                }
+                .alert("Konfirmasi Logout", isPresented: $showLogoutAlert) {
+                    Button("Batal", role: .cancel) { }
+                    Button("Keluar", role: .destructive) {
+                        session.logout()
+                    }
+                } message: {
+                    Text("Apakah Anda yakin ingin keluar dari aplikasi?")
+                }
             }
-            .buttonStyle(PlainButtonStyle())
             .padding(.horizontal)
+            .padding(.bottom, 20)
             
         }
         .padding(.vertical)
