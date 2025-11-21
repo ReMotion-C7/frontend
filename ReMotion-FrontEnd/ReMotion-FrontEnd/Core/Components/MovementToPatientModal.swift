@@ -65,16 +65,16 @@ struct MovementToPatientModal: View {
             )
         }
         .interactiveDismissDisabled()
-        .alert("Tutup Pemilihan Gerakan?", isPresented: $showSelectionExitAlert) {
+        .alert("Belum ada gerakan yang dipilih. Apakah Anda ingin keluar dari halaman ini?", isPresented: $showSelectionExitAlert) {
             Button("Batal", role: .cancel) { }
-            Button("Tutup", role: .destructive) {
+            Button("Keluar", role: .destructive) {
                 dismiss()
             }
         } message: {
             Text("Anda belum memilih gerakan. Apakah Anda yakin ingin menutup?")
         }
         
-        .alert("Batalkan Menambah Gerakan?", isPresented: $showConfigExitAlert) {
+        .alert("Pengaturan yang Anda isi tidak akan disimpan. Apakah Anda yakin ingin kembali?", isPresented: $showConfigExitAlert) {
             Button("Batal", role: .cancel) { }
             Button("Kembali", role: .destructive) {
                 currentStep = .selection
@@ -236,12 +236,19 @@ struct MovementToPatientModal: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isSelected ? Color.black : Color.white)
-                        .overlay(
+                    Group {
+                        if isSelected {
+                            GradientPurple()
+                                .cornerRadius(10)
+                        } else {
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                        )
+                                .fill(Color.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                                )
+                        }
+                    }
                 )
         }
     }
@@ -364,8 +371,15 @@ struct MovementToPatientModal: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isFormValid ? Color.black : Color.gray.opacity(0.5))
+                Group {
+                    if isFormValid {
+                        GradientPurple()
+                            .cornerRadius(12)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.gray.opacity(0.5))
+                    }
+                }
             )
         }
         .disabled(!isFormValid)

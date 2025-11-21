@@ -20,7 +20,7 @@ struct CustomSidebarPatient: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
-                Text("Remotion")
+                Text("ReMotion")
                     .font(.title3)
                     .fontWeight(.bold)
                 Spacer()
@@ -36,25 +36,34 @@ struct CustomSidebarPatient: View {
                     selectedMenu = menu.0
                 }) {
                     HStack {
-                        Image(systemName: menu.1)
-                            .font(.system(size: 18, weight: .semibold))
+                        if selectedMenu == menu.0 {
+                            Image(systemName: menu.1)
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.white)
+                        } else {
+                            Image(systemName: menu.1)
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.clear)
+                                .background(
+                                    GradientPurple()
+                                        .mask(
+                                            Image(systemName: menu.1)
+                                                .font(.system(size: 18, weight: .semibold))
+                                        )
+                                )
+                        }
+                        
                         Text("\(menu.0)")
                             .font(.system(size: 15, weight: .medium))
+                            .foregroundColor(selectedMenu == menu.0 ? .white : .black)
                     }
-                    .foregroundColor(selectedMenu == menu.0 ? .white : .black)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
                     .background(
                         Group {
                             if selectedMenu == menu.0 {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [Color("lightPurple"), Color("darkPurple")],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
+                                GradientPurple()
+                                    .cornerRadius(10)
                             } else {
                                 RoundedRectangle(cornerRadius: 10)
                                     .fill(Color.gray.opacity(0.15))
@@ -90,7 +99,14 @@ struct CustomSidebarPatient: View {
                 }) {
                     Image(systemName: "rectangle.portrait.and.arrow.right")
                         .font(.system(size: 20))
-                        .foregroundColor(.black)
+                        .foregroundColor(.clear)
+                        .background(
+                            GradientPurple()
+                                .mask(
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                        .font(.system(size: 20))
+                                )
+                        )
                 }
                 .alert("Konfirmasi Logout", isPresented: $showLogoutAlert) {
                     Button("Batal", role: .cancel) { }

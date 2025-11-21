@@ -97,9 +97,7 @@ struct SessionPage: View {
                                         .padding(.top, 12)
                                         
                                         Button(action: {
-                                            //                                            self.todaysExercises = DummyDataService.fetchExercises(for: "patient-123")
                                             Task {
-                                                // because your function is async throws
                                                 do {
                                                     self.todaysExercises = try await viewModel.readExercises(patientId: patientId)
                                                     
@@ -118,7 +116,7 @@ struct SessionPage: View {
                                             }
                                             .padding()
                                             .frame(maxWidth: .infinity)
-                                            .background(Color.black)
+                                            .background(GradientPurple())
                                             .foregroundColor(.white)
                                             .cornerRadius(10)
                                             .padding(.top, 10)

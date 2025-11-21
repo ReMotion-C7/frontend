@@ -386,7 +386,7 @@ struct AddPatientModal: View {
                 try await viewModel.readUsersNonFisio(fisioId: fisioId)
             }
         }
-        .alert("Batalkan Menambah Pasien?", isPresented: $showExitAlert) {
+        .alert("Keluar Tanpa Menyimpan?", isPresented: $showExitAlert) {
             Button("Batal", role: .cancel) { }
             Button("Keluar", role: .destructive) {
                 dismiss()

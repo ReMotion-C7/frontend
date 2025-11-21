@@ -65,14 +65,16 @@ struct ExerciseView: View {
             
             Spacer()
             
-            // --- Action Buttons ---
             VStack(spacing: 12) {
                 Button(action: onNext) {
                     Label("Selanjutnya", systemImage: "arrow.right")
+                        .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.black)
+                .foregroundColor(.white)
+                .background(GradientPurple())
+                .cornerRadius(10)
                 
                 Button(action: onPrevious) {
                     Label("Sebelumnya", systemImage: "arrow.left")
@@ -85,13 +87,12 @@ struct ExerciseView: View {
             Spacer()
         }
         .padding(40)
-        .frame(width: geometry.size.width * 0.4) // 40% of the screen
+        .frame(width: geometry.size.width * 0.4)
         .background(Color.white)
         .onAppear(perform: startTimerIfNeeded)
         .onDisappear(perform: stopTimer)
     }
     
-    // Formats the remaining time into HH:MM:SS
     private func formatTime(_ time: TimeInterval) -> String {
         let hours = Int(time) / 3600
         let minutes = (Int(time) % 3600) / 60
@@ -99,24 +100,20 @@ struct ExerciseView: View {
         return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
     
-    // Checks if the exercise is duration-based and starts the timer.
     private func startTimerIfNeeded() {
         guard exerciseDetails.type == "Waktu" else { return }
         
-        // Subscribe to a timer that publishes every second.
         timerSubscription = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
                 if timeRemaining > 0 {
                     timeRemaining -= 1
                 } else {
-                    // Time is up. Stop the timer but DO NOTHING else.
                     stopTimer()
                 }
             }
     }
     
-    // Cancels the timer subscription to prevent it from running in the background.
     private func stopTimer() {
         timerSubscription?.cancel()
         timerSubscription = nil

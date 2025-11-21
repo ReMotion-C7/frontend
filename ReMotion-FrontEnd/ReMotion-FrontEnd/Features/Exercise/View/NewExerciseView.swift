@@ -40,7 +40,7 @@ struct NewExerciseView: View {
         HStack {
             if let currentPhase = viewModel.newCurrentPhase {
                 switch currentPhase {
-                    //                case .exercise(let details, let currentSet):
+                    //                 case .exercise(let details, let currentSet):
                 case .exercise(let exercise, let currentSet):
                     ExercisePhaseSidebar(
                         exercise: exercise,
@@ -320,6 +320,7 @@ struct RestPhaseSidebar: View {
                     .background(Color(.sRGB, white: 0.15, opacity: 1))
                     .cornerRadius(16)
             }
+            .padding(.bottom, 80)
             
             Button(action: {
                 print("Selanjutnya tapped")
@@ -334,7 +335,7 @@ struct RestPhaseSidebar: View {
                 .font(.subheadline)
                 .frame(maxWidth: 320)
                 .padding()
-                .background(Color(.sRGB, white: 0.15, opacity: 1))
+                .background(GradientPurple())
                 .cornerRadius(16)
             }
             
@@ -427,7 +428,7 @@ struct ExercisePhaseSidebar: View {
                 .font(.subheadline)
                 .frame(maxWidth: 320)
                 .padding()
-                .background(Color(.sRGB, white: 0.15, opacity: 1))
+                .background(GradientPurple())
                 .cornerRadius(16)
             }
             
