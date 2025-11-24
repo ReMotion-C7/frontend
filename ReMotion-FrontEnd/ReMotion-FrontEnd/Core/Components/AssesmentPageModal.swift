@@ -69,7 +69,9 @@ struct AssesmentPageModal: View {
                             .frame(maxWidth: .infinity)
                     }
                     .padding()
-                    .background(Color.blue)
+                    // --- MODIFIED CTA ---
+                    .background(GradientPurple())
+                    // --------------------
                     .foregroundColor(.white)
                     .cornerRadius(14)
                     

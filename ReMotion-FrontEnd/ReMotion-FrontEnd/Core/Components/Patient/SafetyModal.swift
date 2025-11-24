@@ -106,7 +106,7 @@ struct SafetyModal: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(GradientPurple())
                         .cornerRadius(14)
                 }
                 

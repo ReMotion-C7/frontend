@@ -311,8 +311,8 @@ struct DetailPatientPage: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.black)
+                        GradientPurple()
+                            .cornerRadius(6)
                     )
                 }
             }

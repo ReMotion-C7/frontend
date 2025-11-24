@@ -363,8 +363,18 @@ struct AddPatientModal: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(selectedPatient != nil ? Color.black : Color.gray.opacity(0.4))
+                // --- MODIFIED CTA: Menggunakan GradientPurple saat aktif ---
+                .background(
+                    Group {
+                        if selectedPatient != nil {
+                            GradientPurple()
+                        } else {
+                            Color.gray.opacity(0.4)
+                        }
+                    }
+                )
                 .cornerRadius(8)
+                // ----------------------------------------------------------
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 20)
@@ -376,7 +386,7 @@ struct AddPatientModal: View {
                 try await viewModel.readUsersNonFisio(fisioId: fisioId)
             }
         }
-        .alert("Batalkan Menambah Pasien?", isPresented: $showExitAlert) {
+        .alert("Keluar Tanpa Menyimpan?", isPresented: $showExitAlert) {
             Button("Batal", role: .cancel) { }
             Button("Keluar", role: .destructive) {
                 dismiss()

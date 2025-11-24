@@ -148,8 +148,15 @@ extension EditPatientExerciseModal {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(isFormValid ? Color.black : Color.gray.opacity(0.5))
+                    Group {
+                        if isFormValid {
+                            GradientPurple()
+                                .cornerRadius(12)
+                        } else {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.gray.opacity(0.5))
+                        }
+                    }
                 )
             }
         }

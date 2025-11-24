@@ -264,7 +264,7 @@ struct EditPatientDetailPage: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(Color.black)
+                    .background(GradientPurple())
                     .cornerRadius(8)
             }
             .padding(.horizontal, 20)
