@@ -136,7 +136,7 @@ struct LoginPage: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color(red: 0.2, green: 0.2, blue: 0.2))
+                                .background(GradientPurple())
                                 .cornerRadius(8)
                         }
                         .padding(.top, 24)
@@ -187,7 +187,3 @@ struct LoginPage: View {
     }
     
 }
-
-//#Preview {
-//    LoginPage()
-//}
