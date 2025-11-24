@@ -63,7 +63,7 @@ struct PatientAssessmentCamera: View {
         .onDisappear {
             viewModel.quickPose.stop()
         }
-        .onChange(of: viewModel.showModal) { show in
+        .onChange(of: viewModel.showModal) { show, _ in
             if !show {
                 print("CHECKING COUNTDOWN")
                 viewModel.checkCountdown()

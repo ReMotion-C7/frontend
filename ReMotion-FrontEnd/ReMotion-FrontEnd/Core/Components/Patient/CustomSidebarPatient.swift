@@ -127,10 +127,10 @@ struct CustomSidebarPatient: View {
     }
 }
 
-#Preview {
-    StatefulPreviewWrapper("Sesi Latihan") { selectedMenu in
-        CustomSidebarPatient(selectedMenu: selectedMenu)
-            .previewLayout(.sizeThatFits)
-            .padding()
-    }
-}
+//#Preview {
+//    StatefulPreviewWrapper("Sesi Latihan") { selectedMenu in
+//        CustomSidebarPatient(selectedMenu: selectedMenu)
+//            .previewLayout(.sizeThatFits)
+//            .padding()
+//    }
+//}

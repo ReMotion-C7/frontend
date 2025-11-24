@@ -12,7 +12,7 @@ struct VideoPlayerView: UIViewControllerRepresentable {
         
         let controller = AVPlayerViewController()
         controller.player = player
-        controller.showsPlaybackControls = false
+        controller.showsPlaybackControls = true
         controller.videoGravity = .resizeAspectFill
         
         // Loop video otomatis

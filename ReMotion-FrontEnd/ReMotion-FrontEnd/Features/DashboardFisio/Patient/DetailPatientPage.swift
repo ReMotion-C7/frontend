@@ -89,7 +89,7 @@ struct DetailPatientPage: View {
                 .sheet(isPresented: $showExerciseSheet) {
                     MovementToPatientModal(selectedExercises: .constant(patient.exercises), patientViewModel: viewModel, dismissSheet: $dismissSheet, patient: patient, fisioId: fisioId)
                 }
-                .onChange(of: dismissSheet) { newValue in
+                .onChange(of: dismissSheet) { newValue, _ in
                     if newValue {
                         showExerciseSheet = false
                         dismissSheet = false
