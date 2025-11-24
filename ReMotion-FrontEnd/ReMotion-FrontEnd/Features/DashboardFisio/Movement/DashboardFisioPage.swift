@@ -99,7 +99,7 @@ struct DashboardFisioPage: View {
                 .navigationDestination(isPresented: $navigateToAddGerakan) {
                     AddMovementPage()
                 }
-                .onChange(of: selectedMenu) { _ in
+                .onChange(of: selectedMenu) {
                     navigateToAddGerakan = false
                 }
             }
