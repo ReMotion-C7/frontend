@@ -15,7 +15,7 @@ struct DashboardCardSmall: View {
             // Image
             Rectangle()
                 .fill(Color.gray.opacity(0.3))
-                .frame(width: 244, height: 160)
+                .frame(maxWidth: 244, maxHeight: 160)
                 .overlay(
                     AsyncImage(url: URL(string: movement.image)) { phase in
                         switch phase {

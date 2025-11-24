@@ -32,30 +32,31 @@ struct DashboardFisioPage: View {
                             .padding(.leading, 12)
                         
                         Spacer()
-                        
-                        Button(action: {
-                            if selectedMenu == "Pasien" {
-                                showAddPatientModal = true
-                            } else {
-                                navigateToAddGerakan = true
+                        if selectedMenu == "Pasien" {
+                            Button(action: {
+                                if selectedMenu == "Pasien" {
+                                    showAddPatientModal = true
+                                } else {
+                                    navigateToAddGerakan = false
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "plus")
+                                        .fontWeight(.bold)
+                                        .padding(.leading, 10)
+                                    
+                                    Text(selectedMenu == "Pasien" ? "Tambah Pasien Baru" : "Tambah Gerakan Baru")
+                                        .fontWeight(.semibold)
+                                        .padding(.trailing, 10)
+                                }
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 6)
+                                .foregroundColor(.white)
+                                .background(GradientPurple())
+                                .cornerRadius(8)
                             }
-                        }) {
-                            HStack {
-                                Image(systemName: "plus")
-                                    .fontWeight(.bold)
-                                    .padding(.leading, 10)
-                                
-                                Text(selectedMenu == "Pasien" ? "Tambah Pasien Baru" : "Tambah Gerakan Baru")
-                                    .fontWeight(.semibold)
-                                    .padding(.trailing, 10)
-                            }
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 6)
-                            .foregroundColor(.white)
-                            .background(GradientPurple())
-                            .cornerRadius(8)
+                            .padding(.trailing, 8)
                         }
-                        .padding(.trailing, 8)
                     }
                     .padding(.bottom, 10)
                     
@@ -73,7 +74,7 @@ struct DashboardFisioPage: View {
                     .cornerRadius(8)
                     .padding(.horizontal, 10)
                     if selectedMenu == "Gerakan Latihan" {
-                        LibraryGerakanPage()
+                        LibraryGerakanPage(searchText: $searchText)
                     } else {
                         PatientListPage(viewModel: viewModel, fisioId: fisioId, searchText: searchText)
                     }
