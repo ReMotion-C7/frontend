@@ -77,54 +77,44 @@ class SessionViewModel: ObservableObject {
         }
     }
     
-    // mapping helper
     func jointsForExercise(named name: String) -> [JointConfig] {
-        // normalize name for robust matching
         let key = name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
         switch key {
-        case "lunges":
-            return [
-                .init(type: .knee, side: .left),
-                .init(type: .knee, side: .right),
-                .init(type: .hip,  side: .left),
-                .init(type: .hip,  side: .right)
-            ]
-            
         case "squat":
             return [
-                .init(type: .knee,  side: .left),
-                .init(type: .knee,  side: .right),
-                .init(type: .hip,   side: .left),
-                .init(type: .hip,   side: .right),
-                .init(type: .ankle, side: .left),
-                .init(type: .ankle, side: .right)
+                .init(type: .knee,  side: .left,  idealAngle: 90.0, tolerance: 90.0, clockwiseDirection: true),
+                .init(type: .knee,  side: .right, idealAngle: 90.0, tolerance: 90.0, clockwiseDirection: true),
+                .init(type: .hip,   side: .left,  idealAngle: 85.0, tolerance: 85.0, clockwiseDirection: false),
+                .init(type: .hip,   side: .right, idealAngle: 85.0, tolerance: 85.0, clockwiseDirection: false),
+            ]
+            
+        case "lunges":
+            return [
+                .init(type: .knee, side: .left,  idealAngle: 85.0, tolerance: 85.0, clockwiseDirection: true),
+                .init(type: .knee, side: .right, idealAngle: 80.0, tolerance: 80.0, clockwiseDirection: true),
+                .init(type: .hip,  side: .left,  idealAngle: 95.0, tolerance: 95.0, clockwiseDirection: false),
+                .init(type: .hip,  side: .right, idealAngle: 170.0, tolerance: 170.0, clockwiseDirection: false)
+            ]
+            
+        case "one leg balance":
+            return [
+                .init(type: .knee, side: .left, idealAngle: 90.0, tolerance: 90.0, clockwiseDirection: true),
+                .init(type: .hip, side: .left, idealAngle: 90.0, tolerance: 90.0, clockwiseDirection: false)
+            ]
+            
+        case let s where s.contains("leg extension") || s.contains("leg-extension"):
+            return [
+                .init(type: .knee,  side: .left, idealAngle: 170.0, tolerance: 170.0, clockwiseDirection: false),
+                .init(type: .knee,  side: .right, idealAngle: 170.0, tolerance: 170.0, clockwiseDirection: false)
             ]
             
         case "bridging":
             return [
-                .init(type: .knee,  side: .left),
-                .init(type: .knee,  side: .right),
-                .init(type: .hip,   side: .left),
-                .init(type: .hip,   side: .right),
-            ]
-        case let s where s.contains("leg extension") || s.contains("leg-extension") || s.contains("legextension"):
-            // your example used left-side joints only — keep that or add logic to choose side
-            return [
-                .init(type: .ankle, side: .left),
-                .init(type: .knee,  side: .left),
-                .init(type: .hip,   side: .left)
-            ]
-
-
-            
-            // match variations like "one leg balance", "one-leg balance", etc.
-        case let s where s.contains("one leg") || s.contains("one-leg") || s.contains("oneleg"):
-            // your example used left-side joints only — keep that or add logic to choose side
-            return [
-                .init(type: .ankle, side: .left),
-                .init(type: .knee,  side: .left),
-                .init(type: .hip,   side: .left)
+                .init(type: .hip,   side: .left,  idealAngle: 175.0, tolerance: 165.0, clockwiseDirection: false),
+                .init(type: .hip,   side: .right, idealAngle: 175.0, tolerance: 165.0, clockwiseDirection: false),
+                .init(type: .knee,  side: .left,  idealAngle: 85.0,  tolerance: 75.0, clockwiseDirection: true),
+                .init(type: .knee,  side: .right, idealAngle: 85.0,  tolerance: 75.0, clockwiseDirection: true),
             ]
             
         default:

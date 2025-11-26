@@ -65,13 +65,16 @@ struct NewExerciseView: View {
                         }
                     )
                     ExercisePhaseCamera(viewModel: viewModel, exercises: exercises)
-                case .rest(_, let nextExercise):
+                    
+                case .rest(let duration, let nextExercise):
                     RestPhaseSidebar(
+                        duration: duration,
                         onNext: viewModel.newGoToNextPhase,
                         onPrevious: viewModel.newGoToPreviousPhase,
                         onAddTime: viewModel.addRestTime,
                         viewModel: viewModel
                     )
+                    
                     if let url = currentVideoURL {
                         VideoPlayerView(videoURL: url)
                             .overlay(
@@ -292,6 +295,7 @@ struct ExercisePhaseCamera: View {
 
 struct RestPhaseSidebar: View {
     
+    let duration: TimeInterval
     let onNext: () -> Void
     let onPrevious: () -> Void
     let onAddTime: (Int) -> Void
@@ -359,7 +363,7 @@ struct RestPhaseSidebar: View {
         .frame(maxWidth: 400, maxHeight: .infinity)
         .background(Color.white)
         .onAppear {
-            viewModel.startCountdown(from: 30)
+            viewModel.startCountdown(from: Int(duration))
         }
     }
 }

@@ -81,31 +81,30 @@ class NewExerciseViewModel: ObservableObject {
             break
         }
         
-        
-        let basicStyle = QuickPose.Style(
-            relativeFontSize: 0.5,
-            relativeArcSize: 0.2,
-            relativeLineWidth: 0.5,
-            conditionalColors: [QuickPose.Style.ConditionalColor(min: nil, max: 150, color: UIColor.green)]
-        )
-        
         var features: [QuickPose.Feature] = [
             .inside(edgeInsets),
             .overlay(.none)
         ]
         
         for joint in jointsToTrack {
-            let feature = createRangeOfMotionFeature(for: joint, style: basicStyle)
+            
+            let minAngle = joint.idealAngle - 25
+            let maxAngle = joint.idealAngle + 25
+            
+            let jointSpecificStyle = QuickPose.Style(
+                relativeFontSize: 0.5,
+                relativeArcSize: 0.2,
+                relativeLineWidth: 0.5,
+                conditionalColors: [
+                    QuickPose.Style.ConditionalColor(min: minAngle, max: maxAngle, color: UIColor.green)
+                ]
+            )
+            
+            let feature = createRangeOfMotionFeature(for: joint, style: jointSpecificStyle)
             features.append(feature)
         }
         
         quickPose.start(
-            //            features: [
-            //                .inside(edgeInsets),
-            //                .rangeOfMotion(.knee(side: .left, clockwiseDirection: true), style: basicStyle),
-            //                .rangeOfMotion(.knee(side: .right, clockwiseDirection: true), style: basicStyle),
-            //                .overlay(.none)
-            //            ]
             features: features
         ) { status, outputImage, measurements, feedback, body in
             
@@ -126,29 +125,7 @@ class NewExerciseViewModel: ObservableObject {
                     }
                     
                     self.processMeasurements(measurements)
-                    
-                    //                    for (feature, result) in measurements {
-                    //                        switch feature {
-                    //                        case .rangeOfMotion(let rom, _):
-                    //                            switch rom {
-                    //                            case .knee(side: .left, _):
-                    //                                print("Left knee angle: \(result.stringValue)")
-                    //                                self.leftKneeScore = self.countIdealScore(for: result.value, ideal: 90, tolerance: 90)
-                    //                            case .knee(side: .right, _):
-                    //                                print("Right knee angle: \(result.stringValue)")
-                    //                                self.rightKneeScore = self.countIdealScore(for: result.value, ideal: 90, tolerance: 90)
-                    //                            default:
-                    //                                break
-                    //                            }
-                    //
-                    //                        case .inside:
-                    //                            print("Inside score: \(result.stringValue)")
-                    //
-                    //                        default:
-                    //                            break
-                    //                        }
-                    //                    }
-                    
+                
                 case .noPersonFound:
                     print("GAADA ORANG BANGG")
                 case .sdkValidationError:
@@ -159,19 +136,20 @@ class NewExerciseViewModel: ObservableObject {
     }
     
     private func createRangeOfMotionFeature(for joint: JointConfig, style: QuickPose.Style) -> QuickPose.Feature {
-        let side = joint.side  // Use the converted side
+        let side = joint.side
+        let direction = joint.clockwiseDirection
         
         switch joint.type {
         case .knee:
-            return .rangeOfMotion(.knee(side: side, clockwiseDirection: true), style: style)
+            return .rangeOfMotion(.knee(side: side, clockwiseDirection: direction), style: style)
         case .hip:
-            return .rangeOfMotion(.hip(side: side, clockwiseDirection: true), style: style)
+            return .rangeOfMotion(.hip(side: side, clockwiseDirection: direction), style: style)
         case .elbow:
-            return .rangeOfMotion(.elbow(side: side, clockwiseDirection: true), style: style)
+            return .rangeOfMotion(.elbow(side: side, clockwiseDirection: direction), style: style)
         case .shoulder:
-            return .rangeOfMotion(.shoulder(side: side, clockwiseDirection: true), style: style)
+            return .rangeOfMotion(.shoulder(side: side, clockwiseDirection: direction), style: style)
         case .ankle:
-            return .rangeOfMotion(.ankle(side: side, clockwiseDirection: true), style: style)
+            return .rangeOfMotion(.ankle(side: side, clockwiseDirection: direction), style: style)
         }
     }
     
@@ -180,10 +158,13 @@ class NewExerciseViewModel: ObservableObject {
             switch feature {
             case .rangeOfMotion(let rom, _):
                 let key = getROMKey(rom)
-                let score = countIdealScore(for: result.value, ideal: 90, tolerance: 90)
                 
-                jointScores[key] = score
-                print("\(key): \(result.stringValue) - Score: \(score)")
+                if let config = jointsToTrack.first(where: { $0.key == key }) {
+                    let score = countIdealScore(for: result.value, ideal: config.idealAngle, tolerance: config.tolerance)
+                    
+                    jointScores[key] = score
+                    print("\(key): \(result.stringValue) (Ideal: \(config.idealAngle)) - Score: \(score)")
+                }
                 
             default:
                 break
@@ -242,11 +223,11 @@ class NewExerciseViewModel: ObservableObject {
         }
     }
     
-//    func newGoToPreviousPhase() {
-//        if currentPhaseIndex > 0 {
-//            currentPhaseIndex -= 1
-//        }
-//    }
+    //    func newGoToPreviousPhase() {
+    //        if currentPhaseIndex > 0 {
+    //            currentPhaseIndex -= 1
+    //        }
+    //    }
     
     private func newGenerateWorkoutPhases(from exercises: [NewExercises]) -> [NewWorkoutPhase] {
         print("INI NGE GENERATE WORKOUT PHASE BRO")
@@ -424,7 +405,7 @@ class NewExerciseViewModel: ObservableObject {
             currentPhaseIndex -= 1
         }
     }
-
+    
     func addRestTime(seconds: Int) {
         // Simply add the specified number of seconds to the current remaining time
         // This will work even if the timer is already running.
