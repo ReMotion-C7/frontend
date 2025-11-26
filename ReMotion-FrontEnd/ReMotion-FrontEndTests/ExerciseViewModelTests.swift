@@ -22,6 +22,7 @@ struct ExerciseViewModelTests {
             id: 10,
             name: "Test Quadriceps Set",
             type: "Waktu",
+            category: "ya",
             description: "Deskripsi tes.",
             muscle: "Otot Paha Depan",
             image: "test_image.png"

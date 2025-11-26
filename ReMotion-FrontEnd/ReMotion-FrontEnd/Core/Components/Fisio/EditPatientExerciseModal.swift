@@ -14,6 +14,7 @@ struct EditPatientExerciseModal: View {
     
     @State private var setInput: String = ""
     @State private var repOrTimeInput: String = ""
+    @State private var methodId: Int = 1
     
     init(exercise: Exercise, viewModel: PatientViewModel, showEditModal: Binding<Bool>) {
         self.exercise = exercise
@@ -21,6 +22,7 @@ struct EditPatientExerciseModal: View {
         self._showEditModal = showEditModal
         _setInput = State(initialValue: "\(exercise.set)")
         _repOrTimeInput = State(initialValue: "\(exercise.repOrTime)")
+        _methodId = State(initialValue: exercise.type == "Waktu" ? 2 : 1)
     }
     
     var body: some View {
@@ -97,20 +99,16 @@ extension EditPatientExerciseModal {
                 .font(.system(size: 22, weight: .bold))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
-            
-            HStack(spacing: 8) {
-                TagView(
-                    text: exercise.type,
-                    icon: exercise.type == "Waktu" ? "clock" : "repeat"
-                )
-                
-                TagView(text: exercise.muscle, icon: nil)
-            }
         }
     }
     
     private var inputFieldsSection: some View {
         VStack(spacing: 16) {
+            MethodPickerView(method: $methodId, methodOptions: [
+                (1, "Repetisi"),
+                (2, "Waktu")
+            ])
+
             InputField(
                 title: "Masukkan Jumlah Set",
                 placeholder: "5",
@@ -119,8 +117,8 @@ extension EditPatientExerciseModal {
             )
             
             InputField(
-                title: exercise.type == "Waktu" ? "Masukkan Durasi Waktu (detik)" : "Masukkan Jumlah Rep",
-                placeholder: exercise.type == "Waktu" ? "30" : "10",
+                title: methodId == 2 ? "Masukkan Durasi Waktu (detik)" : "Masukkan Jumlah Rep",
+                placeholder: methodId == 2 ? "30" : "10",
                 text: $repOrTimeInput,
                 keyboardType: .numberPad
             )
@@ -191,6 +189,7 @@ extension EditPatientExerciseModal {
             fisioId: fisioId,
             patientId: patientId,
             exerciseId: exercise.id,
+            methodId: methodId,
             set: setValue,
             repOrTime: repOrTimeValue
         )

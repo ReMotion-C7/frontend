@@ -251,19 +251,22 @@ class PatientViewModel: ObservableObject {
         }
     }
     
-    
-    
     func editPatientExercise(
         fisioId: Int,
         patientId: Int,
         exerciseId: Int,
+        methodId: Int,
         set: Int,
         repOrTime: Int
     ) async {
         isLoading = true
         isError = false
         errorMessage = ""
-        
+        print(fisioId)
+        print(patientId)
+        print(methodId)
+        print(set)
+        print(repOrTime)
         defer {
             isLoading = false
         }
@@ -272,7 +275,7 @@ class PatientViewModel: ObservableObject {
             let response: EditPatientExerciseResponse = try await APIService.shared.requestAPI(
                 "fisio/\(fisioId)/patients/\(patientId)/exercises/edit/\(exerciseId)",
                 method: .patch,
-                parameters: ["set": set, "repOrTime": repOrTime],
+                parameters: ["methodId": methodId, "set": set, "repOrTime": repOrTime],
                 responseType: EditPatientExerciseResponse.self
             )
             

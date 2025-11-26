@@ -279,7 +279,7 @@ struct ExercisePhaseCamera: View {
             viewModel.quickPoseSetup()
             //            viewModel.newStartSession(with: exercises)
         }
-        .onChange(of: viewModel.showModal) { sound in
+        .onChange(of: viewModel.showModal) { sound, _ in
             if sound {
                 print("PLAY SOUND")
                 viewModel.playSound(named: "yobel_kurang_mundur")

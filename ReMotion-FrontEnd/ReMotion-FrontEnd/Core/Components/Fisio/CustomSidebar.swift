@@ -132,10 +132,10 @@ struct CustomSidebar: View {
     }
 }
 
-#Preview {
-    StatefulPreviewWrapper("Pasien") { selectedMenu in
-        CustomSidebar(selectedMenu: selectedMenu)
-            .previewLayout(.sizeThatFits)
-            .padding()
-    }
-}
+//#Preview {
+//    StatefulPreviewWrapper("Pasien") { selectedMenu in
+//        CustomSidebar(selectedMenu: selectedMenu)
+//            .previewLayout(.sizeThatFits)
+//            .padding()
+//    }
+//}

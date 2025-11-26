@@ -48,24 +48,53 @@ struct DetailExercisePage: View {
                                UIApplication.shared.canOpenURL(videoURL) {
                                 
                                 ZStack {
+//                                    VideoPlayerView(videoURL: videoURL, isPlaying: $isPlaying)
+//                                        .cornerRadius(12)
+//                                        .allowsHitTesting(false)
+//                                        .onAppear {
+//                                            isVideoReady = false
+//                                            let player = AVPlayer(url: videoURL)
+//                                            player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["playable"]) {
+//                                                var error: NSError? = nil
+//                                                let status = player.currentItem?.asset.statusOfValue(forKey: "playable", error: &error)
+//                                                DispatchQueue.main.async {
+//                                                    if status == .loaded {
+//                                                        isVideoReady = true
+//                                                    } else {
+//                                                        isVideoReady = false
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+
                                     VideoPlayerView(videoURL: videoURL, isPlaying: $isPlaying)
                                         .cornerRadius(12)
                                         .allowsHitTesting(false)
                                         .onAppear {
                                             isVideoReady = false
+
                                             let player = AVPlayer(url: videoURL)
-                                            player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["playable"]) {
-                                                var error: NSError? = nil
-                                                let status = player.currentItem?.asset.statusOfValue(forKey: "playable", error: &error)
-                                                DispatchQueue.main.async {
-                                                    if status == .loaded {
-                                                        isVideoReady = true
-                                                    } else {
-                                                        isVideoReady = false
+
+                                            Task {
+                                                if let asset = player.currentItem?.asset {
+                                                    do {
+                                                        // Load the async AVAsset property
+                                                        let playable = try await asset.load(.isPlayable)
+
+                                                        // Must update SwiftUI state on main thread
+                                                        await MainActor.run {
+                                                            isVideoReady = playable
+                                                        }
+                                                    } catch {
+                                                        // Loading failed
+                                                        await MainActor.run {
+                                                            isVideoReady = false
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
+
                                     
                                     // Overlay transparan untuk tap gesture
                                     Rectangle()

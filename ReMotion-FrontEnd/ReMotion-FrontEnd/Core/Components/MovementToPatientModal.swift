@@ -351,8 +351,8 @@ struct MovementToPatientModal: View {
             )
             
             InputField(
-                title: movement.type == "Waktu" ? "Masukan Durasi Waktu (detik)" : "Masukkan Jumlah Rep",
-                placeholder: movement.type == "Waktu" ? "30" : "10",
+                title: method == 2 ? "Masukkan Durasi Waktu (detik)" : "Masukkan Jumlah Rep",
+                placeholder: method == 2 ? "30" : "10",
                 text: $durationInput,
                 keyboardType: .numberPad
             )
